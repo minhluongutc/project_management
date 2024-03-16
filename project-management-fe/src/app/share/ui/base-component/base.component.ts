@@ -4,16 +4,22 @@ import {
   Injector,
   OnDestroy,
 } from '@angular/core';
+import { ToastModule } from 'primeng/toast';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 // import { TranslateService } from '@ngx-translate/core';
 // import { VtsToastService } from '@ui-vts-kit/ng-vts/toast';
 import { Subscription } from 'rxjs';
+import {MessageService} from "primeng/api";
 // import { PvnTableConfig } from '../pvn-table/pvn-table.component';
 
 @Component({
   template: `
-    <ng-content></ng-content>`,
+    <ng-content></ng-content>
+    <p-toast></p-toast>`,
+  imports: [
+    ToastModule
+  ],
   standalone: true
 })
 export class BaseComponent implements OnDestroy {
@@ -29,8 +35,8 @@ export class BaseComponent implements OnDestroy {
   protected route: ActivatedRoute;
   protected ref: ChangeDetectorRef;
   protected state: any;
+  protected toast: MessageService;
   // protected translate: TranslateService;
-  // protected toast: VtsToastService;
 
   subscriptions: Subscription[] = [];
 
@@ -40,11 +46,27 @@ export class BaseComponent implements OnDestroy {
     this.route = this.injector.get(ActivatedRoute);
     this.ref = this.injector.get(ChangeDetectorRef);
     // this.translate = this.injector.get(TranslateService);
-    // this.toast = this.injector.get(VtsToastService);
+    this.toast = this.injector.get(MessageService);
     this.state = this.router.getCurrentNavigation()?.extras?.state;
   }
 
   handleDestroy() {}
+
+  createSuccessToast(summary: string, message: string) {
+    this.toast.add({severity: 'success', summary: summary, detail: message});
+  }
+
+  createInfoToast(summary: string, message: string) {
+    this.toast.add({severity: 'info', summary: summary, detail: message});
+  }
+
+  createWarningToast(summary: string, message: string) {
+    this.toast.add({severity: 'warn', summary: summary, detail: message});
+  }
+
+  createErrorToast(summary: string, message: string) {
+    this.toast.add({severity: 'error', summary: summary, detail: message});
+  }
 
   ngOnDestroy() {
     this.subscriptions?.forEach((sub) => {

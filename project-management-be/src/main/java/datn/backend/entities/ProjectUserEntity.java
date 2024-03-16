@@ -25,8 +25,8 @@ public class ProjectUserEntity implements Serializable {
     @Column(name = "USER_ID")
     String userId;
 
-    @Column(name = "ROLE_ID")
-    String roleId;
+    @Column(name = "IS_TEAM_LEADER")
+    Integer isTeamLeader;
 
     @Column(name = "PROFESSIONAL_LEVEL")
     Integer professionalLevel;

@@ -1,9 +1,7 @@
 package datn.backend.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import datn.backend.config.auth.ERole;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,14 +21,12 @@ public class RoleEntity implements Serializable {
     @Column(name = "ID")
     String id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "NAME")
-    String name;
+    ERole name;
 
     @Column(name = "DESCRIPTION")
     String description;
-
-    @Column(name = "PROJECT_ID")
-    String projectId;
 
     @Column(name = "CREATE_USER_ID")
     String createUserId;

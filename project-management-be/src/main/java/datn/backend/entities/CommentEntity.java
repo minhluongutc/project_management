@@ -34,7 +34,7 @@ public class CommentEntity {
     @Column(name = "CREATE_TIME")
     Date createTime;
 
-    @Column(name = "CREATE_USER_ID")
+    @Column(name = "UPDATE_USER_ID")
     String updateUserId;
 
     @Column(name = "UPDATE_TIME")
