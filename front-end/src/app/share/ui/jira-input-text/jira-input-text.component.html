@@ -1,0 +1,30 @@
+<div class="flex flex-column gap-2" style="flex-direction: column;">
+  <label *ngIf="jiraShowLabel">{{ jiraLabelText }}</label>
+
+  @if (jiraIsInputText) {
+    <input pInputText [class]="'input ' + inputTextClass"
+           [disabled]="jiraConfig.disabled"
+           [placeholder]="jiraConfig.placeholder"
+           (ngModelChange)="onInputChange($event)"
+           (blur)="inputBlur($event)"
+           [(ngModel)]="value"/>
+  }
+  @else if (jiraIsInputNumber) {
+    <p-inputNumber [prefix]="jiraConfig.numberConfig.prefix" [suffix]="jiraConfig.numberConfig.suffix"
+                   [min]="jiraConfig.numberConfig.min" [max]="jiraConfig.numberConfig.max"
+                   [class]="'input ' + inputTextClass"
+                   [disabled]="jiraConfig.disabled"
+                   [placeholder]="jiraConfig.placeholder"
+                   (ngModelChange)="onInputChange($event)"
+                   (blur)="inputBlur($event)"
+                   [(ngModel)]="value">
+    </p-inputNumber>
+  }
+
+
+
+
+
+  <small *ngIf="jiraShowHelperText && jiraConfig.textMessageValue && jiraConfig.showError"
+         id="username-help" class="text-message">{{ jiraConfig.textMessageValue }}</small>
+</div>

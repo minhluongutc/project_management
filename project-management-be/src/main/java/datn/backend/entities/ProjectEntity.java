@@ -1,9 +1,6 @@
 package datn.backend.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,8 @@ public class ProjectEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     @Column(name = "NAME")
     String name;
@@ -29,20 +27,20 @@ public class ProjectEntity implements Serializable {
     @Column(name = "DESCRIPTION")
     String description;
 
-    @Column(name = "PARRENT_ID")
-    String parrentId;
+    @Column(name = "PARENT_ID")
+    Integer parentId;
 
     @Column(name = "COMPANY_ID")
-    String companyId;
+    Integer companyId;
 
     @Column(name = "CREATE_USER_ID")
-    String createUserId;
+    Integer createUserId;
 
     @Column(name = "CREATE_TIME")
     Date createTime;
 
     @Column(name = "UPDATE_USER_ID")
-    String updateUserId;
+    Integer updateUserId;
 
     @Column(name = "UPDATE_TIME")
     Date updateTime;

@@ -1,3 +1,22 @@
-<p>feature-test works!</p>
-s
-aaaa
+<div class="card flex justify-content-center">
+  <form [formGroup]="jiraForm">
+      <p-inputNumber formControlName="field" inputId="integeronly" class="ng-invalid ng-dirty" [(ngModel)]="value"> </p-inputNumber>
+  </form>
+  <br>
+</div>
+
+  <form [formGroup]="jiraForm2">
+<!--    <jira-input-text formControlName="fieldText" [jiraLabelText]="'fieldText'"-->
+<!--                     [jiraShowError]="showError('fieldText')"-->
+<!--                     [jiraErrors]="getError('fieldText')">-->
+<!--    </jira-input-text>-->
+    <jira-input-text formControlName="fieldNumber" [jiraLabelText]="'fieldNumber'"
+                     [jiraShowError]="true"
+                     [jiraErrors]="true"
+                     [jiraIsInputNumber]="true">
+    </jira-input-text>
+    <jira-input-text formControlName="fieldText" [jiraLabelText]="'fieldText'"
+                     [jiraShowError]="showError('fieldText')"
+                     [jiraErrors]="getError('fieldText')" >
+    </jira-input-text>
+  </form>

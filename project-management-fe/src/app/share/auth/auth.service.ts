@@ -34,16 +34,17 @@ export class AuthService {
       .pipe(
         catchError(this.handleError),
         tap((resData: AuthResponseData) => {
+          console.log('resData:', resData )
           this.handleAuthentication(
-            resData.user.idUser,
+            resData.user.id,
             resData.user.username,
             resData.user.firstName,
             resData.user.lastName,
             resData.user.email,
-            resData.user.contact,
-            resData.user.maChucVu,
-            resData.user.image,
-            resData.access_token,
+            resData.user.roles,
+            resData.user.companyId,
+            resData.user.avatarId,
+            resData.accessToken,
             +resData.expires_in
           );
         })
@@ -54,14 +55,14 @@ export class AuthService {
     const userDataString: string | null = localStorage.getItem('userData');
 
     const userData: {
-      idUser: string;
+      id: number;
       username: string;
       firstName: string;
       lastName: string;
       email: string;
-      contact: string;
-      maChucVu: string;
-      image: string;
+      roles: string[];
+      companyId: number;
+      avatarId: number;
       _token: string;
       _tokenExpirationData: string;
     } = userDataString ? JSON.parse(userDataString) : null;
@@ -71,14 +72,14 @@ export class AuthService {
     }
 
     const loadedUser = new User(
-      userData.idUser,
+      userData.id,
       userData.username,
       userData.firstName,
       userData.lastName,
       userData.email,
-      userData.contact,
-      userData.maChucVu,
-      userData.image,
+      userData.roles,
+      userData.companyId,
+      userData.avatarId,
       userData._token,
       new Date(userData._tokenExpirationData),
     );
@@ -110,21 +111,24 @@ export class AuthService {
   }
 
   private handleAuthentication(
-    id: string,
+    id: number,
     username: string,
     firstName: string,
     lastName: string,
     email: string,
-    contact: string,
-    roleId: string,
-    image: string,
-    token: string,
+    roles: string[],
+    companyId: number,
+    avatarId: number,
+    accessToken: string,
     expiresIn: number,
   ) {
-    const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
-    const user: User = new User(id, username, firstName, lastName, email, contact, roleId, image, token, expirationDate);
+    console.log(expiresIn)
+    let expirationDate = new Date(new Date().getTime() + 3600 * 1000);
+      if (expiresIn) expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+    const user: User = new User(id, username, firstName, lastName, email, roles, companyId, avatarId, accessToken, expirationDate);
     this.user.next(user);
-    this.autoLogout(expiresIn * 1000);
+    if (expiresIn) this.autoLogout(expiresIn * 1000);
+    else this.autoLogout(3600 * 1000);
     localStorage.setItem('userData', JSON.stringify(user));
     console.log(user)
   }

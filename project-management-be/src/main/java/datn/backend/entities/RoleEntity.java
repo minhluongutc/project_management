@@ -19,7 +19,8 @@ public class RoleEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "NAME")
@@ -29,13 +30,13 @@ public class RoleEntity implements Serializable {
     String description;
 
     @Column(name = "CREATE_USER_ID")
-    String createUserId;
+    Integer createUserId;
 
     @Column(name = "CREATE_TIME")
     Date createTime;
 
     @Column(name = "UPDATE_USER_ID")
-    String updateUserId;
+    Integer updateUserId;
 
     @Column(name = "UPDATE_TIME")
     Date updateTime;

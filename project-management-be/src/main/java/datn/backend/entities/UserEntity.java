@@ -20,7 +20,8 @@ public class UserEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
 
     @Column(name = "USERNAME")
     String username;
@@ -29,7 +30,7 @@ public class UserEntity implements Serializable {
     String password;
 
     @Column(name = "SETTING_ID")
-    String settingId;
+    Integer settingId;
 
     @Column(name = "FIRST_NAME")
     String firstName;
@@ -47,10 +48,10 @@ public class UserEntity implements Serializable {
     Integer gender;
 
     @Column(name = "AVATAR_ID")
-    String avatarId;
+    Integer avatarId;
 
     @Column(name = "BACKGROUND_ID")
-    String backgroundId;
+    Integer backgroundId;
 
     @Column(name = "DATE_OF_BIRTH")
     Date dateOfBirth;
@@ -59,16 +60,16 @@ public class UserEntity implements Serializable {
     String address;
 
     @Column(name = "COMPANY_ID")
-    String companyId;
+    Integer companyId;
 
     @Column(name = "CREATE_USER_ID")
-    String createUserId;
+    Integer createUserId;
 
     @Column(name = "CREATE_TIME")
     Date createTime;
 
     @Column(name = "UPDATE_USER_ID")
-    String updateUserId;
+    Integer updateUserId;
 
     @Column(name = "UPDATE_TIME")
     Date updateTime;
@@ -82,8 +83,7 @@ public class UserEntity implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private Set<RoleEntity> roles = new HashSet<>();
 
-    public UserEntity(String id, String username, String email, String password) {
-        this.id = id;
+    public UserEntity(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;

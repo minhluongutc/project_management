@@ -1,7 +1,7 @@
 package datn.backend.config.auth.security.service;
 
 import datn.backend.entities.UserEntity;
-import datn.backend.jpa.UserRepositoryJPA;
+import datn.backend.repositories.jpa.UserRepositoryJPA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

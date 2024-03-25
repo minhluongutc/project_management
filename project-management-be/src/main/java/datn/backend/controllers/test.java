@@ -1,8 +1,7 @@
 package datn.backend.controllers;
 
 import datn.backend.config.core.I18n;
-import datn.backend.entities.UserEntity;
-import datn.backend.jpa.UserRepositoryJPA;
+import datn.backend.repositories.jpa.UserRepositoryJPA;
 import datn.backend.utils.ResponseUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -23,24 +20,24 @@ public class test {
     final UserRepositoryJPA userRepositoryJPA;
 
     @GetMapping(value = "test")
-    public ResponseEntity<Object> tests() {
-        return ResponseUtils.getResponseEntity(userRepositoryJPA.findAll());
+    public ResponseEntity<Object> tests(String name) {
+        return ResponseUtils.getResponseEntity(userRepositoryJPA.getIdByUsername(name));
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasRole('USER') or hasRole('PM') or hasRole('CM')")
+    @PreAuthorize("hasRole('USER') or hasRole('PROJECT_MANAGER') or hasRole('ADMIN')")
     public String userAccess() {
         return "User Content.";
     }
 
     @GetMapping("/pm")
-    @PreAuthorize("hasRole('PM')")
+    @PreAuthorize("hasRole('PROJECT_MANAGER')")
     public String moderatorAccess() {
         return "Project manager Board.";
     }
 
     @GetMapping("/cm")
-    @PreAuthorize("hasRole('CM')")
+    @PreAuthorize("hasRole('ADMIN')")
     public String adminAccess() {
         return "Company manager Board.";
     }

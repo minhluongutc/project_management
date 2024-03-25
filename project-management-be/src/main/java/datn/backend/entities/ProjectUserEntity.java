@@ -15,18 +15,18 @@ import java.io.Serializable;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "project_user")
+@Table(name = "PROJECT_USER")
 public class ProjectUserEntity implements Serializable {
 
     @Id
     @Column(name = "PROJECT_ID")
-    String projectId;
+    Integer projectId;
 
     @Column(name = "USER_ID")
-    String userId;
+    Integer userId;
 
-    @Column(name = "IS_TEAM_LEADER")
-    Integer isTeamLeader;
+//    @Column(name = "IS_TEAM_LEADER")
+//    Integer isTeamLeader;
 
     @Column(name = "PROFESSIONAL_LEVEL")
     Integer professionalLevel;

@@ -1,0 +1,21 @@
+@import '../../../../../variables';
+
+.header-right {
+  cursor: pointer;
+  border-radius: 50%;
+  //box-sizing: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    background-color: $--button-hover;
+  }
+}
+.dropdown-item {
+  padding: 8px 4px;
+  cursor: pointer;
+  border-radius: 3px;
+  &:hover {
+    background-color: $--button-hover;
+  }
+}

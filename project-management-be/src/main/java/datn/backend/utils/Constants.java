@@ -9,11 +9,6 @@ public class Constants {
     public static final String DATE_STRING_FORMAT = "dd/MM/yyyy";
 
     public static final String FILE_MINIO_TENANT = "pvn";
-    public static final String FILE_MINIO_EXPLORATION_GRAVITY_MAGNETIC_SURVEY = "exploration/gravity-magnetic-survey";
-    public static final String FILE_MINIO_EXPLORATION_SEISMIC_SURVEY_EQUIPMENT= "exploration/seismic-survey-equipment";
-    public static final String FILE_MINIO_EXPLORATION_SEISMIC_SURVEY_LIMIT_POINTS = "exploration/seismic-survey-limit-points";
-
-    public static final String FILE_MINIO_EXPLORATION_SEISMIC_SURVEY_ROUTES = "exploration/seismic-survey-routes";
 
     public enum DOCUMENT_TYPE {
         SEISMIC_SURVEY_SHIP(20),

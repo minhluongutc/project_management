@@ -1,0 +1,60 @@
+@import "../../../../variables";
+.input {
+  width: 100%;
+  height: 40px;
+  border-radius: 3px;
+  border-color: var(--gray-300);
+  border-width: 2px;
+  transition: 200ms ease-in-out 0s, border-color 200ms ease-in-out 0s;
+  &:hover {
+    background-color: #EBECF0;
+    transition: background-color 200ms ease-in-out 0s, border-color 200ms ease-in-out 0s;
+  }
+  &:focus {
+    box-shadow: none;
+    border-color: $bg-primary-link;
+    transition: 200ms ease-in-out 0s, border-color 200ms ease-in-out 0s;
+  }
+
+  &:focus-within {
+    //border: 1px solid var(--primary-link) !important;
+  }
+
+  &__text--error {
+    border-color: $bg-error-red;
+
+    //&:hover,
+    &:focus {
+      border-color: $bg-primary-link;
+    }
+
+    &:disabled {
+      background: $bg-gray-input;
+
+      &:hover,
+      &:focus {
+        border-color: $bg-error-red;
+      }
+    }
+  }
+}
+
+.input[disabled]:hover {
+  border-color: #e9e9e9;
+  //cursor: not-allowed;
+}
+
+.text-message {
+  color: $bg-error-red;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+ng-invalid ng-dirty {
+  border-color: $bg-error-red;
+  border-width: 2px;
+  z-index: 1;
+}
+
+

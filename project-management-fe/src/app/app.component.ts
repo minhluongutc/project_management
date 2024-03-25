@@ -1,15 +1,24 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import {Component} from '@angular/core';
+import {RouterOutlet} from "@angular/router";
 import {ButtonModule} from "primeng/button";
+import {AutoCompleteCompleteEvent, AutoCompleteModule} from "primeng/autocomplete";
+import {FormsModule} from "@angular/forms";
+import {CheckboxModule} from "primeng/checkbox";
+import {InputTextModule} from "primeng/inputtext";
 
 @Component({
-  selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, ButtonModule],
+  selector: 'app-root',
   templateUrl: './app.component.html',
+  imports: [
+    RouterOutlet,
+    ButtonModule,
+    AutoCompleteModule,
+    FormsModule,
+    CheckboxModule,
+    InputTextModule
+  ],
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'frontend';
 }

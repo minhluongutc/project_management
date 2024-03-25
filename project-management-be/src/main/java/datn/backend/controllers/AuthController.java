@@ -5,18 +5,17 @@ import datn.backend.config.auth.payload.request.LoginRequest;
 import datn.backend.config.auth.payload.request.SignupRequest;
 import datn.backend.config.auth.payload.response.JwtResponse;
 import datn.backend.config.auth.payload.response.MessageResponse;
+import datn.backend.config.auth.payload.response.UserDTO;
 import datn.backend.config.auth.security.jwt.JwtUtils;
 import datn.backend.config.auth.security.service.UserDetailsImpl;
 import datn.backend.entities.RoleEntity;
 import datn.backend.entities.UserEntity;
-import datn.backend.jpa.RoleRepositoryJPA;
-import datn.backend.jpa.UserRepositoryJPA;
+import datn.backend.repositories.jpa.RoleRepositoryJPA;
+import datn.backend.repositories.jpa.UserRepositoryJPA;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.AccessType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,10 +24,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -56,12 +55,16 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
+        UserDTO user = new UserDTO(userDetails.getId(),
                 userDetails.getUsername(),
+                userDetails.getPassword(),
+                userDetails.getFirstName(),
+                userDetails.getLastName(),
                 userDetails.getEmail(),
-                roles));
+                userDetails.getAvatarId(),
+                userDetails.getCompanyId(),
+                roles);
+        return ResponseEntity.ok(new JwtResponse(jwt, user));
     }
 
     @PostMapping("/signup")
@@ -79,7 +82,7 @@ public class AuthController {
         }
 
         // Create new user's account
-        UserEntity user = new UserEntity(UUID.randomUUID().toString() ,signUpRequest.getUsername(),
+        UserEntity user = new UserEntity(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 
@@ -93,17 +96,15 @@ public class AuthController {
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "CM":
-                        RoleEntity companyManagerRole = roleRepository.findByName(ERole.ROLE_COMPANY_MANAGER)
+                    case "ADMIN":
+                        RoleEntity companyManagerRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(companyManagerRole);
-
                         break;
-                    case "PM":
+                    case "PROJECT_MANAGER":
                         RoleEntity projectManagerRole = roleRepository.findByName(ERole.ROLE_PROJECT_MANAGER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(projectManagerRole);
-
                         break;
                     default:
                         RoleEntity userRole = roleRepository.findByName(ERole.ROLE_USER)
@@ -113,6 +114,13 @@ public class AuthController {
             });
         }
 
+        user.setFirstName(signUpRequest.getFirstName());
+        user.setLastName(signUpRequest.getLastName());
+        user.setContact(signUpRequest.getContact());
+        user.setGender(signUpRequest.getGender());
+        user.setDateOfBirth(signUpRequest.getDateOfBirth());
+        user.setAddress(signUpRequest.getAddress());
+        user.setCreateTime(new Date());
         user.setRoles(roles);
         userRepository.save(user);
 
