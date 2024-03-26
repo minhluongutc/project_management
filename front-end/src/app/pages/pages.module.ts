@@ -9,6 +9,12 @@ import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule, HttpHandler} from "@ang
 import {AuthInterceptorService} from "../share/auth/auth-interceptor.service";
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {UiModule} from "../share/ui/ui.module";
+import {IconFieldModule} from "primeng/iconfield";
+import {InputIconModule} from "primeng/inputicon";
+import {InputTextModule} from "primeng/inputtext";
+import {TreeTableModule} from "primeng/treetable";
+import {ProjectService} from "../service/project.service";
+import {BaseService} from "../share/services/base.service";
 
 
 
@@ -22,7 +28,11 @@ import {UiModule} from "../share/ui/ui.module";
     CommonModule,
     ReactiveFormsModule,
     PagesRoutingModule,
-    UiModule
+    UiModule,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
+    TreeTableModule
   ],
 })
 export class PagesModule { }

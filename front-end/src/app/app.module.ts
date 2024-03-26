@@ -7,6 +7,8 @@ import {PagesModule} from "./pages/pages.module";
 import {AuthModule} from "./share/auth/auth.module";
 import {MessageService} from "primeng/api";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {ProjectService} from "./service/project.service";
+import {ServiceModule} from "./service/service.module";
 
 
 @NgModule({
@@ -18,7 +20,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserModule,
     AppRoutingModule,
     PagesModule,
-    AuthModule
+    AuthModule,
+    ServiceModule
   ],
   providers: [MessageService],
   bootstrap: [AppComponent]

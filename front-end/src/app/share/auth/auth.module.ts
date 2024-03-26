@@ -3,6 +3,7 @@ import {AuthGuardService} from "./auth-guard.service";
 import {AuthService} from "./auth.service";
 import {AuthInterceptorService} from "./auth-interceptor.service";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
+import {ProjectService} from "../../service/project.service";
 
 @NgModule({
   providers: [

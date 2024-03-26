@@ -9,8 +9,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 // import { TranslateService } from '@ngx-translate/core';
 // import { VtsToastService } from '@ui-vts-kit/ng-vts/toast';
-import { Subscription } from 'rxjs';
+import {BehaviorSubject, Subscription} from 'rxjs';
 import {MessageService} from "primeng/api";
+import {AuthService} from "../../auth/auth.service";
+import {User} from "../../auth/user.model";
 // import { PvnTableConfig } from '../pvn-table/pvn-table.component';
 
 @Component({
@@ -24,6 +26,7 @@ import {MessageService} from "primeng/api";
 export class BaseComponent implements OnDestroy {
   // tableConfig!: PvnTableConfig;
   listData: any = [];
+  user: User;
   formSearch: FormGroup = new FormGroup({});
   // pageIndex = 1;
   // pageSize = 10;
@@ -35,6 +38,7 @@ export class BaseComponent implements OnDestroy {
   protected ref: ChangeDetectorRef;
   protected state: any;
   protected toast: MessageService;
+  protected authService: AuthService;
   // protected translate: TranslateService;
 
   subscriptions: Subscription[] = [];
@@ -47,6 +51,9 @@ export class BaseComponent implements OnDestroy {
     // this.translate = this.injector.get(TranslateService);
     this.toast = this.injector.get(MessageService);
     this.state = this.router.getCurrentNavigation()?.extras?.state;
+    this.authService = this.injector.get(AuthService);
+
+    this.user = this.authService.user.value
   }
 
   handleDestroy() {}

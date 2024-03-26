@@ -33,7 +33,6 @@ export class HeaderComponent {
     });
     // @ts-ignore
     this.userData = JSON.parse(localStorage.getItem('userData'));
-    console.log(this.userData)
     if (!this.isAuthenticated) {
       this.router.navigate(['/login']);
     }
