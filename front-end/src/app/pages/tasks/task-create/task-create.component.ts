@@ -2,7 +2,6 @@ import {Component, Injector} from '@angular/core';
 import { BaseComponent } from '../../../share/ui/base-component/base.component';
 import {Validators} from "@angular/forms";
 import {FileUploadEvent} from "primeng/fileupload";
-import {DialogService} from "primeng/dynamicdialog";
 
 @Component({
   selector: 'app-task-create',

@@ -21,6 +21,26 @@
         <jira-label [jiraLabel]="'Mô tả'"></jira-label>
         <p-editor [style]="{ height: '120px' }"></p-editor>
     </div>
+    <div class="flex flex-col gap-2 pt-4 col-start-1 col-end-3">
+        <jira-label [jiraLabel]="'Danh mục'"></jira-label>
+        <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-label [jiraLabel]="'Thời gian bắt đầu - kết thúc'"></jira-label>
+        <p-calendar selectionMode="range" [readonlyInput]="true"></p-calendar>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-input-text formControlName="subject" jiraLabelText="Ước lượng thời gian" [jiraIsInputNumber]="true"
+                         [jiraSuffix]="' giờ'" [jiraMin]="0"></jira-input-text>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-label [jiraLabel]="'Độ ưu tiên'"></jira-label>
+        <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-label [jiraLabel]="'Độ nghiêm trọng'"></jira-label>
+        <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>
+    </div>
     <div class="flex flex-col gap-2 pt-4">
         <jira-label [jiraLabel]="'Người được giao'"></jira-label>
         <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>
@@ -64,12 +84,16 @@
             </ng-template>
         </p-fileUpload>
     </div>
+    <div class="flex gap-2 pt-4 items-center">
+        <p-checkbox value="New York" inputId="isPublic"></p-checkbox>
+        <label for="isPublic" class="select-none cursor-pointer">Công khai</label>
+    </div>
 </form>
 <div class="absolute bottom-0 left-0 right-0 border-gray-200 rounded-b bg-white"
      style="border-top: 1px solid rgb(229 231 235);">
     <div class="flex justify-between items-center p-4 rounded-b">
         <div class="flex align-items-center gap-1">
-            <p-checkbox formControlName="city" value="New York" inputId="checkbox"></p-checkbox>
+            <p-checkbox value="New York" inputId="checkbox"></p-checkbox>
             <label for="checkbox" class="select-none cursor-pointer">Thêm công việc khác</label>
         </div>
         <div class="flex gap-4">

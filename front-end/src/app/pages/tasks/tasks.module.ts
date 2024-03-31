@@ -19,6 +19,7 @@ import {EditorModule} from "primeng/editor";
 import {FileUploadModule} from "primeng/fileupload";
 import {UiModule} from "../../share/ui/ui.module";
 import {CheckboxModule} from "primeng/checkbox";
+import {CalendarModule} from "primeng/calendar";
 
 @NgModule({
   declarations: [TasksComponent, DetailViewComponent, ListViewComponent, TaskCreateComponent],
@@ -40,7 +41,8 @@ import {CheckboxModule} from "primeng/checkbox";
     EditorModule,
     FileUploadModule,
     UiModule,
-    CheckboxModule
+    CheckboxModule,
+    CalendarModule
   ],
 })
 export class TasksModule {

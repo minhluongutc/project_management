@@ -1,10 +1,4 @@
-import { Component } from '@angular/core';
-import {Footer, SharedModule} from "primeng/api";
-import {AvatarModule} from "primeng/avatar";
-import {ButtonModule} from "primeng/button";
-import {InputTextModule} from "primeng/inputtext";
-import {ToolbarModule} from "primeng/toolbar";
-import {SplitButtonModule} from "primeng/splitbutton";
+import {Component} from '@angular/core';
 import {AuthService} from "../../../auth/auth.service";
 import {User} from "../../../auth/user.model";
 import {Router} from "@angular/router";
