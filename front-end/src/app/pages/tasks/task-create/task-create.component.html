@@ -3,18 +3,78 @@
   <p-button label="Nhập theo file" [text]="true" [plain]="true"
             size="small" class="import-button font-light"></p-button>
 </div>
-<div class="flex flex-col gap-2 pt-4">
-  <label class="font-bold text-sm">Dự án</label>
-  <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Select a Project"></p-dropdown>
-</div>
-<div class="flex flex-col gap-2 pt-4">
-  <label class="font-bold text-sm">Loại công việc</label>
-  <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Select a Project"></p-dropdown>
-</div>
-<div class="flex flex-col gap-2 pt-4">
-  <label class="font-bold text-sm">Trạng thái</label>
-  <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Select a Project"></p-dropdown>
-</div>
-<div class="flex flex-col gap-2 pt-4">
-  <jira-input-text jiraLabelText="Tổng quan" [jiraRequired]="true"></jira-input-text>
+<form [formGroup]="form" class="grid grid-cols-2 gap-4 relative">
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-label [jiraLabel]="'Dự án'" [jiraRequired]="true"></jira-label>
+        <p-dropdown [options]="cities" optionLabel="name" [showClear]="true"
+                    placeholder="Chọn"></p-dropdown>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-label [jiraLabel]="'Loại công việc'" [jiraRequired]="true"></jira-label>
+        <p-dropdown [options]="cities" optionLabel="name" [showClear]="true"
+                    placeholder="Chọn"></p-dropdown>
+    </div>
+    <div class="flex flex-col gap-2 pt-4 col-start-1 col-end-3">
+        <jira-input-text formControlName="subject" jiraLabelText="Tổng quan" [jiraRequired]="true"></jira-input-text>
+    </div>
+    <div class="flex flex-col gap-2 pt-4 col-start-1 col-end-3">
+        <jira-label [jiraLabel]="'Mô tả'"></jira-label>
+        <p-editor [style]="{ height: '120px' }"></p-editor>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-label [jiraLabel]="'Người được giao'"></jira-label>
+        <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-label [jiraLabel]="'Người nghiệm thu'"></jira-label>
+        <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-label [jiraLabel]="'Trạng thái'" [jiraRequired]="true"></jira-label>
+        <p-dropdown [options]="cities" optionLabel="name" [showClear]="true"
+                    placeholder="Chọn"></p-dropdown>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-label [jiraLabel]="'Danh mục'"></jira-label>
+        <p-dropdown [options]="cities" optionLabel="name" [showClear]="true"
+                    placeholder="Chọn"></p-dropdown>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-label [jiraLabel]="'Công việc cha'"></jira-label>
+        <p-dropdown [options]="cities" optionLabel="name" [showClear]="true"
+                    placeholder="Chọn"></p-dropdown>
+    </div>
+    <div class="flex flex-col gap-2 pt-4">
+        <jira-input-text formControlName="reporter" jiraLabelText="Người tạo" [jiraRequired]="true"></jira-input-text>
+    </div>
+    <div class="flex flex-col gap-2 pt-4 col-start-1 col-end-3">
+        <jira-label [jiraLabel]="'Tệp đính kèm'"></jira-label>
+        <p-fileUpload name="demo[]" url="https://www.primefaces.org/cdn/api/upload.php"
+                      [multiple]="true"
+                      [showUploadButton]="false"
+                      [chooseLabel]="'chọn file'"
+                      [cancelLabel]="'hủy bỏ'"
+                      accept="image/*"
+                      [maxFileSize]="1000000"
+                      (onUpload)="onUpload($event)"
+                      [chooseStyleClass]="'h-10 rounded-sm'">
+            <ng-template pTemplate="content">
+                <!-- Your custom link -->
+                <a class="custom-upload-link">Upload File</a>
+            </ng-template>
+        </p-fileUpload>
+    </div>
+</form>
+<div class="absolute bottom-0 left-0 right-0 border-gray-200 rounded-b bg-white"
+     style="border-top: 1px solid rgb(229 231 235);">
+    <div class="flex justify-between items-center p-4 rounded-b">
+        <div class="flex align-items-center gap-1">
+            <p-checkbox formControlName="city" value="New York" inputId="checkbox"></p-checkbox>
+            <label for="checkbox" class="select-none cursor-pointer">Thêm công việc khác</label>
+        </div>
+        <div class="flex gap-4">
+            <p-button label="Hủy" [text]="true" [plain]="true" size="small" (click)="closeDialog()"></p-button>
+            <p-button label="Lưu" size="small"></p-button>
+        </div>
+    </div>
 </div>

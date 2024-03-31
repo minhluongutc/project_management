@@ -1,18 +1,15 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  Injector,
-  OnDestroy,
-} from '@angular/core';
-import { ToastModule } from 'primeng/toast';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ChangeDetectorRef, Component, Injector, OnDestroy,} from '@angular/core';
+import {ToastModule} from 'primeng/toast';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
 // import { TranslateService } from '@ngx-translate/core';
 // import { VtsToastService } from '@ui-vts-kit/ng-vts/toast';
-import {BehaviorSubject, Subscription} from 'rxjs';
+import {Subscription} from 'rxjs';
 import {MessageService, TreeNode} from "primeng/api";
 import {AuthService} from "../../auth/auth.service";
 import {User} from "../../auth/user.model";
+import {DialogService} from "primeng/dynamicdialog";
+
 // import { PvnTableConfig } from '../pvn-table/pvn-table.component';
 
 @Component({
@@ -40,6 +37,7 @@ export class BaseComponent implements OnDestroy {
   protected state: any;
   protected toast: MessageService;
   protected authService: AuthService;
+  public dialogService: DialogService
   // protected translate: TranslateService;
 
   subscriptions: Subscription[] = [];
@@ -53,6 +51,7 @@ export class BaseComponent implements OnDestroy {
     this.toast = this.injector.get(MessageService);
     this.state = this.router.getCurrentNavigation()?.extras?.state;
     this.authService = this.injector.get(AuthService);
+    this.dialogService = this.injector.get(DialogService);
 
     this.user = this.authService.user.value
   }
@@ -74,6 +73,32 @@ export class BaseComponent implements OnDestroy {
 
   createErrorToast(summary: string, message: string) {
     this.toast.add({severity: 'error', summary: summary, detail: message});
+  }
+
+  showError(formControlName: string): boolean {
+    const control = this.form.controls[formControlName];
+    return !!(control.touched && control?.errors);
+  }
+
+  getError(formControlName: string) {
+    const control = this.form.controls[formControlName];
+    return control.touched ? control?.errors : undefined;
+  }
+
+  showErrorCustom(formControlName: string, formCustom: FormGroup): boolean {
+    const control = formCustom.controls[formControlName];
+    return !!(control.touched && control?.errors);
+  }
+
+  getErrorCustom(formControlName: string, formCustom: FormGroup) {
+    const control = formCustom.controls[formControlName];
+    return control.touched ? control?.errors : undefined;
+  }
+
+  closeDialog() {
+    this.dialogService.dialogComponentRefMap.forEach(dialog => {
+      dialog.destroy();
+    });
   }
 
   ngOnDestroy() {
