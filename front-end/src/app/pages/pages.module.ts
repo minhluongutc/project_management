@@ -23,6 +23,7 @@ import { ProjectDetailComponent } from './projects/project-detail/project-detail
 import { TasksComponent } from './tasks/tasks.component';
 import {ProjectModule} from "./projects/project.module";
 import {TasksModule} from "./tasks/tasks.module";
+import {AccordionModule} from "primeng/accordion";
 
 
 
@@ -37,7 +38,8 @@ import {TasksModule} from "./tasks/tasks.module";
     PagesRoutingModule,
     UiModule,
     ProjectModule,
-    TasksModule
+    TasksModule,
+    AccordionModule
   ],
   providers: [DecimalPipe]
 })

@@ -15,6 +15,10 @@ import {SelectButtonModule} from "primeng/selectbutton";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { TaskCreateComponent } from './task-create/task-create.component';
 import {JiraInputTextComponent} from "../../share/ui/jira-input-text/jira-input-text.component";
+import {EditorModule} from "primeng/editor";
+import {FileUploadModule} from "primeng/fileupload";
+import {UiModule} from "../../share/ui/ui.module";
+import {CheckboxModule} from "primeng/checkbox";
 
 @NgModule({
   declarations: [TasksComponent, DetailViewComponent, ListViewComponent, TaskCreateComponent],
@@ -32,7 +36,11 @@ import {JiraInputTextComponent} from "../../share/ui/jira-input-text/jira-input-
     SelectButtonModule,
     FormsModule,
     ReactiveFormsModule,
-    JiraInputTextComponent
+    JiraInputTextComponent,
+    EditorModule,
+    FileUploadModule,
+    UiModule,
+    CheckboxModule
   ],
 })
 export class TasksModule {

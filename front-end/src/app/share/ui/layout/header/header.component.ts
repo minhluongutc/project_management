@@ -40,21 +40,17 @@ export class HeaderComponent {
     if (!this.isAuthenticated) {
       this.router.navigate(['/login']);
     }
-    this.showCreateTask();
   }
 
   showCreateTask() {
     this.ref = this.dialogService.open(TaskCreateComponent, {
       header: 'Thêm mới công việc',
       width: '60vw',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'auto', 'margin-bottom': '69px' },
       breakpoints: {
         '960px': '75vw',
         '640px': '90vw'
       },
-      templates: {
-        footer: Footer
-      }
     })
   }
 

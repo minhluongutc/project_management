@@ -13,12 +13,16 @@ import {FormsModule} from "@angular/forms";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {DialogService} from "primeng/dynamicdialog";
+import { JiraLabelComponent } from './label/jiraLabel.component';
+import {NgIf} from "@angular/common";
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
   declarations: [
     FooterComponent,
     HeaderComponent,
-    LayoutComponent
+    LayoutComponent,
+    JiraLabelComponent
   ],
   imports: [
     SharedModule,
@@ -30,9 +34,11 @@ import {DialogService} from "primeng/dynamicdialog";
     ListboxModule,
     FormsModule,
     OverlayPanelModule,
+    NgIf,
+    DialogModule,
   ],
   providers: [DialogService],
-  exports: [LayoutComponent]
+  exports: [LayoutComponent, JiraLabelComponent]
 })
 export class UiModule {
 }

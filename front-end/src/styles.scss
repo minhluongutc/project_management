@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'variables';
+@import "quill/dist/quill.snow.css";
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
@@ -14,6 +15,7 @@
   h1, h2, h3, h4, h5, p, label {
     color: $--ds-text-subtle;
   }
+
   .p-overlaypanel .p-overlaypanel-content {
     padding: 0.75rem ;
   }
@@ -129,6 +131,13 @@
 
   .p-inputnumber {
     display: contents;
+  }
+
+  .border-t-2-primary {
+    border-top: 3px solid $bg-primary-link;
+    &:hover {
+      background-color: $--button-hover!important;
+    }
   }
 
   .p-dropdown,
