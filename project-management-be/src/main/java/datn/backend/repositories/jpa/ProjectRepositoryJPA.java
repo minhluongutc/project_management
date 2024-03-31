@@ -12,7 +12,9 @@ public interface ProjectRepositoryJPA extends JpaRepository<ProjectEntity, Integ
 
     @Query("select p " +
             "from ProjectEntity p join ProjectUserEntity pu on p.id = pu.projectId " +
-            "where pu.userId = :userId ")
-    List<ProjectEntity> getProjectEntitiesByUserId(Integer userId);
+            "where pu.userId = :userId and p.parentId is null and p.enabled = 1")
+    List<ProjectEntity> getProjectParentByUserId(Integer userId);
+
+    List<ProjectEntity> getProjectEntitiesByParentIdAndEnabled(Integer parentId, Integer enabled);
 
 }

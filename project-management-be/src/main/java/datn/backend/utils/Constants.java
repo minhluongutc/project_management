@@ -36,9 +36,7 @@ public class Constants {
 
     public enum STATUS {
         ACTIVE(1),
-        IN_ACTIVE(0),
-        INSERTING(-1),
-        SUGGEST(-2);
+        IN_ACTIVE(0);
         public final int value;
 
         STATUS(int value) {

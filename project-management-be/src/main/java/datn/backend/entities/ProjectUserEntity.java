@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -30,4 +31,10 @@ public class ProjectUserEntity implements Serializable {
 
     @Column(name = "PROFESSIONAL_LEVEL")
     Integer professionalLevel;
+
+    @Column(name = "CREATE_USER_ID")
+    Integer createUserId;
+
+    @Column(name = "CREATE_TIME")
+    Date createTime;
 }

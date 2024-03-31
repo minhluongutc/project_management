@@ -1,0 +1,20 @@
+<div class="flex justify-between items-center">
+  <p class="text-sm"> Các trường bắt buộc được ký hiệu bở dấu <span style="color: red">*</span></p>
+  <p-button label="Nhập theo file" [text]="true" [plain]="true"
+            size="small" class="import-button font-light"></p-button>
+</div>
+<div class="flex flex-col gap-2 pt-4">
+  <label class="font-bold text-sm">Dự án</label>
+  <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Select a Project"></p-dropdown>
+</div>
+<div class="flex flex-col gap-2 pt-4">
+  <label class="font-bold text-sm">Loại công việc</label>
+  <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Select a Project"></p-dropdown>
+</div>
+<div class="flex flex-col gap-2 pt-4">
+  <label class="font-bold text-sm">Trạng thái</label>
+  <p-dropdown [options]="cities" optionLabel="name" [showClear]="true" placeholder="Select a Project"></p-dropdown>
+</div>
+<div class="flex flex-col gap-2 pt-4">
+  <jira-input-text jiraLabelText="Tổng quan" [jiraRequired]="true"></jira-input-text>
+</div>

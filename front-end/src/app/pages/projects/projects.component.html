@@ -1,12 +1,26 @@
 <div class="pl-8 pr-8">
-  <h3 class="pt-2 font-bold text-2xl">Danh sách dự án</h3>
-  <div class="grid grid-cols-4 gap-4">
+  <div class="flex justify-between items-center">
+    <h3 class="pt-2 font-bold text-2xl">Danh sách dự án</h3>
+    <p-button label="Thêm mới dự án" routerLink="/projects/create"></p-button>
+  </div>
+  <div class="grid grid-cols-4 gap-4 pb-7">
     <p-iconField iconPosition="right">
       <p-inputIcon styleClass="pi pi-search" />
       <input type="text" pInputText placeholder="Nhập tên dự án" />
     </p-iconField>
   </div>
-  <p-treeTable [value]="listData" [columns]="cols" [paginator]="true" [rows]="10" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
+  <p-treeTable
+    #myTab
+    [columns]="cols"
+    [value]="listDataTree"
+    [paginator]="true"
+    [rows]="5">
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col *ngFor="let col of columns"/>
+      </colgroup>
+    </ng-template>
+
     <ng-template pTemplate="header" let-columns>
       <tr>
         <th *ngFor="let col of columns">
@@ -14,14 +28,21 @@
         </th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
-      <tr [ttRow]="rowNode">
+
+    <ng-template
+      pTemplate="body"
+      let-rowNode
+      let-rowData="rowData"
+      let-columns="columns">
+      <tr>
         <td *ngFor="let col of columns; let i = index">
-          <p-treeTableToggler [rowNode]="rowNode" *ngIf="i === 0"></p-treeTableToggler>
+          <p-treeTableToggler
+            [rowNode]="rowNode"
+            *ngIf="i == 0">
+          </p-treeTableToggler>
           {{ rowData[col.field] }}
         </td>
       </tr>
     </ng-template>
   </p-treeTable>
-
 </div>

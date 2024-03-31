@@ -250,13 +250,10 @@ export class JiraInputTextComponent
   }
 
   setErrorMessage() {
-    console.log(this.jiraErrors)
     if (this.jiraErrors) {
       for (const error of this.jiraErrorDefs) {
-        console.log(error)
         const key = error.errorName;
         if (this.jiraErrors[key]) {
-          console.log(key)
           this.jiraConfig.textMessageValue = error.errorDescription;
 
           if (key === 'minlength' && this.useDefault(key, this.jiraErrorDefs)) {
@@ -273,7 +270,6 @@ export class JiraInputTextComponent
           } else if (key === 'max' && this.useDefault(key, this.jiraErrorDefs)) {
             this.jiraConfig.textMessageValue += this.jiraMax;
           }
-          console.log(this.jiraConfig.textMessageValue)
 
           this.inputTextClass = 'input__text--error';
           this.textError = 'ng-invalid ng-dirty';
@@ -300,7 +296,6 @@ export class JiraInputTextComponent
   }
 
   onInputChange($event: any) {
-    console.log('change')
     this.onChange($event);
     this.jiraChange.emit($event);
   }

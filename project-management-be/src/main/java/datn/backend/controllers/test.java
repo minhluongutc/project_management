@@ -1,6 +1,6 @@
 package datn.backend.controllers;
 
-import datn.backend.config.core.I18n;
+//import datn.backend.config.core.I18n;
 import datn.backend.repositories.jpa.UserRepositoryJPA;
 import datn.backend.utils.ResponseUtils;
 import lombok.AccessLevel;
@@ -42,8 +42,8 @@ public class test {
         return "Company manager Board.";
     }
 
-    @GetMapping(value = "testi18n")
-    public ResponseEntity<Object> testi18n() {
-        return ResponseUtils.getResponseEntity(I18n.getMessage("msg.common.validate.import.file.template.not-found"));
-    }
+//    @GetMapping(value = "testi18n")
+//    public ResponseEntity<Object> testi18n() {
+//        return ResponseUtils.getResponseEntity(I18n.getMessage("msg.common.validate.import.file.template.not-found"));
+//    }
 }

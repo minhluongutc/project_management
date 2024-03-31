@@ -4,6 +4,7 @@ import datn.backend.dto.ProjectDTO;
 import datn.backend.service.ProjectService;
 import datn.backend.service.jpa.ProjectServiceJPA;
 import datn.backend.utils.ResponseUtils;
+import datn.backend.utils.response.ResponseTreeNode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,10 +28,10 @@ public class ProjectController {
     }
 
     @GetMapping(value = "/{userId}/projects", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getProjectsByUserId(Authentication authentication,
-                                                      @PathVariable Integer userId) {
-        Object result = projectServiceJPA.getProjectsByUserId(userId);
-        return ResponseUtils.getResponseEntity(result);
+    public ResponseTreeNode<Object> getProjectsByUserId(Authentication authentication,
+                                                        @PathVariable Integer userId) {
+        Object result = projectService.getProjectsByUserId(userId);
+        return ResponseUtils.getTreeResponseEntity(result);
     }
 
     @PostMapping(value = "/projects", produces = MediaType.APPLICATION_JSON_VALUE)

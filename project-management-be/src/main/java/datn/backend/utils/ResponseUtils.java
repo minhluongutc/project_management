@@ -1,7 +1,9 @@
 package datn.backend.utils;
 
-import datn.backend.config.core.I18n;
+//import datn.backend.config.core.I18n;
 import datn.backend.utils.response.BaseResponse;
+import datn.backend.utils.response.ResponseData;
+import datn.backend.utils.response.ResponseTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -23,8 +25,17 @@ public class ResponseUtils {
             baseResponse.setData(itemObject);
         }
         baseResponse.setCode(ErrorApp.SUCCESS.getCode());
-        baseResponse.setMessage(I18n.getMessage(ErrorApp.SUCCESS.getDescription()));
+        baseResponse.setMessage(ErrorApp.SUCCESS.getDescription());
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
+    public static ResponseTreeNode<Object> getTreeResponseEntity(Object itemObject) {
+//        BaseResponse baseResponse = new BaseResponse();
+//        if (itemObject != null) {
+//            baseResponse.setData(itemObject);
+//        }
+//        baseResponse.setCode(ErrorApp.SUCCESS.getCode());
+//        baseResponse.setMessage(ErrorApp.SUCCESS.getDescription());
+        return new ResponseTreeNode<>(itemObject);
     }
 
     /**
@@ -40,7 +51,7 @@ public class ResponseUtils {
             baseResponse.setData(itemObject);
         }
         baseResponse.setCode(errorApp.getCode());
-        baseResponse.setMessage(I18n.getMessage(errorApp.getDescription()));
+        baseResponse.setMessage(errorApp.getDescription());
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
 

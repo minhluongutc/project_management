@@ -10,7 +10,8 @@
 @layer reset, primeng;
 
 @layer reset {
-  h1, h2, h3, h4, h5 ,p {
+
+  h1, h2, h3, h4, h5, p, label {
     color: $--ds-text-subtle;
   }
   .p-overlaypanel .p-overlaypanel-content {
@@ -32,10 +33,6 @@
       box-shadow: none;
       border-color: $bg-primary-link;
       transition: 200ms ease-in-out 0s, border-color 200ms ease-in-out 0s;
-    }
-
-    &:focus-within {
-      //border: 1px solid var(--primary-link) !important;
     }
 
     &__text--error {
@@ -115,8 +112,54 @@
     }
   }
 
+  .import-button {
+    button {
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 300;
+      color: $--ds-text-subtle;
+      border: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      background-color: #ebecef;
+      &:hover {
+        background-color: #DCDFE4;
+      }
+    }
+  }
+
   .p-inputnumber {
     display: contents;
+  }
+
+  .p-dropdown,
+  .p-treeselect {
+    width: 100%;
+    height: 40px;
+    border-radius: 3px;
+    border-color: var(--gray-300);
+    border-width: 2px;
+    display: flex;
+    align-items: center;
+    outline: none;
+    box-shadow: none;
+
+    &:hover {
+      outline: none;
+      border-color: $bg-primary-link;
+      background-color: #EBECF0;
+      transition: background-color 200ms ease-in-out 0s, border-color 200ms ease-in-out 0s;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+      border-color: $bg-primary-link;
+      transition: 200ms ease-in-out 0s, border-color 200ms ease-in-out 0s;
+    }
+  }
+
+  .p-dropdown-label {
+    height: 44px;
   }
 
   button, input {
@@ -139,14 +182,8 @@
     //width: 100%;
     height: 40px;
     border-radius: 3px;
-    border-color: var(--gray-300);
     border-width: 2px;
     transition: 200ms ease-in-out 0s, border-color 200ms ease-in-out 0s;
-
-    &:hover {
-      background-color: #EBECF0;
-      transition: background-color 200ms ease-in-out 0s, border-color 200ms ease-in-out 0s;
-    }
 
     &:focus {
       box-shadow: none;

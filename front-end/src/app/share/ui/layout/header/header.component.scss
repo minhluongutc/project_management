@@ -19,3 +19,24 @@
     background-color: $--button-hover;
   }
 }
+
+button {
+  padding: 12px;
+  font-size: 15px;
+  border-color: var(--gray-300);
+  &:hover {
+    background-color: #EBECF0;
+    transition: background-color 200ms ease-in-out 0s, border-color 200ms ease-in-out 0s;
+  }
+}
+
+.button-create {
+  background-color: var(--blue-500)!important;
+  color: var(--white)!important;
+  border-radius: 3px;
+  border-color: var(--blue-500)!important;
+  &:hover {
+    background-color: var(--blue-600)!important;
+    border-color: var(--blue-600)!important;
+  }
+}

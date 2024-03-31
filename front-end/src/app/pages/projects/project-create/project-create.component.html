@@ -1,0 +1,32 @@
+<div class="pl-8 pr-8">
+  <h3 class="pt-2 font-bold text-2xl">Thêm mới dự án</h3>
+
+  <form [formGroup]="form">
+    <div class="grid grid-cols-3 gap-4">
+      <div class="col-start-2 col-span-1">
+        <div class="flex flex-col gap-2">
+          <jira-input-text jiraLabelText="Tên dự án" [jiraIsInputText]="true" formControlName="name"
+                           [jiraRequired]="true" [jiraErrors]="getError('name')"
+                           [jiraShowError]="showError('name')"></jira-input-text>
+        </div>
+        <div class="flex flex-col gap-2 pt-4">
+          <jira-input-text jiraLabelText="Mô tả" [jiraIsInputText]="true" formControlName="description"
+                           [jiraErrors]="getError('description')"
+                           [jiraShowError]="showError('description')"></jira-input-text>
+        </div>
+        <div class="flex flex-col gap-2 pt-4">
+          <label for="parentId" class="font-bold text-sm">Dự án cha</label>
+          <p-treeSelect id="parentId" class="md:w-20rem w-full" containerStyleClass="w-full" [options]="listProject"
+                        ariaLabelledBy="name" placeholder="Chọn"
+                        formControlName="parentId"
+          ></p-treeSelect>
+        </div>
+        <div class="flex flex-col gap-2 pt-4">
+          <p-button label="Thêm mới" (click)="handleSave(form)" [disabled]="form.invalid"></p-button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+

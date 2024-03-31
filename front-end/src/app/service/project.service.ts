@@ -2,6 +2,7 @@ import {HttpClient} from "@angular/common/http";
 import {BaseService} from "../share/services/base.service";
 import {Environment} from "../share/environment/environment";
 import {Injectable} from "@angular/core";
+import {Project} from "../models/project.model";
 
 @Injectable()
 export class ProjectService extends BaseService {
@@ -17,6 +18,10 @@ export class ProjectService extends BaseService {
     return this.getRequest(`${this.SERVICE_URL}/${userId}/projects`, {
       params: this.buildParams(queryParams)
     });
+  }
+
+  createProject(data: Project) {
+    return this.postRequest(`${this.SERVICE_URL}/projects`, data);
   }
 
 

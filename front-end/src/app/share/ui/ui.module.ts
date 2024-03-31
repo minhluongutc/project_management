@@ -12,6 +12,7 @@ import {ListboxModule} from "primeng/listbox";
 import {FormsModule} from "@angular/forms";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {DialogService} from "primeng/dynamicdialog";
 
 @NgModule({
   declarations: [
@@ -29,9 +30,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     ListboxModule,
     FormsModule,
     OverlayPanelModule,
-
   ],
-  providers: [],
+  providers: [DialogService],
   exports: [LayoutComponent]
 })
 export class UiModule {

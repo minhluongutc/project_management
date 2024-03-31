@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 // import { TranslateService } from '@ngx-translate/core';
 // import { VtsToastService } from '@ui-vts-kit/ng-vts/toast';
 import {BehaviorSubject, Subscription} from 'rxjs';
-import {MessageService} from "primeng/api";
+import {MessageService, TreeNode} from "primeng/api";
 import {AuthService} from "../../auth/auth.service";
 import {User} from "../../auth/user.model";
 // import { PvnTableConfig } from '../pvn-table/pvn-table.component';
@@ -25,9 +25,10 @@ import {User} from "../../auth/user.model";
 })
 export class BaseComponent implements OnDestroy {
   // tableConfig!: PvnTableConfig;
+  listDataTree: TreeNode[] = [];
   listData: any = [];
   user: User;
-  formSearch: FormGroup = new FormGroup({});
+  form: FormGroup = new FormGroup({});
   // pageIndex = 1;
   // pageSize = 10;
   isSubmitted: boolean = false;

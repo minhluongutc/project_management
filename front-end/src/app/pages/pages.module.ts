@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DecimalPipe} from '@angular/common';
 import { ProjectsComponent } from './projects/projects.component';
 import { LoginComponent } from './login/login.component';
 import {ReactiveFormsModule} from "@angular/forms";
@@ -15,24 +15,30 @@ import {InputTextModule} from "primeng/inputtext";
 import {TreeTableModule} from "primeng/treetable";
 import {ProjectService} from "../service/project.service";
 import {BaseService} from "../share/services/base.service";
+import {ButtonModule} from "primeng/button";
+import { ProjectCreateComponent } from './projects/project-create/project-create.component';
+import {DropdownModule} from "primeng/dropdown";
+import {TreeSelectModule} from "primeng/treeselect";
+import { ProjectDetailComponent } from './projects/project-detail/project-detail.component';
+import { TasksComponent } from './tasks/tasks.component';
+import {ProjectModule} from "./projects/project.module";
+import {TasksModule} from "./tasks/tasks.module";
 
 
 
 @NgModule({
   declarations: [
-    ProjectsComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     PagesRoutingModule,
     UiModule,
-    IconFieldModule,
-    InputIconModule,
-    InputTextModule,
-    TreeTableModule
+    ProjectModule,
+    TasksModule
   ],
+  providers: [DecimalPipe]
 })
 export class PagesModule { }

@@ -1,6 +1,5 @@
 import {NgModule} from "@angular/core";
 import {RouterModule, Routes} from "@angular/router";
-import {ProjectsComponent} from "./projects/projects.component";
 import {LayoutComponent} from "../share/ui/layout/layout.component";
 import {DashboardComponent} from "./dashboard/dashboard.component";
 import {AuthGuardService} from "../share/auth/auth-guard.service";
@@ -14,7 +13,14 @@ const routes: Routes = [
     children: [
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
       {path: 'dashboard', component: DashboardComponent},
-      {path: 'projects', component: ProjectsComponent},
+      {
+        path: 'projects',
+        loadChildren: () => import('./projects/project.module').then(m => m.ProjectModule)
+      },
+      {
+        path: 'tasks',
+        loadChildren: () => import('./tasks/tasks.module').then(m => m.TasksModule)
+      }
     ]
   }
 ];

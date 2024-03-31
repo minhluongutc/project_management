@@ -16,7 +16,4 @@ public class ProjectServiceJPA {
         return projectRepositoryJPA.findAll();
     }
 
-    public List<ProjectEntity> getProjectsByUserId(Integer userId) {
-        return projectRepositoryJPA.getProjectEntitiesByUserId(userId);
-    }
 }

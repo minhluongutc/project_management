@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {SharedModule} from "primeng/api";
+import {Footer, SharedModule} from "primeng/api";
 import {AvatarModule} from "primeng/avatar";
 import {ButtonModule} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
@@ -9,6 +9,8 @@ import {AuthService} from "../../../auth/auth.service";
 import {User} from "../../../auth/user.model";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
+import {DialogService, DynamicDialogRef} from "primeng/dynamicdialog";
+import {TaskCreateComponent} from "../../../../pages/tasks/task-create/task-create.component";
 
 @Component({
   selector: 'app-header',
@@ -20,9 +22,11 @@ export class HeaderComponent {
   isAuthenticated: boolean = false;
   userData: Partial<User> = {};
 
+  ref: DynamicDialogRef | undefined;
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    public dialogService: DialogService
   ) {
     this.userSub = Subscription.EMPTY;
   }
@@ -36,6 +40,22 @@ export class HeaderComponent {
     if (!this.isAuthenticated) {
       this.router.navigate(['/login']);
     }
+    this.showCreateTask();
+  }
+
+  showCreateTask() {
+    this.ref = this.dialogService.open(TaskCreateComponent, {
+      header: 'Thêm mới công việc',
+      width: '60vw',
+      contentStyle: { overflow: 'auto' },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      templates: {
+        footer: Footer
+      }
+    })
   }
 
   onLogout() {

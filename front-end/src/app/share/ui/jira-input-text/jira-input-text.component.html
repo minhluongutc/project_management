@@ -1,5 +1,8 @@
 <div class="flex flex-column gap-2" style="flex-direction: column;">
-  <label *ngIf="jiraShowLabel">{{ jiraLabelText }}</label>
+  <label *ngIf="jiraShowLabel" class="font-bold text-sm">
+    {{ jiraLabelText }}
+    <span *ngIf="jiraRequired" style="color: red; margin-left: 3px;">*</span>
+  </label>
 
   @if (jiraIsInputText) {
     <input pInputText [class]="'input ' + inputTextClass"

@@ -55,7 +55,8 @@ export class LoginComponent {
       errorMessage => {
         this.isLoading = false;
         console.log('errorMessage', errorMessage);
-        this.showError(errorMessage)
+        // this.showError(errorMessage)
+        this.messageService.add({severity: 'error', summary: 'Thất bại', detail: errorMessage});
       });
   }
 

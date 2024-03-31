@@ -18,47 +18,23 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
               private projectService: ProjectService
   ) {
     super(injector);
-    this.getProjects();
   }
 
-  ngOnInit() {
-    // this.files = [];
-    // for (let i = 0; i < 50; i++) {
-    //   let node = {
-    //     data: {
-    //       name: 'Item ' + i,
-    //       size: Math.floor(Math.random() * 1000) + 1 + 'kb',
-    //       type: 'Type ' + i
-    //     },
-    //     children: [
-    //       {
-    //         data: {
-    //           name: 'Item ' + i + ' - 0',
-    //           size: Math.floor(Math.random() * 1000) + 1 + 'kb',
-    //           type: 'Type ' + i
-    //         }
-    //       }
-    //     ]
-    //   };
-
-      // this.files.push(node);
-    // }
-
+  async ngOnInit() {
     this.cols = [
-      {field: 'name', header: 'Name'},
-      {field: 'description', header: 'Chi tiết'}
+      {field: 'name', header: 'Tên dự án'},
+      {field: 'description', header: 'Mô tả'},
     ];
+    await this.getProjects();
   }
 
-  getProjects() {
-    this.projectService.getProjects(this.user.id, {})
-      .subscribe({
-        next: (res: any) => {
-          console.log('res:', res)
-          this.listData = res.data;
-        }, error: (err: any) => {
-          this.createErrorToast('Error', err.message)
-        }
-      })
+  async getProjects() {
+    try {
+      const res: any = await this.projectService.getProjects(this.user.id, {}).toPromise();
+      console.log('res:', res);
+      this.listDataTree = res.data;
+    } catch (err: any) {
+      this.createErrorToast('Lỗi', err.message);
+    }
   }
 }
