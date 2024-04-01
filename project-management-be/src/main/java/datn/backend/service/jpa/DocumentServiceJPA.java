@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class TaskServiceJPA {
+public class DocumentServiceJPA {
 }

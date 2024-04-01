@@ -23,6 +23,7 @@ export class HeaderComponent {
     public dialogService: DialogService
   ) {
     this.userSub = Subscription.EMPTY;
+    this.showCreateTask();
   }
 
   ngOnInit(): void {

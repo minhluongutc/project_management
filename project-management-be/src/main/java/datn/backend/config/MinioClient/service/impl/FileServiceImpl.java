@@ -22,14 +22,6 @@ public class FileServiceImpl implements FileService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileServiceImpl.class);
     private final MinioService minioService;
 
-    /**
-     * Upload file to minio
-     *
-     * @param tenant
-     * @param channel
-     * @param files
-     * @return
-     */
     @Override
     public List<ObjectFileDTO> uploadFiles(String tenant, String channel, MultipartFile[] files) {
         List<ObjectFileDTO> result = new ArrayList<>();
@@ -53,13 +45,6 @@ public class FileServiceImpl implements FileService {
         return result;
     }
 
-    /**
-     * Get content file
-     *
-     * @param tenant
-     * @param filePath
-     * @return
-     */
     @Override
     public byte[] getFile(String tenant, String filePath) {
         try {

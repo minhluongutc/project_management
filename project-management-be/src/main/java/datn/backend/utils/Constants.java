@@ -10,24 +10,11 @@ public class Constants {
     public static final String TIMEZONE_VN = "Asia/Ho_Chi_Minh";
     public static final String DATE_STRING_FORMAT = "dd/MM/yyyy";
 
-    public static final String FILE_MINIO_TENANT = "pvn";
+    public static final String FILE_MINIO_TENANT = "jiraclone";
+    public static final String FILE_MINIO_CHANNEL = "MinhLuong";
 
     public enum DOCUMENT_TYPE {
-        SEISMIC_SURVEY_SHIP(20),
-        SEISMIC_PROCESSING(22),
-        SEISMIC2D_PROCESSING(24),
-        SEISMIC2D_PROCESSING_VELOCITY(25),
-        SEISMIC2D_ROUTE_AFTER_PROCESS(26),
-        SEISMIC3D_PROCESSING(27),
-        SEISMIC3D_PROCESSING_VELOCITY(28),
-        SEISMIC3D_PROCESSING_SEGY(29),
-        GRAVITY_MAGNETIC_SURVEY_PARAMS (31),
-        GRAVITY_MAGNETIC_SURVEY_EQUIPMENTS(32),
-        GRAVITY_MAGNETIC_SURVEY_PROCESSINGS(33),
-        GRAVITY_MAGNETIC_INTERPRETATION_PARAMS (34),
-        SEISMIC_SURVEY_EQUIPMENT (21),
-        SEISMIC_INTERPRETATION_PARAMS (23);
-
+        TASK(1);
 
         public final Integer value;
 

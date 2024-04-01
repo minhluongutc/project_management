@@ -45,6 +45,9 @@ public class TaskEntity implements Serializable {
     @Column(name = "PRIORITY")
     Integer priority;
 
+    @Column(name = "severity")
+    Integer severity;
+
     @Column(name = "PARENT_ID")
     Integer parentId;
 
@@ -64,13 +67,13 @@ public class TaskEntity implements Serializable {
     Integer estimateTime;
 
     @Column(name = "CREATE_USER_ID")
-    String createUserId;
+    Integer createUserId;
 
     @Column(name = "CREATE_TIME")
     Date createTime;
 
     @Column(name = "UPDATE_USER_ID")
-    String updateUserId;
+    Integer updateUserId;
 
     @Column(name = "UPDATE_TIME")
     Date updateTime;

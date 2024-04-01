@@ -17,14 +17,6 @@ public class Utils {
     private static final String ALGORITHM = "AES";
     private static final byte[] keyValue = new byte[]{'T', 'h', 'e', 'B', 'e', 's', 't', 'S', 'e', 'c', 'r', 'e', 't', 'K', 'e', 'y'};
 
-
-    /**
-     * Check valid file
-     * @param fileName
-     * @sparam validExt - extentions that are allow to upload
-     * @return
-     */
-
     public static boolean checkFileTypeValid(String fileName, String []validExt) {
         return checkFileExtensionValid(fileName, validExt);
     }
@@ -37,11 +29,6 @@ public class Utils {
         return file.length <= maxFileSizeMb;
     }
 
-    /**
-     * Check valid extension file
-     * @param fileName
-     * @return
-     */
     public static boolean checkFileExtensionValid(String fileName, String []includeExt) {
         Objects.requireNonNull(fileName);
         for (String fileExtension : includeExt) {
@@ -52,22 +39,12 @@ public class Utils {
         return false;
     }
 
-    /**
-     *
-     * @return
-     */
     public static String getRandomSalt() {
         byte[] salt = new byte[SALT_LENGTH];
         new SecureRandom().nextBytes(salt);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(salt);
     }
 
-    /**
-     *
-     * @param valueToEnc
-     * @return
-     * @throws Exception
-     */
     public static String encrypt(String valueToEnc) throws Exception {
         Key key = new SecretKeySpec(keyValue, ALGORITHM);
         Cipher c = Cipher.getInstance(ALGORITHM);
@@ -77,12 +54,6 @@ public class Utils {
         return new String(encryptedByteValue);
     }
 
-    /**
-     *
-     * @param encryptedValue
-     * @return
-     * @throws Exception
-     */
     public static String decrypt(String encryptedValue) throws Exception {
         Key key = new SecretKeySpec(keyValue, ALGORITHM);
         Cipher c = Cipher.getInstance(ALGORITHM);
