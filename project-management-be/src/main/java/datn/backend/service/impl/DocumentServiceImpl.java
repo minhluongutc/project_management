@@ -26,10 +26,11 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     @Transactional
-    public Object addAttachment(Authentication authentication, Integer objectId, MultipartFile file, Integer type) {
+    public Object addAttachment(Authentication authentication, String objectId, MultipartFile file, Integer type) {
         ObjectFileDTO objectFileDTO = fileService.uploadFiles(Constants.FILE_MINIO_TENANT, Constants.FILE_MINIO_CHANNEL, new MultipartFile[]{file}).get(0);
         if (objectFileDTO != null) {
             DocumentEntity documentEntity = new DocumentEntity();
+            documentEntity.setId(AuditUtils.generateUUID());
             documentEntity.setObjectId(objectId);
             documentEntity.setFileName(objectFileDTO.getFileName());
             documentEntity.setFilePath(objectFileDTO.getFilePath());
@@ -49,11 +50,12 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     @Transactional
-    public Object addAttachments(Authentication authentication, Integer objectId, MultipartFile[] files, Integer type) {
+    public Object addAttachments(Authentication authentication, String objectId, MultipartFile[] files, Integer type) {
         List<ObjectFileDTO> objectFileDTOs = fileService.uploadFiles(Constants.FILE_MINIO_TENANT, Constants.FILE_MINIO_CHANNEL, files);
         if (objectFileDTOs != null && !objectFileDTOs.isEmpty()) {
             for (ObjectFileDTO objectFileDTO : objectFileDTOs) {
                 DocumentEntity documentEntity = new DocumentEntity();
+                documentEntity.setId(AuditUtils.generateUUID());
                 documentEntity.setObjectId(objectId);
                 documentEntity.setFileName(objectFileDTO.getFileName());
                 documentEntity.setFilePath(objectFileDTO.getFilePath());

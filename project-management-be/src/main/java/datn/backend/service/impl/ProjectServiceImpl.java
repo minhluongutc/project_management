@@ -29,7 +29,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     final ModelMapper modelMapper;
 
-    public List<TreeDTO> getProjectsByUserId(Integer userId) {
+    public List<TreeDTO> getProjectsByUserId(String userId) {
         List<ProjectEntity> projectParents = projectRepositoryJPA.getProjectParentByUserId(userId);
         List<TreeDTO> trees = new ArrayList<>();
         for (ProjectEntity projectParent : projectParents) {
@@ -60,6 +60,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public Object insertProject(Authentication authentication, ProjectDTO.ProjectInsertDTO dto) {
         ProjectEntity projectEntity = modelMapper.map(dto, ProjectEntity.class);
+        projectEntity.setId(AuditUtils.generateUUID());
         projectEntity.setCreateUserId(AuditUtils.createUserId(authentication));
         projectEntity.setCreateTime(AuditUtils.createTime());
         projectEntity.setEnabled(Constants.STATUS.ACTIVE.value);

@@ -20,10 +20,10 @@ public class TypeEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
-    Integer id;
+    String id;
 
     @Column(name = "PROJECT_ID")
-    Integer projectId;
+    String projectId;
 
     @Column(name = "NAME")
     String name;

@@ -18,14 +18,13 @@ public class TaskEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    String id;
 
     @Column(name = "TASK_ID")
-    Integer taskCode;
+    String taskCode;
 
     @Column(name = "PROJECT_ID")
-    Integer projectId;
+    String projectId;
 
     @Column(name = "SUBJECT")
     String subject;
@@ -37,10 +36,10 @@ public class TaskEntity implements Serializable {
     Boolean isPublic;
 
     @Column(name = "TYPE_ID")
-    Integer typeId;
+    String typeId;
 
     @Column(name = "STATUS_ISSUE_ID")
-    Integer statusIssueId;
+    String statusIssueId;
 
     @Column(name = "PRIORITY")
     Integer priority;
@@ -49,13 +48,13 @@ public class TaskEntity implements Serializable {
     Integer severity;
 
     @Column(name = "PARENT_ID")
-    Integer parentId;
+    String parentId;
 
     @Column(name = "ASSIGN_USER_ID")
-    Integer assignUserId;
+    String assignUserId;
 
     @Column(name = "REVIEW_USER_ID")
-    Integer reviewUserId;
+    String reviewUserId;
 
     @Column(name = "START_DATE")
     Date startDate;
@@ -67,13 +66,13 @@ public class TaskEntity implements Serializable {
     Integer estimateTime;
 
     @Column(name = "CREATE_USER_ID")
-    Integer createUserId;
+    String createUserId;
 
     @Column(name = "CREATE_TIME")
     Date createTime;
 
     @Column(name = "UPDATE_USER_ID")
-    Integer updateUserId;
+    String updateUserId;
 
     @Column(name = "UPDATE_TIME")
     Date updateTime;

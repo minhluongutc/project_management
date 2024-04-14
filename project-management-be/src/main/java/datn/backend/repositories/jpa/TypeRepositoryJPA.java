@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TypeRepositoryJPA extends JpaRepository<TypeEntity, Integer> {
-    List<TypeEntity> getTypeEntitiesByProjectIdAndEnabled(Integer projectId, Integer enabled);
+public interface TypeRepositoryJPA extends JpaRepository<TypeEntity, String> {
+    List<TypeEntity> getTypeEntitiesByProjectIdAndEnabled(String projectId, Integer enabled);
 }

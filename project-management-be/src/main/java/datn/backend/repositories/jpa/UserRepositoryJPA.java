@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepositoryJPA extends JpaRepository<UserEntity, Integer> {
+public interface UserRepositoryJPA extends JpaRepository<UserEntity, String> {
     Optional<UserEntity> findByUsername(String username);
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
 
     @Query("SELECT u.id FROM UserEntity u WHERE u.username = ?1 and u.enabled=1")
-    Integer getIdByUsername(String username);
+    String getIdByUsername(String username);
 
-    UserEntity findByIdAndEnabled(int id, Integer enabled);
+    UserEntity findByIdAndEnabled(String id, Integer enabled);
 }

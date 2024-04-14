@@ -41,19 +41,19 @@ public class TaskDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class TaskInsertDTO {
-        Integer id;
+        String id;
         Integer taskCode;
-        Integer projectId;
+        String projectId;
         String subject;
         String description;
         Boolean isPublic;
-        Integer typeId;
-        Integer statusIssueId;
+        String typeId;
+        String statusIssueId;
         Integer priority;
         Integer severity;
-        Integer parentId;
-        Integer assignUserId;
-        Integer reviewUserId;
+        String parentId;
+        String assignUserId;
+        String reviewUserId;
         Date startDate;
         Date dueDate;
     }

@@ -25,7 +25,7 @@ public class ProjectUserServiceImpl implements ProjectUserService {
     final ModelMapper modelMapper;
 
     @Override
-    public List<UserDTO.UserResponseDTO> getUsers(Integer projectId) {
+    public List<UserDTO.UserResponseDTO> getUsers(String projectId) {
         List<UserDTO.UserResponseDTO> dtos = new ArrayList<>();
         List<ProjectUserEntity> projectUserEntities = projectUserRepositoryJPA.getProjectUserEntitiesByProjectId(projectId);
         for (ProjectUserEntity projectUserEntity : projectUserEntities) {

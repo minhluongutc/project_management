@@ -32,6 +32,7 @@ public class TaskServiceImpl implements TaskService {
     public Object insertTask(Authentication authentication, TaskDTO.TaskInsertDTO dto, MultipartFile[] files) {
         // save entity
         TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setId(AuditUtils.generateUUID());
         taskEntity = modelMapper.map(dto, TaskEntity.class);
         taskEntity.setCreateUserId(AuditUtils.createUserId(authentication));
         taskEntity.setCreateTime(AuditUtils.createTime());

@@ -21,10 +21,10 @@ public class ProjectUserEntity implements Serializable {
 
     @Id
     @Column(name = "PROJECT_ID")
-    Integer projectId;
+    String projectId;
 
     @Column(name = "USER_ID")
-    Integer userId;
+    String userId;
 
 //    @Column(name = "IS_TEAM_LEADER")
 //    Integer isTeamLeader;
@@ -33,7 +33,7 @@ public class ProjectUserEntity implements Serializable {
     Integer professionalLevel;
 
     @Column(name = "CREATE_USER_ID")
-    Integer createUserId;
+    String createUserId;
 
     @Column(name = "CREATE_TIME")
     Date createTime;

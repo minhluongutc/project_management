@@ -7,5 +7,5 @@ import datn.backend.entities.UserEntity;
 import java.util.List;
 
 public interface ProjectUserService {
-    List<UserDTO.UserResponseDTO> getUsers(Integer projectId);
+    List<UserDTO.UserResponseDTO> getUsers(String projectId);
 }

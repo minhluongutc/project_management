@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProjectUserRepositoryJPA extends JpaRepository<ProjectUserEntity, Integer> {
+public interface ProjectUserRepositoryJPA extends JpaRepository<ProjectUserEntity, String> {
 
-    List<ProjectUserEntity> getProjectUserEntitiesByProjectId(Integer projectId);
+    List<ProjectUserEntity> getProjectUserEntitiesByProjectId(String projectId);
 }

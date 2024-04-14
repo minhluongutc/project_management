@@ -13,7 +13,7 @@ public class UserDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class UserResponseDTO {
-        public Long id;
+        public String id;
         public String username;
         public String email;
         public String fullName;

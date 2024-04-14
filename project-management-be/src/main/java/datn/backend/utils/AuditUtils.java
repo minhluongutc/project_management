@@ -1,13 +1,9 @@
 package datn.backend.utils;
 
-import datn.backend.config.auth.security.jwt.AuthTokenFilter;
 import datn.backend.repositories.jpa.UserRepositoryJPA;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
 
@@ -19,6 +15,7 @@ public class AuditUtils {
     public AuditUtils(UserRepositoryJPA userRepositoryJPA) {
         AuditUtils.userRepositoryJPA = userRepositoryJPA;
     }
+
     public static Date createTime() {
         return new Date();
     }
@@ -27,11 +24,15 @@ public class AuditUtils {
         return new Date();
     }
 
-    public static Integer createUserId(Authentication authentication) {
+    public static String generateUUID() {
+        return java.util.UUID.randomUUID().toString();
+    }
+
+    public static String createUserId(Authentication authentication) {
         return userRepositoryJPA.getIdByUsername(authentication.getName());
     }
 
-    public static Integer updateUserId(Authentication authentication) {
+    public static String updateUserId(Authentication authentication) {
         return userRepositoryJPA.getIdByUsername(authentication.getName());
     }
 

@@ -8,13 +8,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProjectRepositoryJPA extends JpaRepository<ProjectEntity, Integer> {
+public interface ProjectRepositoryJPA extends JpaRepository<ProjectEntity, String> {
 
     @Query("select p " +
             "from ProjectEntity p join ProjectUserEntity pu on p.id = pu.projectId " +
             "where pu.userId = :userId and p.parentId is null and p.enabled = 1")
-    List<ProjectEntity> getProjectParentByUserId(Integer userId);
+    List<ProjectEntity> getProjectParentByUserId(String userId);
 
-    List<ProjectEntity> getProjectEntitiesByParentIdAndEnabled(Integer parentId, Integer enabled);
+    List<ProjectEntity> getProjectEntitiesByParentIdAndEnabled(String parentId, Integer enabled);
 
 }

@@ -20,7 +20,7 @@ public class UserDetailsImpl implements UserDetails {
     static final long serialVersionUID = 1L;
 
     @Getter
-    Integer id;
+    String id;
     String username;
     @Getter
     String email;
@@ -31,20 +31,20 @@ public class UserDetailsImpl implements UserDetails {
     @Getter
     String lastName;
     @Getter
-    Integer avatarId;
+    String avatarId;
     @Getter
-    Integer companyId;
+    String companyId;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Integer id,
+    public UserDetailsImpl(String id,
                            String username,
                            String email,
                            String password,
                            String firstName,
                            String lastName,
-                           Integer avatarId,
-                           Integer companyId,
+                           String avatarId,
+                           String companyId,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;

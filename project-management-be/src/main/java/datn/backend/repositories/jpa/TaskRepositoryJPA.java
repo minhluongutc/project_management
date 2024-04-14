@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, Integer> {
+public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
 
     @Query("select t " +
             " from TaskEntity t" +

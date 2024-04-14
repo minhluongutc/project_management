@@ -18,8 +18,7 @@ public class ProjectEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    String id;
 
     @Column(name = "NAME")
     String name;
@@ -28,19 +27,19 @@ public class ProjectEntity implements Serializable {
     String description;
 
     @Column(name = "PARENT_ID")
-    Integer parentId;
+    String parentId;
 
     @Column(name = "COMPANY_ID")
-    Integer companyId;
+    String companyId;
 
     @Column(name = "CREATE_USER_ID")
-    Integer createUserId;
+    String createUserId;
 
     @Column(name = "CREATE_TIME")
     Date createTime;
 
     @Column(name = "UPDATE_USER_ID")
-    Integer updateUserId;
+    String updateUserId;
 
     @Column(name = "UPDATE_TIME")
     Date updateTime;

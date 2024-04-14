@@ -21,7 +21,7 @@ public class DocumentEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
-    Integer id;
+    String id;
 
     @Column(name = "FILE_NAME")
     String fileName;
@@ -39,16 +39,16 @@ public class DocumentEntity implements Serializable {
     Integer type;
 
     @Column(name = "OBJECT_ID")
-    Integer objectId;
+    String objectId;
 
     @Column(name = "CREATE_USER_ID")
-    Integer createUserId;
+    String createUserId;
 
     @Column(name = "CREATE_TIME")
     Date createTime;
 
     @Column(name = "UPDATE_USER_ID")
-    Integer updateUserId;
+    String updateUserId;
 
     @Column(name = "UPDATE_TIME")
     Date updateTime;

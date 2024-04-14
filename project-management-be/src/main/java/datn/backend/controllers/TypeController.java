@@ -20,7 +20,7 @@ public class TypeController {
     final TypeServiceJPA typeServiceJPA;
 
     @GetMapping(value = "/types", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getTypes(Integer projectId) {
+    public ResponseEntity<Object> getTypes(String projectId) {
         Object result = typeServiceJPA.getTypeEntitiesByProjectIdAndEnabled(projectId);
         return ResponseUtils.getResponseEntity(result);
     }

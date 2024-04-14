@@ -29,7 +29,7 @@ public class ProjectController {
 
     @GetMapping(value = "/{userId}/projects", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseTreeNode<Object> getProjectsByUserId(Authentication authentication,
-                                                        @PathVariable Integer userId) {
+                                                        @PathVariable String userId) {
         Object result = projectService.getProjectsByUserId(userId);
         return ResponseUtils.getTreeResponseEntity(result);
     }

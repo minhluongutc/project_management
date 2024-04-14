@@ -19,7 +19,7 @@ public class ProjectUserController {
     final ProjectUserService projectUserService;
 
     @GetMapping(value = "/project-users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Object getProjectUsers(Integer projectId) {
+    public Object getProjectUsers(String projectId) {
         Object result = projectUserService.getUsers(projectId);
         return ResponseUtils.getResponseEntity(result);
     }

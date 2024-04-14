@@ -113,7 +113,7 @@ public class AuthController {
                 }
             });
         }
-
+        user.setId(java.util.UUID.randomUUID().toString());
         user.setFirstName(signUpRequest.getFirstName());
         user.setLastName(signUpRequest.getLastName());
         user.setContact(signUpRequest.getContact());
