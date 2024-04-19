@@ -1,1 +1,109 @@
-<p>list-view works!</p>
+<div class="pl-4 pr-4 pt-4">
+  <div class="grid grid-cols-4 gap-4 pb-7">
+    <p-iconField iconPosition="right">
+      <p-inputIcon styleClass="pi pi-search"/>
+      <input type="text" pInputText placeholder="Tìm kiếm"/>
+    </p-iconField>
+  </div>
+  <p-treeTable
+    #myTab
+    [columns]="cols"
+    [value]="listDataTree"
+    [paginator]="true"
+    [rows]="5"
+    [styleClass]="'p-treetable-sm'">
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col *ngFor="let col of columns"/>
+      </colgroup>
+    </ng-template>
+
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns">
+          {{ col.header }}
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template
+      pTemplate="body"
+      let-rowNode
+      let-rowData="rowData"
+      let-columns="columns">
+      <tr>
+        <td *ngFor="let col of columns; let i = index">
+          <p-treeTableToggler [rowNode]="rowNode" *ngIf="i == 0"/>
+          @if (col.field == "priority") {
+            @if (rowData[col.field] == 1) {
+              <p-tag [style]="{ 'background': '#1AADB5'}"
+                     [value]="convertValueById(rowData[col.field], 'name', PRIORIES)"
+                     [rounded]="true"
+              />
+            } @else if (rowData[col.field] == 2) {
+              <p-tag [style]="{ 'background': '#2B1AB6'}"
+                     [value]="convertValueById(rowData[col.field], 'name', PRIORIES)"
+                     [rounded]="true"
+              />
+            } @else if (rowData[col.field] == 3) {
+              <p-tag [style]="{ 'background': '#FDFD05'}"
+                     [value]="convertValueById(rowData[col.field], 'name', PRIORIES)"
+                     [rounded]="true"
+              />
+            } @else if (rowData[col.field] == 4) {
+              <p-tag [style]="{ 'background': '#FB9F00'}"
+                     [value]="convertValueById(rowData[col.field], 'name', PRIORIES)"
+                     [rounded]="true"
+              />
+            } @else if (rowData[col.field] == 5) {
+              <p-tag [style]="{ 'background': '#FD3F01'}"
+                     [value]="convertValueById(rowData[col.field], 'name', PRIORIES)"
+                     [rounded]="true"
+              />
+            }
+          } @else if (col.field == "severity") {
+            @if (rowData[col.field] == 1) {
+              <p-tag [style]="{ 'background': '#1AADB5'}"
+                     [value]="convertValueById(rowData[col.field], 'name', SEVERITIES)"
+                     [rounded]="true"
+              />
+            } @else if (rowData[col.field] == 2) {
+              <p-tag [style]="{ 'background': '#2B1AB6'}"
+                     [value]="convertValueById(rowData[col.field], 'name', SEVERITIES)"
+                     [rounded]="true"
+              />
+            } @else if (rowData[col.field] == 3) {
+              <p-tag [style]="{ 'background': '#FDFD05'}"
+                     [value]="convertValueById(rowData[col.field], 'name', SEVERITIES)"
+                     [rounded]="true"
+              />
+            } @else if (rowData[col.field] == 4) {
+              <p-tag [style]="{ 'background': '#FB9F00'}"
+                     [value]="convertValueById(rowData[col.field], 'name', SEVERITIES)"
+                     [rounded]="true"
+              />
+            } @else if (rowData[col.field] == 5) {
+              <p-tag [style]="{ 'background': '#FD3F01'}"
+                     [value]="convertValueById(rowData[col.field], 'name', SEVERITIES)"
+                     [rounded]="true"
+              />
+            }
+          } @else if (col.field == "startDate") {
+            {{ rowData[col.field] | date: 'dd/MM/yyyy' }}
+          } @else if (col.field == "dueDate") {
+            {{ rowData[col.field] | date: 'dd/MM/yyyy' }}
+          } @else if (col.field == "createTime") {
+            {{ rowData[col.field] | date: 'dd/MM/yyyy' }}
+          } @else if (col.field == "updateTime") {
+            {{ rowData[col.field] | date: 'dd/MM/yyyy' }}
+          } @else if (i == cols.length - 1) {
+            <p-button icon="pi pi-pencil" [rounded]="true" severity="secondary" [style]="{ 'margin-right': '.5em' }"/>
+            <p-button icon="pi pi-trash" [rounded]="true" severity="secondary"/>
+          } @else {
+            {{ rowData[col.field] }}
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </p-treeTable>
+</div>

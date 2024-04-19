@@ -1,11 +1,7 @@
 <!-- This is an example component -->
-<div class="flex">
+<div class="flex layout">
   <div class="flex-col border-r pl-5 w-1/5 bg-gray-100 h-auto">
-    <div class="flex ml-3 py-8">
-      <div class="h-8 w-8 rounded">
-        <img class="h- w-20 mt-1 rounded " src="https://noeticitservices.com/project-assets/images/noetic_logo.png">
-      </div>
-    </div>
+    <h3 class="p-8">Bộ lọc</h3>
     <div class=" px-3">
       <div class="flex py-2 px-4 cursor-pointer hover:bg-blue-100 rounded">
         <svg class="h-3 w-3 mt-1 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
@@ -19,13 +15,15 @@
       </div>
     </div>
     <div class="border border-gray-300 mt-5"></div>
-    <div class="overflow-auto" style="height: 430px">
+    <div class="overflow-auto">
       <div class="flex-col px-3">
         <div class="items-center ml-2 py-4  mb-1 text-sm font-medium text-gray-700">
           Issues and filters
         </div>
         <div
-          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
+          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal"
+          [routerLink]="[routerLink]"
+          [queryParams]="{ statusIssueCodeIsEqual: false, statusIssueCode: 5 }">
           My open issues
         </div>
         <div
@@ -44,32 +42,11 @@
           class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
           Done issues
         </div>
-        <div
-          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
-          Viewed recently
-        </div>
-        <div
-          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
-          Created recently
-        </div>
-        <div
-          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
-          Resolved recently
-        </div>
-        <div
-          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
-          Updated recently
-        </div>
-        <div class="border border-gray-300 mt-5"></div>
-        <div
-          class="cursor-pointer py-3 px-3 mb-5 mt-5 hover:bg-blue-100 rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
-          View all filters
-        </div>
       </div>
     </div>
   </div>
   <div class="mt-4 w-4/5 h-auto">
-    <div class="ml-4">
+    <div class="ml-4 mr-4">
       <div class="text-sm text-gray-600 font-normal antialiased tracking-normal">
         Projects &nbsp; / &nbsp; PVN
       </div>
@@ -77,8 +54,12 @@
         <div class="text-2xl mt-3 text-black font-semibold antialiased tracking-normal">
           All Issues
         </div>
-        <p-selectButton [options]="stateView" [(ngModel)]="value" optionLabel="label" optionValue="value"
-                        (onChange)="checkChange($event)" styleClass="text-sm"></p-selectButton>
+        <div class="flex gap-2 justify-center items-center">
+          <p class="text-2xl">Xem Danh sách</p>
+          <p-inputSwitch [(ngModel)]="isViewList" (ngModelChange)="changeStage($event)"></p-inputSwitch>
+        </div>
+<!--        <p-selectButton [options]="stateView" [(ngModel)]="value" optionLabel="label" optionValue="value"-->
+<!--                        (onChange)="checkChange($event)" styleClass="text-sm"></p-selectButton>-->
       </div>
     </div>
     <router-outlet></router-outlet>

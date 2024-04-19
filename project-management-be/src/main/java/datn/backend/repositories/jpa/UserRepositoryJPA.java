@@ -18,4 +18,6 @@ public interface UserRepositoryJPA extends JpaRepository<UserEntity, String> {
     String getIdByUsername(String username);
 
     UserEntity findByIdAndEnabled(String id, Integer enabled);
+
+    List<UserEntity> getUserEntitiesByEnabled(Integer enabled);
 }

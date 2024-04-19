@@ -3,21 +3,17 @@ import {BaseService} from "../share/services/base.service";
 import {HttpClient} from "@angular/common/http";
 import {Environment} from "../share/environment/environment";
 
-@Injectable({
-  providedIn: 'root'
-})
-export class ProjectUserService extends BaseService {
+@Injectable(
+  {
+    providedIn: 'root'
+  }
+)
+export class UserService extends BaseService {
   constructor(private http: HttpClient) {
     super(http);
   }
 
   get SERVICE_URL(): string {
-    return `${Environment.baseUrl}/api/project-users`;
-  }
-
-  getUserByProject(queryParams: Record<string, any>) {
-    return this.getRequest(this.SERVICE_URL, {
-      params: this.buildParams(queryParams)
-    });
+    return `${Environment.baseUrl}/api/users`;
   }
 }

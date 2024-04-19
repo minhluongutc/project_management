@@ -1,21 +1,21 @@
-import {Injectable} from "@angular/core";
 import {BaseService} from "../share/services/base.service";
+import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Environment} from "../share/environment/environment";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProjectUserService extends BaseService {
+export class CategoryService extends BaseService {
   constructor(private http: HttpClient) {
     super(http);
   }
 
   get SERVICE_URL(): string {
-    return `${Environment.baseUrl}/api/project-users`;
+    return `${Environment.baseUrl}/api/categories`;
   }
 
-  getUserByProject(queryParams: Record<string, any>) {
+  getCategories(queryParams: Record<string, any>) {
     return this.getRequest(this.SERVICE_URL, {
       params: this.buildParams(queryParams)
     });

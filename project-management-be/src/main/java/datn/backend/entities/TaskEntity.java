@@ -20,7 +20,7 @@ public class TaskEntity implements Serializable {
     @Column(name = "ID")
     String id;
 
-    @Column(name = "TASK_ID")
+    @Column(name = "TASK_CODE")
     String taskCode;
 
     @Column(name = "PROJECT_ID")
@@ -55,6 +55,9 @@ public class TaskEntity implements Serializable {
 
     @Column(name = "REVIEW_USER_ID")
     String reviewUserId;
+
+    @Column(name = "CATEGORY_ID")
+    String categoryId;
 
     @Column(name = "START_DATE")
     Date startDate;

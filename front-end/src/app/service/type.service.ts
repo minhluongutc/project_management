@@ -3,7 +3,9 @@ import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Environment} from "../share/environment/environment";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class TypeService extends BaseService {
   constructor(private http: HttpClient) {
     super(http);
@@ -11,5 +13,11 @@ export class TypeService extends BaseService {
 
   get SERVICE_URL(): string {
     return `${Environment.baseUrl}/api/types`;
+  }
+
+  getTypes(queryParams: Record<string, any>) {
+    return this.getRequest(this.SERVICE_URL, {
+      params: this.buildParams(queryParams)
+    });
   }
 }

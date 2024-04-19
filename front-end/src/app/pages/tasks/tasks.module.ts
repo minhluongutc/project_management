@@ -6,7 +6,7 @@ import {TreeTableModule} from "primeng/treetable";
 import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
 import {TreeSelectModule} from "primeng/treeselect";
-import {NgForOf, NgIf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {TasksRoutingModule} from "./tasks.routing";
 import {TasksComponent} from "./tasks.component";
 import { DetailViewComponent } from './detail-view/detail-view.component';
@@ -20,6 +20,8 @@ import {FileUploadModule} from "primeng/fileupload";
 import {UiModule} from "../../share/ui/ui.module";
 import {CheckboxModule} from "primeng/checkbox";
 import {CalendarModule} from "primeng/calendar";
+import {TagModule} from "primeng/tag";
+import {InputSwitchModule} from "primeng/inputswitch";
 
 @NgModule({
   declarations: [TasksComponent, DetailViewComponent, ListViewComponent, TaskCreateComponent],
@@ -42,7 +44,10 @@ import {CalendarModule} from "primeng/calendar";
     FileUploadModule,
     UiModule,
     CheckboxModule,
-    CalendarModule
+    CalendarModule,
+    DatePipe,
+    TagModule,
+    InputSwitchModule
   ],
 })
 export class TasksModule {

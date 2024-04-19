@@ -12,9 +12,9 @@ import datn.backend.utils.Constants;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.modelmapper.ModelMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -42,19 +42,17 @@ public class ProjectServiceImpl implements ProjectService {
         return trees;
     }
 
-    public void setProjectChildren(TreeDTO parentTree, ProjectEntity projectEntity) {
-    List<ProjectEntity> projectChildren = projectRepositoryJPA.getProjectEntitiesByParentIdAndEnabled(projectEntity.getId(), Constants.STATUS.ACTIVE.value);
+    private void setProjectChildren(TreeDTO parentTree, ProjectEntity projectEntity) {
+        List<ProjectEntity> projectChildren = projectRepositoryJPA.getProjectEntitiesByParentIdAndEnabled(projectEntity.getId(), Constants.STATUS.ACTIVE.value);
         parentTree.setChildren(new ArrayList<>());
-    if (projectChildren.isEmpty()) {
-        return;
+        if (projectChildren.isEmpty()) return;
+        for (ProjectEntity projectChild : projectChildren) {
+            TreeDTO treeDTO = new TreeDTO();
+            treeDTO.setData(projectChild);
+            setProjectChildren(treeDTO, projectChild);
+            parentTree.getChildren().add(treeDTO);
+        }
     }
-    for (ProjectEntity projectChild : projectChildren) {
-        TreeDTO treeDTO = new TreeDTO();
-        treeDTO.setData(projectChild);
-        setProjectChildren(treeDTO, projectChild);
-        parentTree.getChildren().add(treeDTO);
-    }
-}
 
     @Override
     @Transactional

@@ -5,71 +5,139 @@
 </div>
 <form [formGroup]="form" class="grid grid-cols-2 gap-4 relative">
     <div class="flex flex-col gap-2 pt-4">
-      <jira-label [jiraLabel]="'Dự án'" [jiraRequired]="true"></jira-label>
-      <p-treeSelect id="projectId" class="md:w-20rem w-full" containerStyleClass="w-full" [options]="listProject"
-                    ariaLabelledBy="name" placeholder="Chọn"
-                    formControlName="parentId"
-      ></p-treeSelect>
+      <jira-label [jiraLabel]="'Dự án'" [jiraRequired]="true"/>
+      <p-treeSelect id="projectId"
+                    class="md:w-20rem w-full"
+                    containerStyleClass="w-full"
+                    formControlName="projectId"
+                    placeholder="Chọn"
+                    [options]="listProject"
+                    (onNodeSelect)="onSelectProject($event)"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-      <jira-label [jiraLabel]="'Loại công việc'" [jiraRequired]="true"></jira-label>
-      <p-dropdown [options]="issueTypes" optionLabel="name" [showClear]="true"
-                    placeholder="Chọn"></p-dropdown>
+      <jira-label [jiraLabel]="'Loại công việc'" [jiraRequired]="true"/>
+      <p-dropdown optionLabel="name"
+                  optionValue="id"
+                  formControlName="typeId"
+                  placeholder="Chọn"
+                  [options]="issueTypes"
+                  [showClear]="true"
+                  (onChange)="updateDropdownValue($event, 'typeId')"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4 col-start-1 col-end-3">
         <jira-input-text formControlName="subject" jiraLabelText="Tổng quan" [jiraRequired]="true"></jira-input-text>
     </div>
     <div class="flex flex-col gap-2 pt-4 col-start-1 col-end-3">
       <jira-label [jiraLabel]="'Mô tả'"></jira-label>
-      <p-editor [style]="{ height: '120px' }"></p-editor>
+      <p-editor formControlName="description"
+                [style]="{ height: '120px' }"
+      />
     </div>
-  <!--    <div class="flex flex-col gap-2 pt-4 col-start-1 col-end-3">-->
-  <!--        <jira-label [jiraLabel]="'Danh mục'"></jira-label>-->
-  <!--        <p-dropdown [options]="categories" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>-->
-  <!--    </div>-->
     <div class="flex flex-col gap-2 pt-4">
       <jira-label [jiraLabel]="'Thời gian bắt đầu - kết thúc'"></jira-label>
-      <p-calendar selectionMode="range" [readonlyInput]="true"></p-calendar>
+      <p-calendar selectionMode="range"
+                  formControlName="time"
+                  [readonlyInput]="true"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-      <jira-input-text formControlName="subject" jiraLabelText="Ước lượng thời gian" [jiraIsInputNumber]="true"
-                         [jiraSuffix]="' giờ'" [jiraMin]="0"></jira-input-text>
+      <jira-input-text formControlName="estimateTime"
+                       jiraLabelText="Ước lượng thời gian"
+                       [jiraIsInputNumber]="true"
+                       [jiraSuffix]="' giờ'"
+                       [jiraMin]="0"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-        <jira-label [jiraLabel]="'Độ ưu tiên'"></jira-label>
-      <p-dropdown [options]="priories" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>
+      <jira-label [jiraLabel]="'Độ ưu tiên'"></jira-label>
+      <p-dropdown optionLabel="name"
+                  optionValue="id"
+                  placeholder="Chọn"
+                  formControlName="priority"
+                  [showClear]="true"
+                  [options]="priories"
+                  (onChange)="updateDropdownValue($event, 'priority')"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4">
         <jira-label [jiraLabel]="'Độ nghiêm trọng'"></jira-label>
-      <p-dropdown [options]="severities" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>
+      <p-dropdown optionLabel="name"
+                  optionValue="id"
+                  placeholder="Chọn"
+                  formControlName="severity"
+                  [options]="severities"
+                  [showClear]="true"
+                  (onChange)="updateDropdownValue($event, 'severity')"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-        <jira-label [jiraLabel]="'Người được giao'"></jira-label>
-      <p-dropdown [options]="assignees" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>
+      <jira-label [jiraLabel]="'Người được giao'"></jira-label>
+      <p-dropdown optionLabel="username"
+                  optionValue="id"
+                  placeholder="Chọn"
+                  formControlName="assignUserId"
+                  [options]="assignees"
+                  [showClear]="true"
+                  [disabled]="projectIdSelected === undefined"
+                  (onChange)="updateDropdownValue($event, 'assignUserId')"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-        <jira-label [jiraLabel]="'Người nghiệm thu'"></jira-label>
-      <p-dropdown [options]="reviewers" optionLabel="name" [showClear]="true" placeholder="Chọn"></p-dropdown>
+      <jira-label [jiraLabel]="'Người nghiệm thu'"></jira-label>
+      <p-dropdown optionLabel="username"
+                  optionValue="id"
+                  placeholder="Chọn"
+                  formControlName="reviewUserId"
+                  [options]="reviewers"
+                  [showClear]="true"
+                  [disabled]="projectIdSelected === undefined"
+                  (onChange)="updateDropdownValue($event, 'reviewUserId')"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-        <jira-label [jiraLabel]="'Trạng thái'" [jiraRequired]="true"></jira-label>
-      <p-dropdown [options]="statuses" optionLabel="name" [showClear]="true"
-                    placeholder="Chọn"></p-dropdown>
+      <jira-label [jiraLabel]="'Trạng thái'" [jiraRequired]="true"></jira-label>
+      <p-dropdown optionLabel="name"
+                  optionValue="id"
+                  placeholder="Chọn"
+                  formControlName="statusIssueId"
+                  [showClear]="true"
+                  [options]="statuses"
+                  [disabled]="projectIdSelected === undefined"
+                  (onChange)="updateDropdownValue($event, 'statusIssueId')"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-        <jira-label [jiraLabel]="'Danh mục'"></jira-label>
-      <p-dropdown [options]="categories" optionLabel="name" [showClear]="true"
-                    placeholder="Chọn"></p-dropdown>
+      <jira-label [jiraLabel]="'Danh mục'"></jira-label>
+      <p-dropdown optionLabel="name"
+                  optionValue="id"
+                  placeholder="Chọn"
+                  formControlName="categoryId"
+                  [options]="categories"
+                  [showClear]="true"
+                  [disabled]="projectIdSelected === undefined"
+                  (onChange)="updateDropdownValue($event, 'categoryId')"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-        <jira-label [jiraLabel]="'Công việc cha'"></jira-label>
-      <p-treeSelect id="parentId" class="md:w-20rem w-full" containerStyleClass="w-full" [options]="listProject"
-                    ariaLabelledBy="name" placeholder="Chọn"
+      <jira-label [jiraLabel]="'Công việc cha'"></jira-label>
+      <p-treeSelect id="parentId"
+                    class="md:w-20rem w-full"
+                    containerStyleClass="w-full"
                     formControlName="parentId"
-      ></p-treeSelect>
+                    ariaLabelledBy="name"
+                    placeholder="Chọn"
+                    [disabled]="projectIdSelected === undefined"
+                    [options]="listTask"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-        <jira-input-text formControlName="reporter" jiraLabelText="Người tạo" [jiraRequired]="true" [jiraDisabled]="true"></jira-input-text>
+      <jira-input-text formControlName="reporter"
+                       jiraLabelText="Người tạo"
+                       [jiraRequired]="true"
+                       [jiraDisabled]="true"
+      />
     </div>
     <div class="flex flex-col gap-2 pt-4 col-start-1 col-end-3">
         <jira-label [jiraLabel]="'Tệp đính kèm'"></jira-label>
@@ -78,18 +146,20 @@
                       [showUploadButton]="false"
                       [chooseLabel]="'chọn file'"
                       [cancelLabel]="'hủy bỏ'"
-                      accept="image/*"
+                      [accept]="'image/*'"
+                      [chooseStyleClass]="'h-10 rounded-sm'"
                       [maxFileSize]="1000000"
-                      (onUpload)="onUpload($event)"
-                      [chooseStyleClass]="'h-10 rounded-sm'">
+                      (onSelect)="onSelectFile($event)"
+                      (onRemove)="onRemoveFile($event)"
+                      (onClear)="onClearFiles($event)">
             <ng-template pTemplate="content">
-                <!-- Your custom link -->
+              <!-- custom link -->
                 <a class="custom-upload-link">Upload File</a>
             </ng-template>
         </p-fileUpload>
     </div>
     <div class="flex gap-2 pt-4 items-center">
-        <p-checkbox value="New York" inputId="isPublic"></p-checkbox>
+      <p-checkbox value="New York" inputId="isPublic" formControlName="isPublic"></p-checkbox>
         <label for="isPublic" class="select-none cursor-pointer">Công khai</label>
     </div>
 </form>
@@ -102,7 +172,7 @@
         </div>
         <div class="flex gap-4">
             <p-button label="Hủy" [text]="true" [plain]="true" size="small" (click)="closeDialog()"></p-button>
-            <p-button label="Lưu" size="small"></p-button>
+          <p-button label="Lưu" size="small" [disabled]="form.invalid" (onClick)="insertTask()"></p-button>
         </div>
     </div>
 </div>

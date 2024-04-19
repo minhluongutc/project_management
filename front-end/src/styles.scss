@@ -10,9 +10,15 @@
 
 @layer reset, primeng;
 
+.layout {
+  min-height: calc(100vh - 116.16px);
+}
+
 @layer reset {
 
   h1, h2, h3, h4, h5, p, label {
+    margin: 0;
+    padding: 0;
     color: $--ds-text-subtle;
   }
 

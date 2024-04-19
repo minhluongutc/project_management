@@ -9,6 +9,7 @@ import {MessageService, TreeNode} from "primeng/api";
 import {AuthService} from "../../auth/auth.service";
 import {User} from "../../auth/user.model";
 import {DialogService} from "primeng/dynamicdialog";
+import {DropdownChangeEvent} from "primeng/dropdown";
 
 // import { PvnTableConfig } from '../pvn-table/pvn-table.component';
 
@@ -99,6 +100,17 @@ export class BaseComponent implements OnDestroy {
     this.dialogService.dialogComponentRefMap.forEach(dialog => {
       dialog.destroy();
     });
+  }
+
+  updateDropdownValue($event: DropdownChangeEvent, formControlName: string) {
+    console.log($event)
+    this.form.controls[formControlName].setValue($event.value);
+    console.log(formControlName)
+    console.log(this.form.value)
+  }
+
+  convertValueById(id: any, name: any, array: any[]) {
+    return array.find((item: any) => item.id === id)?.[name];
   }
 
   ngOnDestroy() {

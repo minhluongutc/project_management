@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../../auth/auth.service";
 import {User} from "../../../auth/user.model";
 import {Router} from "@angular/router";
@@ -11,7 +11,7 @@ import {TaskCreateComponent} from "../../../../pages/tasks/task-create/task-crea
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   userSub: Subscription;
   isAuthenticated: boolean = false;
   userData: Partial<User> = {};
@@ -23,7 +23,7 @@ export class HeaderComponent {
     public dialogService: DialogService
   ) {
     this.userSub = Subscription.EMPTY;
-    this.showCreateTask();
+    // this.showCreateTask();
   }
 
   ngOnInit(): void {
