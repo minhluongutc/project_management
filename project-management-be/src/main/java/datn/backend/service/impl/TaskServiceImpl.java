@@ -1,8 +1,11 @@
 package datn.backend.service.impl;
 
+import datn.backend.dto.AttachmentDTO;
 import datn.backend.dto.TaskDTO;
 import datn.backend.dto.TreeDTO;
 import datn.backend.entities.TaskEntity;
+import datn.backend.repositories.jpa.DocumentRepositoryJPA;
+import datn.backend.repositories.jpa.ProjectRepositoryJPA;
 import datn.backend.repositories.jpa.TaskRepositoryJPA;
 import datn.backend.service.DocumentService;
 import datn.backend.service.TaskService;
@@ -23,35 +26,34 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskServiceImpl implements TaskService {
     final TaskRepositoryJPA taskRepositoryJPA;
+    final ProjectRepositoryJPA projectRepositoryJPA;
     final DocumentService documentService;
+    final DocumentRepositoryJPA documentRepositoryJPA;
     final ModelMapper modelMapper;
 
 
     @Override
-    public Object getTasksByProjectId(Authentication authentication, TaskDTO.TaskQueryDTO dto) {
-        Pageable pageable;
-        Sort sort = Sort.unsorted();
-        if (dto.getSortBy() != null && dto.getSortDir() != null) {
-            sort = Sort.by(dto.getSortDir().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, dto.getSortBy());
+    public Object getTasks(Authentication authentication, TaskDTO.TaskQueryDTO dto) {
+        List<TaskDTO.TaskResponseDTO> taskListResponse = new ArrayList<>();
+        List<TaskDTO.TaskResponseDTO> taskList = taskRepositoryJPA.getTasks(dto);
+        for (TaskDTO.TaskResponseDTO task : taskList) {
+            List<AttachmentDTO.AttachmentResponseDTO> attachments = documentRepositoryJPA.getAttachmentsByObjectId(task.getId());
+            task.setAttachments(attachments);
+            taskListResponse.add(task);
         }
-        if (dto.getPageIndex() != null && dto.getPageSize() != null) {
-            pageable = PageRequest.of(dto.getPageIndex(), dto.getPageSize(), sort);
-        } else {
-            pageable = Pageable.unpaged();
-        }
-        Page<TaskEntity> page = taskRepositoryJPA.getTaskEntityByProjectId(dto, pageable);
-        return new BaseResultSelect(page.getContent(), page.getTotalElements());
+        return taskListResponse;
     }
 
     @Override
     public Object getTasksAccordingLevel(Authentication authentication, TaskDTO.TaskQueryDTO dto) {
-        List<TaskDTO.TaskResponseDTO> taskEntities = taskRepositoryJPA.getTaskEntitiesByParentIdAndProjectIdAndEnabled(dto, null, AuditUtils.getUserId(authentication), Constants.STATUS.ACTIVE.value);
+        List<TaskDTO.TaskResponseDTO> taskEntities = taskRepositoryJPA.getTasksLevel(dto, null, AuditUtils.getUserId(authentication), Constants.STATUS.ACTIVE.value);
         System.out.println(dto);
         List<TreeDTO> trees = new ArrayList<>();
         for (TaskDTO.TaskResponseDTO taskEntity : taskEntities) {
@@ -66,7 +68,7 @@ public class TaskServiceImpl implements TaskService {
 
     private void setTaskChildren(Authentication authentication, TreeDTO parentTree, TaskDTO.TaskResponseDTO taskDTO, TaskDTO.TaskQueryDTO dto) {
 //        queryDTO.setProjectId(taskDTO.getProjectId());
-        List<TaskDTO.TaskResponseDTO> taskChildren = taskRepositoryJPA.getTaskEntitiesByParentIdAndProjectIdAndEnabled(dto, taskDTO.getId(), AuditUtils.getUserId(authentication), Constants.STATUS.ACTIVE.value);
+        List<TaskDTO.TaskResponseDTO> taskChildren = taskRepositoryJPA.getTasksLevel(dto, taskDTO.getId(), AuditUtils.getUserId(authentication), Constants.STATUS.ACTIVE.value);
         parentTree.setChildren(new ArrayList<>());
         if (taskChildren.isEmpty()) return;
         for (TaskDTO.TaskResponseDTO taskChild : taskChildren) {
@@ -83,6 +85,7 @@ public class TaskServiceImpl implements TaskService {
         // save entity
         TaskEntity taskEntity = new TaskEntity();
         taskEntity = modelMapper.map(dto, TaskEntity.class);
+        taskEntity.setTaskCode(generateTaskCodeUniqueEachProject(dto.getProjectId()));
         taskEntity.setId(AuditUtils.generateUUID());
         taskEntity.setCreateUserId(AuditUtils.createUserId(authentication));
         taskEntity.setCreateTime(AuditUtils.createTime());
@@ -94,5 +97,45 @@ public class TaskServiceImpl implements TaskService {
             documentService.addAttachments(authentication, taskEntity.getId(), files, Constants.DOCUMENT_TYPE.TASK.value);
         }
         return "Thành công";
+    }
+
+    @Override
+    public Object updateTask(Authentication authentication, TaskDTO.TaskUpdateDTO dto, String id) {
+        TaskEntity taskEntity = taskRepositoryJPA.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
+        taskEntity.setSubject(dto.getSubject());
+        taskEntity.setDescription(dto.getDescription());
+        taskEntity.setIsPublic(dto.getIsPublic());
+        taskEntity.setTypeId(dto.getTypeId());
+        taskEntity.setStatusIssueId(dto.getStatusIssueId());
+        taskEntity.setPriority(dto.getPriority());
+        taskEntity.setSeverity(dto.getSeverity());
+        taskEntity.setParentId(dto.getParentId());
+        taskEntity.setAssignUserId(dto.getAssignUserId());
+        taskEntity.setReviewUserId(dto.getReviewUserId());
+        taskEntity.setStartDate(dto.getStartDate());
+        taskEntity.setDueDate(dto.getDueDate());
+        taskEntity.setUpdateUserId(AuditUtils.updateUserId(authentication));
+        taskEntity.setUpdateTime(AuditUtils.updateTime());
+        taskRepositoryJPA.save(taskEntity);
+        return "successfully updated";
+    }
+
+    @Override
+    public Object getTask(Authentication authentication, String id) {
+        return taskRepositoryJPA.getTaskDetail(id).orElseThrow(() -> new RuntimeException("Task not found"));
+    }
+
+    private String generateTaskCodeUniqueEachProject(String projectId) {
+        Random random = new Random();
+        List<String> taskCodes = taskRepositoryJPA.getTaskEntitiesByProjectId(projectId).stream().map(TaskEntity::getTaskCode).toList();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(projectRepositoryJPA.getProjectCodeById(projectId)).append("-");
+        for (int i = 0; i < 6; i++) {
+            stringBuilder.append(random.nextInt(10)); // Random số từ 0 đến 9
+        }
+        if (taskCodes.contains(stringBuilder.toString())) {
+            generateTaskCodeUniqueEachProject(projectId);
+        }
+        return stringBuilder.toString();
     }
 }

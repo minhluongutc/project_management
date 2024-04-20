@@ -22,7 +22,7 @@ public class TaskController {
 
     @GetMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getTasks(Authentication authentication, TaskDTO.TaskQueryDTO dto) {
-        Object result = taskService.getTasksByProjectId(authentication, dto);
+        Object result = taskService.getTasks(authentication, dto);
         return ResponseUtils.getResponseEntity(result);
     }
 
@@ -37,6 +37,20 @@ public class TaskController {
                                              @RequestPart("dto") TaskDTO.TaskInsertDTO dto,
                                              @RequestPart(value = "files", required = false) MultipartFile[] files) {
         Object result = taskService.insertTask(authentication, dto, files);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
+    @PutMapping(value = "/tasks/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> updateTask(Authentication authentication,
+                                             @RequestBody TaskDTO.TaskUpdateDTO dto,
+                                             @PathVariable String id) {
+        Object result = taskService.updateTask(authentication, dto, id);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
+    @GetMapping(value = "/tasks/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getTask(Authentication authentication, @PathVariable String id) {
+        Object result = taskService.getTask(authentication, id);
         return ResponseUtils.getResponseEntity(result);
     }
 }

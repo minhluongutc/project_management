@@ -32,6 +32,10 @@ export class FileService extends BaseService {
     });
   }
 
+  getImageUrl(id: string) {
+    return `${Environment.baseUrl}/public/api/files/${id}`;
+  }
+
   base64toBlob = (
     base64Data: string,
     contentType: string = '',

@@ -40,6 +40,10 @@ public class AuditUtils {
         return userRepositoryJPA.getIdByUsername(authentication.getName());
     }
 
+    public static String getCompanyId(Authentication authentication) {
+        return userRepositoryJPA.getCompanyIdByUsername(authentication.getName());
+    }
+
     public static Integer enable() {
         return Constants.STATUS.ACTIVE.value;
     }

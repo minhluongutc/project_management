@@ -6,7 +6,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface TaskService {
 
-    Object getTasksByProjectId(Authentication authentication, TaskDTO.TaskQueryDTO dto);
+    Object getTasks(Authentication authentication, TaskDTO.TaskQueryDTO dto);
     Object getTasksAccordingLevel(Authentication authentication, TaskDTO.TaskQueryDTO dto);
     Object insertTask(Authentication authentication, TaskDTO.TaskInsertDTO dto, MultipartFile[] files);
+    Object updateTask(Authentication authentication, TaskDTO.TaskUpdateDTO dto, String id);
+    Object getTask(Authentication authentication, String id);
 }

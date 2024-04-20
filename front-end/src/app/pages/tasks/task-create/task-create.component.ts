@@ -3,7 +3,7 @@ import {BaseComponent} from '../../../share/ui/base-component/base.component';
 import {Validators} from "@angular/forms";
 import {FileRemoveEvent, FileSelectEvent} from "primeng/fileupload";
 import {ProjectService} from "../../../service/project.service";
-import {TreeNodeSelectEvent} from "primeng/tree";
+import {TreeNodeSelectEvent, TreeNodeUnSelectEvent} from "primeng/tree";
 import {TaskService} from "../../../service/task.service";
 import {Task} from "../../../models/task.model";
 import {PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
@@ -11,6 +11,9 @@ import {TypeService} from "../../../service/type.service";
 import {ProjectUserService} from "../../../service/project-user.service";
 import {StatusIssueService} from "../../../service/status-issue.service";
 import {CategoryService} from "../../../service/category.service";
+import {DynamicDialogConfig} from "primeng/dynamicdialog";
+import {DocumentService} from "../../../service/document.service";
+import {FileService} from "../../../share/services/file.service";
 
 @Component({
   selector: 'app-task-create',
@@ -27,26 +30,81 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   statuses: any[] = [];
   assignees: any[] = [];
   reviewers: any[] = [];
-  fileList: File[] = [];
+  fileList: any[] = [];
 
-  projectIdSelected?: string;
+  data2edit: any;
+
+  projectIdSelected: string | undefined = undefined;
   constructor(injector: Injector,
               private projectService: ProjectService,
               private taskService: TaskService,
               private typeService: TypeService,
               private projectUserService: ProjectUserService,
               private statusIssueService: StatusIssueService,
-              private categoryService: CategoryService) {
+              private categoryService: CategoryService,
+              private documentService: DocumentService,
+              private dynamicDialogConfig: DynamicDialogConfig,
+              private fileService: FileService) {
     super(injector);
     this.buildForm();
     this.severities = SEVERITIES;
     this.priories = PRIORIES;
+    console.log(this.dynamicDialogConfig)
   }
 
   async ngOnInit() {
+  try {
     await this.getProjects();
-    this.changeStructureListProject();
+    console.log(this.projectIdSelected);
+    if (this.projectIdSelected == undefined) {
+      this.form.get('typeId')?.disable();
+      this.form.get('assignUserId')?.disable();
+      this.form.get('reviewUserId')?.disable();
+      this.form.get('statusIssueId')?.disable();
+      this.form.get('categoryId')?.disable();
+      this.form.get('parentId')?.disable();
+    }
+
+    if (this.dynamicDialogConfig.data != undefined) {
+      const res: any = await this.taskService.getTaskById(this.dynamicDialogConfig.data.task.id).toPromise();
+      console.log(res)
+      this.data2edit = res.data;
+      this.projectIdSelected = this.data2edit.projectId;
+      const projectValue = {
+        label: this.data2edit.projectName,
+        key: this.data2edit.projectId,
+      }
+      const parentTask = {
+        label: this.data2edit.parentSubject,
+        key: this.data2edit.parentId,
+      }
+      console.log("parentTask", parentTask)
+      this.getValuesOfProject();
+      console.log(projectValue)
+      this.form.patchValue({
+        projectId: projectValue,
+        subject: this.data2edit.subject,
+        description: this.data2edit.description,
+        time: [new Date(this.data2edit.startDate), new Date(this.data2edit.dueDate)],
+        parentId: parentTask,
+        typeId: this.data2edit.typeId,
+        estimateTime: this.data2edit.estimateTime,
+        priority: this.data2edit.priority,
+        severity: this.data2edit.severity,
+        assignUserId: this.data2edit.assignUserId,
+        reviewUserId: this.data2edit.reviewUserId,
+        statusIssueId: this.data2edit.statusIssueId,
+        categoryId: this.data2edit.categoryId,
+        reporter: this.data2edit.createUserName,
+        isPublic: this.data2edit.isPublic
+      })
+      this.getAttachments2Edit(this.data2edit.id);
+      console.log("this form", this.form.value)
+    }
+  } catch (err: any) {
+    this.createErrorToast('Lỗi', err.message);
   }
+}
 
   buildForm() {
     this.form = this.fb.group({
@@ -54,19 +112,20 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       subject: [null, Validators.required],
       description: [null],
       time: [null],
-      parentId: [{value: null, disabled: true}],
-      typeId: [{value: null, disabled: true}, Validators.required],
+      parentId: [{value: null}],
+      typeId: [null, Validators.required],
       estimateTime: [null],
       priority: [null],
       severity: [null],
-      assignUserId: [{value: null, disabled: true}],
-      reviewUserId: [{value: null, disabled: true}],
-      statusIssueId: [{value: null, disabled: true}],
-      categoryId: [{value: null, disabled: true}],
+      assignUserId: [{value: null}],
+      reviewUserId: [{value: null}],
+      statusIssueId: [{value: null}],
+      categoryId: [{value: null}],
       reporter: [this.user.username, Validators.required],
       isPublic: [false],
       continue: [false]
     });
+    console.log(this.form.value)
   }
 
   getTypes(projectId: string | undefined) {
@@ -76,7 +135,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         .getTypes({projectId: projectId})
         .subscribe({
           next: (res: any) => {
-            console.log("issueTypes", res.data)
+            // console.log("issueTypes", res.data)
             this.issueTypes = res.data;
           }
         })
@@ -105,7 +164,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         .getStatusIssue({projectId: projectId})
         .subscribe({
           next: (res: any) => {
-            console.log("statuses", res.data)
+            // console.log("statuses", res.data)
             this.statuses = res.data;
           }
         })
@@ -119,7 +178,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         .getCategories({projectId: projectId})
         .subscribe({
           next: (res: any) => {
-            console.log("categories", res.data)
+            // console.log("categories", res.data)
             this.categories = res.data;
           }
         })
@@ -130,6 +189,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     try {
       const res: any = await this.projectService.getProjects(this.user.id, {}).toPromise();
       this.listProject = res.data;
+      this.changeStructureListProject();
     } catch (err: any) {
       this.createErrorToast('Lỗi', err.message);
     }
@@ -173,6 +233,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         children: this.setChildProject(item)
       }
     })
+    console.log(this.listProject)
   }
 
   setChildProject(item: any): any {
@@ -190,6 +251,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   onSelectProject($event: TreeNodeSelectEvent) {
+    console.log($event)
     this.form.get('projectId')?.setValue($event.node.key)
     this.projectIdSelected = $event.node.key;
     this.getTypes(this.projectIdSelected);
@@ -199,14 +261,29 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     this.getTasks(this.projectIdSelected);
   }
 
+  getValuesOfProject() {
+    this.getTypes(this.projectIdSelected);
+    this.getUserByProject(this.projectIdSelected);
+    this.getStatusIssueByProject(this.projectIdSelected);
+    this.getCategories(this.projectIdSelected);
+    this.getTasks(this.projectIdSelected);
+  }
+
+  onUnselectProject($event: TreeNodeUnSelectEvent) {
+    console.log($event)
+    this.projectIdSelected = undefined;
+  }
+
   onSelectFile($event: FileSelectEvent) {
     console.log($event)
     this.fileList = $event.currentFiles;
+    console.log(this.fileList)
   }
 
   onRemoveFile($event: FileRemoveEvent) {
     console.log($event)
-    const fileRemoveIndex = this.fileList.findIndex((file: any) => file === $event.file);
+    console.log($event.file)
+    const fileRemoveIndex = this.fileList.findIndex((file: any) => file === $event);
     this.fileList.splice(fileRemoveIndex, 1);
     console.log(this.fileList);
   }
@@ -255,4 +332,51 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     })
   }
 
+  updateTask() {
+    const data: Task = {
+      projectId: this.form.value.projectId?.key,
+      subject: this.form.value.subject,
+      description: this.form.value.description,
+      startDate: this.form.value.time === null ? null : this.form.value.time[0],
+      dueDate: this.form.value.time === null ? null : this.form.value.time[1],
+      parentId: this.form.value.parentId?.key,
+      typeId: this.form.value.typeId,
+      estimateTime: this.form.value.estimateTime,
+      priority: this.form.value.priority,
+      severity: this.form.value.severity,
+      assignUserId: this.form.value.assignUserId,
+      reviewUserId: this.form.value.reviewUserId,
+      statusIssueId: this.form.value.statusIssueId,
+      categoryId: this.form.value.categoryId,
+      reporter: this.user.id,//Not use this field
+      isPublic: this.form.value.isPublic
+    }
+    console.log(data)
+    console.log(this.form.value)
+    this.taskService.updateTask(this.data2edit.id, data).subscribe({
+      next: (res: any) => {
+        this.createSuccessToast('Thành công', 'Chỉnh sửa công việc thành công');
+        this.buildForm();
+        this.fileList = [];
+      }, error: (err: any) => {
+        this.createErrorToast('Lỗi', err.message);
+      }
+    })
+  }
+
+  getAttachments2Edit(objectId: string) {
+    this.documentService.getAttachmentsByObjectId(objectId).subscribe({
+      next: (res: any) => {
+        this.fileList = res.data;
+        console.log("fileList:", this.fileList)
+      }, error: (err: any) => {
+        this.createErrorToast('Lỗi', err.message);
+      }
+    })
+  }
+
+  getImage(id: string) {
+    console.log(this.fileService.getImageUrl(id))
+    return this.fileService.getImageUrl(id);
+  }
 }

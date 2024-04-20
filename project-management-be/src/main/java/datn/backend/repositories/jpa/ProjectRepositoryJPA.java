@@ -17,4 +17,9 @@ public interface ProjectRepositoryJPA extends JpaRepository<ProjectEntity, Strin
 
     List<ProjectEntity> getProjectEntitiesByParentIdAndEnabled(String parentId, Integer enabled);
 
+    List<ProjectEntity> getProjectEntitiesByCompanyId(String companyId);
+
+    @Query("select p.code from ProjectEntity p where p.id = :id")
+    String getProjectCodeById(String id);
+
 }

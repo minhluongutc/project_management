@@ -20,6 +20,9 @@ public class ProjectEntity implements Serializable {
     @Column(name = "ID")
     String id;
 
+    @Column(name = "CODE")
+    String code;
+
     @Column(name = "NAME")
     String name;
 

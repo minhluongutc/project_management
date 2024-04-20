@@ -22,13 +22,13 @@ import {DropdownChangeEvent} from "primeng/dropdown";
   standalone: true
 })
 export class BaseComponent implements OnDestroy {
-  // tableConfig!: PvnTableConfig;
   listDataTree: TreeNode[] = [];
   listData: any = [];
   user: User;
   form: FormGroup = new FormGroup({});
-  // pageIndex = 1;
-  // pageSize = 10;
+  first = 0;
+  rows = 10;
+  totalRecords = 0;
   isSubmitted: boolean = false;
 
   protected fb: FormBuilder;
@@ -110,7 +110,24 @@ export class BaseComponent implements OnDestroy {
   }
 
   convertValueById(id: any, name: any, array: any[]) {
-    return array.find((item: any) => item.id === id)?.[name];
+    return array.find((item: any) => item.id === id)?.[name] === undefined ? 'N/A' : array.find((item: any) => item.id === id)?.[name];
+  }
+
+  getColorTag(value: any) {
+    switch (value) {
+      case 1:
+        return '#1AADB5';
+      case 2:
+        return '#2B1AB6';
+      case 3:
+        return '#FDFD05';
+      case 4:
+        return '#FB9F00';
+      case 5:
+        return '#FD3F01';
+      default:
+        return 'transparent';
+    }
   }
 
   ngOnDestroy() {

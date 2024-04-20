@@ -22,6 +22,15 @@
     color: $--ds-text-subtle;
   }
 
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 5px;
+  }
+
+  tr {
+    padding: 0;
+    margin: 0;
+  }
+
   .p-overlaypanel .p-overlaypanel-content {
     padding: 0.75rem ;
   }
@@ -211,6 +220,10 @@
     }
 
     //}
+  }
+
+  .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    padding: 10px
   }
 }
 

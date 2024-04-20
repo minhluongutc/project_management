@@ -73,4 +73,9 @@ public class DocumentServiceImpl implements DocumentService {
         return null;
     }
 
+    @Override
+    public Object deleteAttachment(Authentication authentication, String id) {
+        return null;
+    }
+
 }

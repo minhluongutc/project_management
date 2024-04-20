@@ -23,7 +23,21 @@ export class TaskService extends BaseService {
     });
   }
 
+  getTasks(queryParams: Record<string, any>) {
+    return this.getRequest(this.SERVICE_URL, {
+      params: this.buildParams(queryParams)
+    });
+  }
+
+  getTaskById(id: string) {
+    return this.getRequest(`${this.SERVICE_URL}/${id}`);
+  }
+
   insertTask(data: any) {
     return this.postRequest(this.SERVICE_URL, data);
+  }
+
+  updateTask(id: string, data: any) {
+    return this.putRequest(`${this.SERVICE_URL}/${id}`, data);
   }
 }

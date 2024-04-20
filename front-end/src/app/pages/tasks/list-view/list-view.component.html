@@ -5,105 +5,73 @@
       <input type="text" pInputText placeholder="Tìm kiếm"/>
     </p-iconField>
   </div>
-  <p-treeTable
-    #myTab
-    [columns]="cols"
-    [value]="listDataTree"
-    [paginator]="true"
-    [rows]="5"
-    [styleClass]="'p-treetable-sm'">
-    <ng-template pTemplate="colgroup" let-columns>
-      <colgroup>
-        <col *ngFor="let col of columns"/>
-      </colgroup>
+  <p-table [value]="listData"
+           [paginator]="true"
+           [rows]="rows"
+           [first]="first"
+           [showCurrentPageReport]="true"
+           [tableStyle]="{ 'min-width': '50rem' }"
+           [styleClass]="'p-datatable-sm'"
+           currentPageReportTemplate="Hiển thị {first} - {last} trên {totalRecords} bản ghi."
+           [rowsPerPageOptions]="[10, 25, 50]"
+           [exportHeader]="'customExportHeader'"
+           #dt
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <button type="button" pButton pRipple icon="pi pi-file" (click)="dt.exportCSV()" class="mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
+        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+        <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom"></button>
+      </div>
     </ng-template>
-
     <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns">
-          {{ col.header }}
-        </th>
+      <tr class="text-sm">
+        <th>taskCode</th>
+        <th pSortableColumn="projectName">Dự án<p-sortIcon field="projectName"></p-sortIcon></th>
+        <th pSortableColumn="subject">Tiêu đề<p-sortIcon field="subject"></p-sortIcon></th>
+        <th pSortableColumn="statusIssueName">Trạng thái<p-sortIcon field="statusIssueName"></p-sortIcon></th>
+        <th pSortableColumn="priority">Độ ưu tiên<p-sortIcon field="priority"></p-sortIcon></th>
+        <th pSortableColumn="severity">Độ nghiêm trọng<p-sortIcon field="severity"></p-sortIcon></th>
+        <th pSortableColumn="assignUserName">Người được giao<p-sortIcon field="assignUserName"></p-sortIcon></th>
+        <th pSortableColumn="reviewUserName">Người giám sát<p-sortIcon field="reviewUserName"></p-sortIcon></th>
+        <th pSortableColumn="categoryName">Danh mục<p-sortIcon field="categoryName"></p-sortIcon></th>
+        <th pSortableColumn="startDate">Ngày bắt đầu<p-sortIcon field="startDate"></p-sortIcon></th>
+        <th pSortableColumn="dueDate">Ngày kết thúc<p-sortIcon field="dueDate"></p-sortIcon></th>
+        <th>Thao tác</th>
       </tr>
     </ng-template>
-
-    <ng-template
-      pTemplate="body"
-      let-rowNode
-      let-rowData="rowData"
-      let-columns="columns">
+    <ng-template pTemplate="body" let-item>
       <tr>
-        <td *ngFor="let col of columns; let i = index">
-          <p-treeTableToggler [rowNode]="rowNode" *ngIf="i == 0"/>
-          @if (col.field == "priority") {
-            @if (rowData[col.field] == 1) {
-              <p-tag [style]="{ 'background': '#1AADB5'}"
-                     [value]="convertValueById(rowData[col.field], 'name', PRIORIES)"
-                     [rounded]="true"
-              />
-            } @else if (rowData[col.field] == 2) {
-              <p-tag [style]="{ 'background': '#2B1AB6'}"
-                     [value]="convertValueById(rowData[col.field], 'name', PRIORIES)"
-                     [rounded]="true"
-              />
-            } @else if (rowData[col.field] == 3) {
-              <p-tag [style]="{ 'background': '#FDFD05'}"
-                     [value]="convertValueById(rowData[col.field], 'name', PRIORIES)"
-                     [rounded]="true"
-              />
-            } @else if (rowData[col.field] == 4) {
-              <p-tag [style]="{ 'background': '#FB9F00'}"
-                     [value]="convertValueById(rowData[col.field], 'name', PRIORIES)"
-                     [rounded]="true"
-              />
-            } @else if (rowData[col.field] == 5) {
-              <p-tag [style]="{ 'background': '#FD3F01'}"
-                     [value]="convertValueById(rowData[col.field], 'name', PRIORIES)"
-                     [rounded]="true"
-              />
-            }
-          } @else if (col.field == "severity") {
-            @if (rowData[col.field] == 1) {
-              <p-tag [style]="{ 'background': '#1AADB5'}"
-                     [value]="convertValueById(rowData[col.field], 'name', SEVERITIES)"
-                     [rounded]="true"
-              />
-            } @else if (rowData[col.field] == 2) {
-              <p-tag [style]="{ 'background': '#2B1AB6'}"
-                     [value]="convertValueById(rowData[col.field], 'name', SEVERITIES)"
-                     [rounded]="true"
-              />
-            } @else if (rowData[col.field] == 3) {
-              <p-tag [style]="{ 'background': '#FDFD05'}"
-                     [value]="convertValueById(rowData[col.field], 'name', SEVERITIES)"
-                     [rounded]="true"
-              />
-            } @else if (rowData[col.field] == 4) {
-              <p-tag [style]="{ 'background': '#FB9F00'}"
-                     [value]="convertValueById(rowData[col.field], 'name', SEVERITIES)"
-                     [rounded]="true"
-              />
-            } @else if (rowData[col.field] == 5) {
-              <p-tag [style]="{ 'background': '#FD3F01'}"
-                     [value]="convertValueById(rowData[col.field], 'name', SEVERITIES)"
-                     [rounded]="true"
-              />
-            }
-          } @else if (col.field == "startDate") {
-            {{ rowData[col.field] | date: 'dd/MM/yyyy' }}
-          } @else if (col.field == "dueDate") {
-            {{ rowData[col.field] | date: 'dd/MM/yyyy' }}
-          } @else if (col.field == "createTime") {
-            {{ rowData[col.field] | date: 'dd/MM/yyyy' }}
-          } @else if (col.field == "updateTime") {
-            {{ rowData[col.field] | date: 'dd/MM/yyyy' }}
-          } @else if (i == cols.length - 1) {
-            <p-button icon="pi pi-pencil" [rounded]="true" severity="secondary" [style]="{ 'margin-right': '.5em' }"/>
-            <p-button icon="pi pi-trash" [rounded]="true" severity="secondary"/>
-          } @else {
-            {{ rowData[col.field] }}
-          }
+        <td>{{item.taskCode}}</td>
+        <td>{{item.projectName}}</td>
+        <td>{{item.subject}}</td>
+        <td>{{item.statusIssueName}}</td>
+        <td>
+          <p-tag [style]="{ 'background': getColorTag(item.priority)}"
+                 [value]="convertValueById(item.priority, 'name', PRIORIES)"
+                 [rounded]="true"/>
+        </td>
+        <td>
+          <p-tag [style]="{ 'background': getColorTag(item.severity)}"
+                 [value]="convertValueById(item.severity, 'name', PRIORIES)"
+                 [rounded]="true"/>
+        </td>
+        <td>{{item.assignUserName}}</td>
+        <td>{{item.reviewUserName}}</td>
+        <td>{{item.categoryName}}</td>
+        <td>{{item.startDate | date: 'dd/MM/yyyy'}}</td>
+        <td>{{item.dueDate | date: 'dd/MM/yyyy'}}</td>
+        <td>
+          <p-button icon="pi pi-pencil" [rounded]="true" severity="secondary" [style]="{ 'margin-right': '.5em' }"/>
+          <p-button icon="pi pi-trash" [rounded]="true" severity="secondary"/>
         </td>
       </tr>
     </ng-template>
-  </p-treeTable>
+    <ng-template pTemplate="paginatorleft">
+      <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+    </ng-template>
+    <ng-template pTemplate="paginatorright">
+      <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+    </ng-template>
+  </p-table>
 </div>

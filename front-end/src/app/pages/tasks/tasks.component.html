@@ -1,62 +1,93 @@
 <!-- This is an example component -->
 <div class="flex layout">
-  <div class="flex-col border-r pl-5 w-1/5 bg-gray-100 h-auto">
-    <h3 class="p-8">Bộ lọc</h3>
-    <div class=" px-3">
-      <div class="flex py-2 px-4 cursor-pointer hover:bg-blue-100 rounded">
-        <svg class="h-3 w-3 mt-1 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-             viewBox="0 0 447.243 447.243">
-          <path fill-rule="evenodd"
-                d="M420.361 192.229a31.967 31.967 0 00-5.535-.41H99.305l6.88-3.2a63.998 63.998 0 0018.08-12.8l88.48-88.48c11.653-11.124 13.611-29.019 4.64-42.4-10.441-14.259-30.464-17.355-44.724-6.914a32.018 32.018 0 00-3.276 2.754l-160 160c-12.504 12.49-12.515 32.751-.025 45.255l.025.025 160 160c12.514 12.479 32.775 12.451 45.255-.063a32.084 32.084 0 002.745-3.137c8.971-13.381 7.013-31.276-4.64-42.4l-88.32-88.64a64.002 64.002 0 00-16-11.68l-9.6-4.32h314.24c16.347.607 30.689-10.812 33.76-26.88 2.829-17.445-9.019-33.88-26.464-36.71z"/>
-        </svg>
-        <div class="ml-5 text-sm text-gray-600  font-normal antialiased tracking-normal">
-          Back to project
-        </div>
-      </div>
-    </div>
-    <div class="border border-gray-300 mt-5"></div>
-    <div class="overflow-auto">
-      <div class="flex-col px-3">
-        <div class="items-center ml-2 py-4  mb-1 text-sm font-medium text-gray-700">
-          Issues and filters
-        </div>
-        <div
-          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal"
-          [routerLink]="[routerLink]"
-          [queryParams]="{ statusIssueCodeIsEqual: false, statusIssueCode: 5 }">
-          My open issues
-        </div>
-        <div
-          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
-          Reported by me
-        </div>
-        <div
-          class="py-3 px-3 bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
-          All issues
-        </div>
-        <div
-          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
-          Open issues
-        </div>
-        <div
-          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal">
-          Done issues
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="mt-4 w-4/5 h-auto">
+<!--  <div class="flex-col border-r pl-5 w-1/5 bg-gray-100 h-auto">-->
+<!--    <h3 class="p-8">Bộ lọc</h3>-->
+<!--    <div class=" px-3">-->
+<!--      <div class="flex py-2 px-4 cursor-pointer hover:bg-blue-100 rounded">-->
+<!--        <svg class="h-3 w-3 mt-1 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="currentColor"-->
+<!--             viewBox="0 0 447.243 447.243">-->
+<!--          <path fill-rule="evenodd"-->
+<!--                d="M420.361 192.229a31.967 31.967 0 00-5.535-.41H99.305l6.88-3.2a63.998 63.998 0 0018.08-12.8l88.48-88.48c11.653-11.124 13.611-29.019 4.64-42.4-10.441-14.259-30.464-17.355-44.724-6.914a32.018 32.018 0 00-3.276 2.754l-160 160c-12.504 12.49-12.515 32.751-.025 45.255l.025.025 160 160c12.514 12.479 32.775 12.451 45.255-.063a32.084 32.084 0 002.745-3.137c8.971-13.381 7.013-31.276-4.64-42.4l-88.32-88.64a64.002 64.002 0 00-16-11.68l-9.6-4.32h314.24c16.347.607 30.689-10.812 33.76-26.88 2.829-17.445-9.019-33.88-26.464-36.71z"/>-->
+<!--        </svg>-->
+<!--        <div class="ml-5 text-sm text-gray-600  font-normal antialiased tracking-normal">-->
+<!--          Back to project-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="border border-gray-300 mt-5"></div>-->
+<!--    <div class="overflow-auto">-->
+<!--      <div class="flex-col px-3">-->
+<!--        <div class="items-center ml-2 py-4  mb-1 text-sm font-medium text-gray-700">-->
+<!--          Issues and filters-->
+<!--        </div>-->
+<!--        <div-->
+<!--          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal"-->
+<!--          [routerLink]="[routerLink]"-->
+<!--          [queryParams]="{ statusIssueCodeIsEqual: true, statusIssueCode: 1, assignUserId: user.id }">-->
+<!--          My new task-->
+<!--        </div>-->
+<!--        <div-->
+<!--          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal"-->
+<!--          [routerLink]="[routerLink]"-->
+<!--          [queryParams]="{ statusIssueCodeIsEqual: true, statusIssueCode: 2, assignUserId: user.id }">-->
+<!--          My confirmed task-->
+<!--        </div>-->
+<!--        <div-->
+<!--          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal"-->
+<!--          [routerLink]="[routerLink]"-->
+<!--          [queryParams]="{ statusIssueCodeIsEqual: false, statusIssueCode: 6, assignUserId: user.id }">-->
+<!--          My open task-->
+<!--        </div>-->
+<!--        <div-->
+<!--          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal"-->
+<!--          [routerLink]="[routerLink]"-->
+<!--          [queryParams]="{ statusIssueCodeIsEqual: true, statusIssueCode: 3, assignUserId: user.id }">-->
+<!--          My deploy waiting task-->
+<!--        </div>-->
+<!--        <div-->
+<!--          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal"-->
+<!--          [routerLink]="routerLink"-->
+<!--          [queryParams]="{ createUserId: user.id }">-->
+<!--          Reported by me-->
+<!--        </div>-->
+<!--        <div-->
+<!--          class="py-3 px-3 bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal"-->
+<!--          [routerLink]="routerLink"-->
+<!--          [queryParams]="{}">-->
+<!--          All issues-->
+<!--        </div>-->
+<!--        <div-->
+<!--          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal"-->
+<!--          [routerLink]="routerLink"-->
+<!--          [queryParams]="{ statusIssueCodeIsEqual: false, statusIssueCode: 6 }">-->
+<!--          Open issues-->
+<!--        </div>-->
+<!--        <div-->
+<!--          class="py-3 px-3 hover:bg-blue-100 cursor-pointer rounded text-sm text-gray-600  font-normal antialiased tracking-normal"-->
+<!--          [routerLink]="routerLink"-->
+<!--          [queryParams]="{ statusIssueCodeIsEqual: true, statusIssueCode: 6 }">-->
+<!--          Done issues-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+  <div class="mt-4 w-full h-auto">
     <div class="ml-4 mr-4">
-      <div class="text-sm text-gray-600 font-normal antialiased tracking-normal">
-        Projects &nbsp; / &nbsp; PVN
-      </div>
       <div class="flex justify-between">
         <div class="text-2xl mt-3 text-black font-semibold antialiased tracking-normal">
-          All Issues
+          Danh sách công việc
         </div>
-        <div class="flex gap-2 justify-center items-center">
-          <p class="text-2xl">Xem Danh sách</p>
-          <p-inputSwitch [(ngModel)]="isViewList" (ngModelChange)="changeStage($event)"></p-inputSwitch>
+        <div class="flex gap-2 justify-center items-end flex-col">
+          <div class="flex">
+            <p class="text-xl">Xem Danh sách</p>
+            <p-inputSwitch [(ngModel)]="isViewList" (ngModelChange)="changeStage($event)"></p-inputSwitch>
+          </div>
+          @if (isViewList) {
+            <div class="flex">
+              <p class="text-xl">Xem dạng cây</p>
+              <p-inputSwitch [(ngModel)]="isViewTree" (ngModelChange)="changeStageViewList($event)"></p-inputSwitch>
+            </div>
+          }
         </div>
 <!--        <p-selectButton [options]="stateView" [(ngModel)]="value" optionLabel="label" optionValue="value"-->
 <!--                        (onChange)="checkChange($event)" styleClass="text-sm"></p-selectButton>-->

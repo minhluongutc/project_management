@@ -20,4 +20,8 @@ public interface UserRepositoryJPA extends JpaRepository<UserEntity, String> {
     UserEntity findByIdAndEnabled(String id, Integer enabled);
 
     List<UserEntity> getUserEntitiesByEnabled(Integer enabled);
+
+    @Query("SELECT u.companyId FROM UserEntity u WHERE u.username = ?1 and u.enabled=1")
+    String getCompanyIdByUsername(String username);
+//    String getCompanyIdByUsername(String name);
 }

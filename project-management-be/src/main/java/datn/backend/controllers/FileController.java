@@ -3,6 +3,7 @@ package datn.backend.controllers;
 import datn.backend.config.MinioClient.service.FileService;
 import datn.backend.config.MinioClient.utils.Utils;
 import datn.backend.config.MinioClient.utils.validates.ValidFile;
+import datn.backend.repositories.jpa.DocumentRepositoryJPA;
 import datn.backend.utils.ErrorApp;
 import datn.backend.utils.ResponseUtils;
 import datn.backend.utils.exceptions.CustomException;
@@ -23,6 +24,7 @@ import static datn.backend.utils.Constants.*;
 @Validated
 public class FileController {
     private final FileService fileService;
+    private final DocumentRepositoryJPA documentRepositoryJPA;
 
     @Value("${minio.tenant}")
     String tenant;
@@ -34,7 +36,7 @@ public class FileController {
      * @param channel
      * @return
      */
-    @PostMapping(REQUEST_MAPPING_PREFIX + VERSION_API_V1 + "/files")
+    @PostMapping(REQUEST_MAPPING_PREFIX + "/files")
     public ResponseEntity<Object> uploadFilesPublic(@ValidFile @RequestParam("file") MultipartFile[] files,
                                                     @RequestParam("channel") String channel) {
         Object result = fileService.uploadFiles(tenant, channel, files);
@@ -49,6 +51,16 @@ public class FileController {
      */
     @GetMapping(value = GET_CONTENT_LINK_URL)
     public ResponseEntity<Object> getContentFilePublic(@RequestParam("filePath") String filePath) throws Exception {
+        String filePathDecrypt = Utils.decrypt(filePath);
+        String fileName = filePathDecrypt.substring(filePathDecrypt.lastIndexOf("/") + 1);
+        byte[] data = fileService.getFile(tenant, filePath);
+        if (data == null) throw new CustomException(ErrorApp.BAD_REQUEST);
+        return datn.backend.config.MinioClient.utils.ResponseUtils.getResponseEntity(data, fileName);
+    }
+
+    @GetMapping(value = PUBLIC_REQUEST_MAPPING_PREFIX + "/files/{id}")
+    public ResponseEntity<Object> viewFile(@PathVariable String id) throws Exception {
+        String filePath = documentRepositoryJPA.getFilePathById(id).orElseThrow(() -> new RuntimeException("File not found"));
         String filePathDecrypt = Utils.decrypt(filePath);
         String fileName = filePathDecrypt.substring(filePathDecrypt.lastIndexOf("/") + 1);
         byte[] data = fileService.getFile(tenant, filePath);

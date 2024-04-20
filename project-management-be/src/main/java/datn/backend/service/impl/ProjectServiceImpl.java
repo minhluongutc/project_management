@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @AllArgsConstructor
@@ -58,6 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public Object insertProject(Authentication authentication, ProjectDTO.ProjectInsertDTO dto) {
         ProjectEntity projectEntity = modelMapper.map(dto, ProjectEntity.class);
+        projectEntity.setCode(generateProjectCodeUniqueEachCompany(AuditUtils.getCompanyId(authentication)));
         projectEntity.setId(AuditUtils.generateUUID());
         projectEntity.setCreateUserId(AuditUtils.createUserId(authentication));
         projectEntity.setCreateTime(AuditUtils.createTime());
@@ -71,5 +73,22 @@ public class ProjectServiceImpl implements ProjectService {
         projectUserEntity.setCreateUserId(AuditUtils.createUserId(authentication));
         projectUserRepositoryJPA.save(projectUserEntity);
         return "ok";
+    }
+
+    private String generateProjectCodeUniqueEachCompany(String companyId) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Random random = new Random();
+        int randomNumberOfChar;
+        char randomChar;
+        for (int i = 0; i < 3; i++) {
+            randomNumberOfChar = random.nextInt(26);
+            randomChar = (char) ('A' + randomNumberOfChar);
+            stringBuilder.append(randomChar);
+        }
+        List<String> projectCodes = projectRepositoryJPA.getProjectEntitiesByCompanyId(companyId).stream().map(ProjectEntity::getCode).toList();
+        if (projectCodes.contains(stringBuilder.toString())) {
+            generateProjectCodeUniqueEachCompany(companyId);
+        }
+        return stringBuilder.toString();
     }
 }
