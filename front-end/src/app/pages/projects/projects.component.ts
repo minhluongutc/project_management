@@ -3,6 +3,7 @@ import {TreeNode} from "primeng/api";
 import {Column} from "../../models/column.model";
 import {BaseComponent} from "../../share/ui/base-component/base.component";
 import {ProjectService} from "../../service/project.service";
+import {ProjectStoreService} from "./project-store.service";
 
 @Component({
   selector: 'app-projects',
@@ -15,7 +16,8 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
   cols!: Column[];
 
   constructor(injector: Injector,
-              private projectService: ProjectService
+              private projectService: ProjectService,
+              private projectStoreService: ProjectStoreService
   ) {
     super(injector);
   }
@@ -36,5 +38,10 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
     } catch (err: any) {
       this.createErrorToast('Lỗi', err.message);
     }
+  }
+
+  onDetailProject(id: string) {
+    this.projectStoreService.id = id;
+    this.router.navigateByUrl(`/projects/${id}`)
   }
 }

@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 @Service
@@ -54,6 +55,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Object getTasksAccordingLevel(Authentication authentication, TaskDTO.TaskQueryDTO dto) {
         List<TaskDTO.TaskResponseDTO> taskEntities = taskRepositoryJPA.getTasksLevel(dto, null, AuditUtils.getUserId(authentication), Constants.STATUS.ACTIVE.value);
+        if (taskEntities.stream().anyMatch(task -> Objects.equals(task.getId(), dto.getOtherTaskId()))) {
+            taskEntities.removeIf(task -> Objects.equals(task.getId(), dto.getOtherTaskId()));
+        }
         System.out.println(dto);
         List<TreeDTO> trees = new ArrayList<>();
         for (TaskDTO.TaskResponseDTO taskEntity : taskEntities) {
@@ -67,14 +71,42 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void setTaskChildren(Authentication authentication, TreeDTO parentTree, TaskDTO.TaskResponseDTO taskDTO, TaskDTO.TaskQueryDTO dto) {
-//        queryDTO.setProjectId(taskDTO.getProjectId());
         List<TaskDTO.TaskResponseDTO> taskChildren = taskRepositoryJPA.getTasksLevel(dto, taskDTO.getId(), AuditUtils.getUserId(authentication), Constants.STATUS.ACTIVE.value);
+        if (taskChildren.stream().anyMatch(task -> Objects.equals(task.getId(), dto.getOtherTaskId()))) {
+            taskChildren.removeIf(task -> Objects.equals(task.getId(), dto.getOtherTaskId()));
+        }
         parentTree.setChildren(new ArrayList<>());
         if (taskChildren.isEmpty()) return;
         for (TaskDTO.TaskResponseDTO taskChild : taskChildren) {
             TreeDTO treeDTO = new TreeDTO();
             treeDTO.setData(taskChild);
             setTaskChildren(authentication, treeDTO, taskChild, dto);
+            parentTree.getChildren().add(treeDTO);
+        }
+    }
+
+    @Override
+    public Object getTasksChildrenByParentId(Authentication authentication, String parentId) {
+        List<TaskEntity> taskEntities = taskRepositoryJPA.getTaskEntitiesByParentIdAndEnabled(parentId, Constants.STATUS.ACTIVE.value);
+        List<TreeDTO> trees = new ArrayList<>();
+        for (TaskEntity taskEntity : taskEntities) {
+            TreeDTO treeDTO = new TreeDTO();
+            treeDTO.setData(taskEntity);
+            treeDTO.setChildren(new ArrayList<>());
+            setTaskChildren(authentication, treeDTO, taskEntity);
+            trees.add(treeDTO);
+        }
+        return trees;
+    }
+
+    private void setTaskChildren(Authentication authentication, TreeDTO parentTree, TaskEntity entity) {
+        List<TaskEntity> taskChildren = taskRepositoryJPA.getTaskEntitiesByParentIdAndEnabled(entity.getId(), Constants.STATUS.ACTIVE.value);
+        parentTree.setChildren(new ArrayList<>());
+        if (taskChildren.isEmpty()) return;
+        for (TaskEntity taskChild : taskChildren) {
+            TreeDTO treeDTO = new TreeDTO();
+            treeDTO.setData(taskChild);
+            setTaskChildren(authentication, treeDTO, taskChild);
             parentTree.getChildren().add(treeDTO);
         }
     }
@@ -123,6 +155,11 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Object getTask(Authentication authentication, String id) {
         return taskRepositoryJPA.getTaskDetail(id).orElseThrow(() -> new RuntimeException("Task not found"));
+    }
+
+    @Override
+    public Object getTasksChildren(Authentication authentication, String parentId) {
+        return taskRepositoryJPA.getChildrenTaskByParentId(parentId);
     }
 
     private String generateTaskCodeUniqueEachProject(String projectId) {

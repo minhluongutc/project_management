@@ -14,15 +14,19 @@ import {CategoryService} from "../../../service/category.service";
 import {DynamicDialogConfig} from "primeng/dynamicdialog";
 import {DocumentService} from "../../../service/document.service";
 import {FileService} from "../../../share/services/file.service";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-task-create',
   templateUrl: './task-create.component.html',
-  styleUrl: './task-create.component.scss'
+  styleUrl: './task-create.component.scss',
+  providers: [ConfirmationService]
 })
 export class TaskCreateComponent extends BaseComponent implements OnInit {
   listProject: any[] = [];
+
   listTask: any[] = [];
+
   issueTypes: any[] = [];
   categories: any[] = [];
   priories: any[];
@@ -44,6 +48,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
               private categoryService: CategoryService,
               private documentService: DocumentService,
               private dynamicDialogConfig: DynamicDialogConfig,
+              private confirmationService: ConfirmationService,
               private fileService: FileService) {
     super(injector);
     this.buildForm();
@@ -56,16 +61,9 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   try {
     await this.getProjects();
     console.log(this.projectIdSelected);
-    if (this.projectIdSelected == undefined) {
-      this.form.get('typeId')?.disable();
-      this.form.get('assignUserId')?.disable();
-      this.form.get('reviewUserId')?.disable();
-      this.form.get('statusIssueId')?.disable();
-      this.form.get('categoryId')?.disable();
-      this.form.get('parentId')?.disable();
-    }
 
     if (this.dynamicDialogConfig.data != undefined) {
+      this.projectIdSelected = this.dynamicDialogConfig.data.task.projectId;
       const res: any = await this.taskService.getTaskById(this.dynamicDialogConfig.data.task.id).toPromise();
       console.log(res)
       this.data2edit = res.data;
@@ -104,6 +102,12 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   } catch (err: any) {
     this.createErrorToast('Lỗi', err.message);
   }
+
+    if (this.projectIdSelected) {
+      this.setEnableFields(true);
+    } else {
+      this.setEnableFields(false);
+    }
 }
 
   buildForm() {
@@ -112,15 +116,15 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       subject: [null, Validators.required],
       description: [null],
       time: [null],
-      parentId: [{value: null}],
+      parentId: [null],
       typeId: [null, Validators.required],
       estimateTime: [null],
       priority: [null],
       severity: [null],
-      assignUserId: [{value: null}],
-      reviewUserId: [{value: null}],
-      statusIssueId: [{value: null}],
-      categoryId: [{value: null}],
+      assignUserId: [null],
+      reviewUserId: [null],
+      statusIssueId: [null],
+      categoryId: [null],
       reporter: [this.user.username, Validators.required],
       isPublic: [false],
       continue: [false]
@@ -195,9 +199,13 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     }
   }
 
-  async getTasks(projectId: string | undefined) {
+  async getTasks(projectId: string | undefined, taskId: string | undefined) {
     try {
-      const res: any = await this.taskService.getTaskAccordingLevel({projectId: projectId}).toPromise();
+      const data = {
+        projectId: projectId,
+        otherTaskId: taskId  == undefined ? '' : taskId
+      }
+      const res: any = await this.taskService.getTaskAccordingLevel(data).toPromise();
       const listTask = res.data;
       this.listTask = listTask.map((item: any) => {
         return {
@@ -252,13 +260,17 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
 
   onSelectProject($event: TreeNodeSelectEvent) {
     console.log($event)
+
+    this.setEnableFields(true);
+
     this.form.get('projectId')?.setValue($event.node.key)
     this.projectIdSelected = $event.node.key;
+    console.log("projectIdSelected", this.projectIdSelected)
     this.getTypes(this.projectIdSelected);
     this.getUserByProject(this.projectIdSelected);
     this.getStatusIssueByProject(this.projectIdSelected);
     this.getCategories(this.projectIdSelected);
-    this.getTasks(this.projectIdSelected);
+    this.getTasks(this.projectIdSelected, this.data2edit.id);
   }
 
   getValuesOfProject() {
@@ -266,12 +278,13 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     this.getUserByProject(this.projectIdSelected);
     this.getStatusIssueByProject(this.projectIdSelected);
     this.getCategories(this.projectIdSelected);
-    this.getTasks(this.projectIdSelected);
+    this.getTasks(this.projectIdSelected, this.data2edit.id);
   }
 
   onUnselectProject($event: TreeNodeUnSelectEvent) {
     console.log($event)
     this.projectIdSelected = undefined;
+    this.setEnableFields(false);
   }
 
   onSelectFile($event: FileSelectEvent) {
@@ -282,9 +295,19 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
 
   onRemoveFile($event: FileRemoveEvent) {
     console.log($event)
-    console.log($event.file)
     const fileRemoveIndex = this.fileList.findIndex((file: any) => file === $event);
-    this.fileList.splice(fileRemoveIndex, 1);
+    if (this.data2edit) {
+      this.documentService.deleteAttachment(this.fileList[fileRemoveIndex].id).subscribe({
+        next: (res: any) => {
+          this.createSuccessToast('Thành công', 'Xóa tài liệu thành công');
+          this.getAttachments2Edit(this.data2edit.id);
+        }, error: (err: any) => {
+          this.createErrorToast('Lỗi', err.message);
+        }
+      })
+    } else {
+      this.fileList.splice(fileRemoveIndex, 1);
+    }
     console.log(this.fileList);
   }
 
@@ -311,6 +334,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       reporter: this.user.id,//Not use this field
       isPublic: this.form.value.isPublic
     }
+    console.log("form value insert", this.form.value)
     console.log(data)
     const formData = new FormData();
     this.fileList.forEach((file: any) => {
@@ -324,7 +348,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     this.taskService.insertTask(formData).subscribe({
       next: (res: any) => {
         this.createSuccessToast('Thành công', 'Tạo mới công việc thành công');
-        this.buildForm();
+        this.form.reset();
         this.fileList = [];
       }, error: (err: any) => {
         this.createErrorToast('Lỗi', err.message);
@@ -356,8 +380,15 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     this.taskService.updateTask(this.data2edit.id, data).subscribe({
       next: (res: any) => {
         this.createSuccessToast('Thành công', 'Chỉnh sửa công việc thành công');
-        this.buildForm();
+        this.form.reset();
         this.fileList = [];
+        this.closeDialog();
+        const currentRoute = this.router.url.split('?')[0];
+        const param = this.router.url.split('?')[1];
+        console.log(currentRoute)
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+          this.router.navigate([`${currentRoute}`], {queryParams: {taskCode: this.data2edit.taskCode}});
+        });
       }, error: (err: any) => {
         this.createErrorToast('Lỗi', err.message);
       }
@@ -376,7 +407,45 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   getImage(id: string) {
-    console.log(this.fileService.getImageUrl(id))
     return this.fileService.getImageUrl(id);
+  }
+
+  confirmDeleteFile(file: any, event: Event) {
+    console.log(event)
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'bạn có muốn xóa tệp đính kèm này?',
+      header: 'Xác nhận xóa',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: "p-button-danger p-button-text",
+      rejectButtonStyleClass: "p-button-text p-button-text",
+      acceptIcon: "none",
+      rejectIcon: "none",
+
+      accept: () => {
+        this.onRemoveFile(file)
+      },
+      reject: () => {
+        console.log("is reject")
+      }
+    });
+  }
+
+  setEnableFields(enable: boolean) {
+    if (enable) {
+      this.form.get('typeId')?.enable();
+      this.form.get('assignUserId')?.enable();
+      this.form.get('reviewUserId')?.enable();
+      this.form.get('statusIssueId')?.enable();
+      this.form.get('categoryId')?.enable();
+      this.form.get('parentId')?.enable();
+    } else {
+      this.form.get('typeId')?.disable();
+      this.form.get('assignUserId')?.disable();
+      this.form.get('reviewUserId')?.disable();
+      this.form.get('statusIssueId')?.disable();
+      this.form.get('categoryId')?.disable();
+      this.form.get('parentId')?.disable();
+    }
   }
 }

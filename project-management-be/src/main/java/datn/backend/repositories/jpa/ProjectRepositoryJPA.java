@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProjectRepositoryJPA extends JpaRepository<ProjectEntity, String> {
@@ -21,5 +22,10 @@ public interface ProjectRepositoryJPA extends JpaRepository<ProjectEntity, Strin
 
     @Query("select p.code from ProjectEntity p where p.id = :id")
     String getProjectCodeById(String id);
+
+    @Query("select p " +
+            "from ProjectEntity p " +
+            "where p.id = :id and p.enabled = 1")
+    Optional<ProjectEntity> getProjectById(String id);
 
 }

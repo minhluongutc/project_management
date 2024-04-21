@@ -5,14 +5,20 @@ import datn.backend.entities.DocumentEntity;
 import datn.backend.repositories.jpa.DocumentRepositoryJPA;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class DocumentServiceJPA {
     private final DocumentRepositoryJPA documentRepositoryJPA;
+
+    public Optional<DocumentEntity> findDocumentById(String id) {
+        return documentRepositoryJPA.findById(id);
+    }
 
     public List<DocumentEntity> getAllDocuments() {
         return documentRepositoryJPA.findAll();

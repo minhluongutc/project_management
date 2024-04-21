@@ -20,6 +20,10 @@ export class ProjectService extends BaseService {
     });
   }
 
+  getProject(projectId: string) {
+    return this.getRequest(`${this.SERVICE_URL}/projects/${projectId}`);
+  }
+
   createProject(data: Project) {
     return this.postRequest(`${this.SERVICE_URL}/projects`, data);
   }

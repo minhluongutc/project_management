@@ -32,6 +32,12 @@ public class TaskController {
         return ResponseUtils.getResponseEntity(result);
     }
 
+    @GetMapping(value = "/tasks/{id}/children", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getTasksChildren(Authentication authentication, @PathVariable String id) {
+        Object result = taskService.getTasksChildrenByParentId(authentication, id);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
     @PostMapping(value = "/tasks", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Object> insertTask(Authentication authentication,
                                              @RequestPart("dto") TaskDTO.TaskInsertDTO dto,

@@ -31,6 +31,7 @@ import {TabViewModule} from "primeng/tabview";
 import {AvatarModule} from "primeng/avatar";
 import {ChipsModule} from "primeng/chips";
 import {FileSizePipe} from "../../share/pipes/file-size.pipe";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import {FileSizePipe} from "../../share/pipes/file-size.pipe";
         AvatarModule,
         ChipsModule,
         FileSizePipe,
+        ConfirmDialogModule,
     ],
 })
 export class TasksModule {

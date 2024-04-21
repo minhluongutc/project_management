@@ -5,6 +5,7 @@ import datn.backend.config.MinioClient.service.FileService;
 import datn.backend.entities.DocumentEntity;
 import datn.backend.repositories.jpa.DocumentRepositoryJPA;
 import datn.backend.service.DocumentService;
+import datn.backend.service.jpa.DocumentServiceJPA;
 import datn.backend.utils.AuditUtils;
 import datn.backend.utils.Constants;
 import lombok.AccessLevel;
@@ -23,6 +24,7 @@ import java.util.List;
 public class DocumentServiceImpl implements DocumentService {
     final FileService fileService;
     final DocumentRepositoryJPA documentRepositoryJPA;
+    final DocumentServiceJPA documentServiceJPA;
 
     @Override
     @Transactional
@@ -74,8 +76,14 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    @Transactional
     public Object deleteAttachment(Authentication authentication, String id) {
-        return null;
+        DocumentEntity documentEntity = documentServiceJPA.findDocumentById(id).orElseThrow(() -> new RuntimeException("Document not found!"));
+        documentEntity.setEnabled(AuditUtils.disable());
+        documentEntity.setUpdateUserId(AuditUtils.createUserId(authentication));
+        documentEntity.setUpdateTime(AuditUtils.updateTime());
+        documentRepositoryJPA.save(documentEntity);
+        return "Deleted successfully!";
     }
 
 }

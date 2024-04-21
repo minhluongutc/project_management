@@ -37,6 +37,8 @@ public class TaskDTO {
         Integer statusIssueCode;
         Boolean statusIssueCodeIsEqual;
 
+        String otherTaskId;
+
         String sortBy;
         String sortDir;
         Integer pageIndex;
@@ -115,6 +117,7 @@ public class TaskDTO {
         String projectId;
         String projectParentTaskCode;
         String projectParentSubject;
+        String parentId;
         List<AttachmentDTO.AttachmentResponseDTO> attachments;
 
 
@@ -143,7 +146,7 @@ public class TaskDTO {
             this.projectId = projectId;
         }
 
-        public TaskResponseDTO(String id, String taskCode, String projectName, String subject, String description, String typeName, String statusIssueName, Integer priority, Integer severity, String parentTaskSubject, String assignUserName, String reviewUserName, String categoryName, Date startDate, Date dueDate, Date createTime, Date updateTime, String createUserName, String updateUserName, Boolean isPublic, String projectId, String projectParentTaskCode, String projectParentSubject) {
+        public TaskResponseDTO(String id, String taskCode, String projectName, String subject, String description, String typeName, String statusIssueName, Integer priority, Integer severity, String parentTaskSubject, String assignUserName, String reviewUserName, String categoryName, Date startDate, Date dueDate, Date createTime, Date updateTime, String createUserName, String updateUserName, Boolean isPublic, String projectId, String projectParentTaskCode, String projectParentSubject, String parentId) {
             this.id = id;
             this.taskCode = taskCode;
             this.projectName = projectName;
@@ -167,6 +170,7 @@ public class TaskDTO {
             this.projectId = projectId;
             this.projectParentTaskCode = projectParentTaskCode;
             this.projectParentSubject = projectParentSubject;
+            this.parentId = parentId;
         }
     }
 

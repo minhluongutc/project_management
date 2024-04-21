@@ -33,58 +33,20 @@ public class Constants {
         }
     }
 
-    public enum CHANEG_REQ_STATUS {
-        SUGGEST_NOT_VIEW(1),
-        SUGGEST_VIEW(2),
-        APPROVE(3),
-        DENY(4);
+    public enum STATUS_ISSUE {
+        NEW(1, "New"),
+        CONFIRMED(2, "Confirmed"),
+        DEPLOY_WAITING(3, "Deploy waiting"),
+        RESOLVE(4, "Resolve"),
+        REOPEN(5, "Reopen"),
+        DONE(6, "Done"),
+        REJECT(7, "Reject");
         public final int value;
+        public final String name;
 
-        CHANEG_REQ_STATUS(int value) {
+        STATUS_ISSUE(int value, String name) {
             this.value = value;
-        }
-    }
-
-    public enum CHART_DAILY_WORK {
-        PROPORTION("proportion"),
-        WORKLOAD("workload");
-        public final String value;
-
-        CHART_DAILY_WORK(String value) {
-            this.value = value;
-        }
-    }
-
-    public enum FILE_TYPE {
-        EXCEL("excel"),
-        DOC("doc"),
-        PDF("pdf");
-
-        public final String value;
-
-        FILE_TYPE(String value) {
-            this.value = value;
-        }
-
-    }
-
-    public enum SURVEY_TYPE {
-        GRAVITY_MAGNETIC_SURVEY(22);
-
-        public final Integer value;
-
-        SURVEY_TYPE(Integer value) {
-            this.value = value;
-        }
-
-    }
-
-    public enum TEMPLATE_IMPORT {
-        GRAVITY_MAGNETIC_DAILY_TASK("GRAVITY_MAGNETIC_DAILY_TASK");
-        public final String value;
-
-        TEMPLATE_IMPORT(String value) {
-            this.value = value;
+            this.name = name;
         }
     }
 }

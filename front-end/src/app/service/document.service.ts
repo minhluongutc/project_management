@@ -20,4 +20,8 @@ export class DocumentService extends BaseService {
       params: {"objectId": objectId}
     });
   }
+
+  deleteAttachment(id: string) {
+    return this.delete(id);
+  }
 }

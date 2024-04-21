@@ -34,6 +34,12 @@ public class ProjectController {
         return ResponseUtils.getTreeResponseEntity(result);
     }
 
+    @GetMapping(value = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getProject(Authentication authentication, @PathVariable String id) {
+        Object result = projectService.getProjectById(id);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
     @PostMapping(value = "/projects", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> insertProject(Authentication authentication,
                                                 @RequestBody ProjectDTO.ProjectInsertDTO dto) {

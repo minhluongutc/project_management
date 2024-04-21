@@ -9,6 +9,7 @@ import {AccordionModule} from "primeng/accordion";
 import {PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
 import {DynamicDialogRef} from "primeng/dynamicdialog";
 import {TaskCreateComponent} from "../task-create/task-create.component";
+import {ProjectStoreService} from "../../projects/project-store.service";
 
 @Component({
   selector: 'app-detail-view',
@@ -20,11 +21,13 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
   cols!: Column[];
   taskSelected!: any;
   attachments: Attachment[] = [];
+  listChildrenTask: any[] = [];
 
   dynamicDialogRef: DynamicDialogRef | undefined;
   constructor(injector: Injector,
               private taskService: TaskService,
-              private fileService: FileService
+              private fileService: FileService,
+              private projectStoreService: ProjectStoreService
   ) {
     super(injector);
   }
@@ -32,18 +35,28 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params: ParamMap) => {
       console.log('params:', params);
+      console.log(params.get('taskCode'))
       this.getTasks(params);
     })
   }
 
   getTasks(queryParams: any) {
-    this.taskService.getTasks(queryParams.params).subscribe({
+    console.log(queryParams)
+    let data = queryParams.params;
+    const projectId = this.route.snapshot?.parent?.parent?.paramMap.get('id') || null;
+    if (projectId != null) {
+      data = { ...data, projectId: projectId }
+    }
+    this.taskService.getTasks(data).subscribe({
       next: (res: any) => {
         console.log('res:', res);
         this.listData = res?.data || [];
         this.totalRecords = this.listData.length || 0;
-
-        // this.exportColumns = this.cols.map((col) => ({ title: col.header, dataKey: col.field }));
+        if (queryParams.get('taskCode')) {
+          this.taskSelected = this.listData.find((task: any) => task.taskCode == queryParams.get('taskCode'));
+          console.log(this.taskSelected)
+          this.viewDetail(this.taskSelected);
+        }
       }, error: (err: any) => {
         this.createErrorToast("Lỗi", err.message);
       }
@@ -52,20 +65,26 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
 
   viewDetail(item: any) {
     console.log(item)
+    const currentRoute = this.router.url.split('?')[0];
+    console.log(currentRoute)
+    this.router.navigate([currentRoute], { queryParams: { taskCode: item.taskCode } });
+
     this.taskSelected = item;
     if (item.attachments.length > 0) {
       this.attachments = item.attachments
     } else {
       this.attachments = [];
     }
-    this.taskSelected.categoryName == undefined ? this.taskSelected.categoryName = 'N/A' : this.taskSelected.categoryName;
-    this.taskSelected.createUserName == undefined ? this.taskSelected.createUserName = 'N/A' : this.taskSelected.createUserName;
-    this.taskSelected.assignUserName == undefined ? this.taskSelected.assignUserName = 'N/A' : this.taskSelected.assignUserName;
-    this.taskSelected.startDate == undefined ? this.taskSelected.startDate = 'N/A' : this.taskSelected.startDate;
-    this.taskSelected.dueDate == undefined ? this.taskSelected.dueDate = 'N/A' : this.taskSelected.dueDate;
-    this.taskSelected.typeName == undefined ? this.taskSelected.typeName = 'N/A' : this.taskSelected.typeName;
-    this.taskSelected.reviewUserName == undefined ? this.taskSelected.reviewUserName = 'N/A' : this.taskSelected.reviewUserName;
-    this.taskSelected.projectParentSubject == undefined ? this.taskSelected.projectParentSubject = 'N/A' : this.taskSelected.projectParentSubject;
+    this.taskSelected.categoryName = this.taskSelected.categoryName || 'N/A';
+    this.taskSelected.createUserName = this.taskSelected.createUserName || 'N/A';
+    this.taskSelected.assignUserName = this.taskSelected.assignUserName || 'N/A';
+    this.taskSelected.startDate = this.taskSelected.startDate || 'N/A';
+    this.taskSelected.dueDate = this.taskSelected.dueDate || 'N/A';
+    this.taskSelected.typeName = this.taskSelected.typeName || 'N/A';
+    this.taskSelected.reviewUserName = this.taskSelected.reviewUserName || 'N/A';
+    this.taskSelected.projectParentSubject = this.taskSelected.projectParentSubject || 'N/A';
+
+    this.getTaskChildren(item.id);
   }
 
   downloadAttachment(attachment: Attachment) {
@@ -87,6 +106,22 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
     });
   }
 
+  getTaskChildren(parentId: string) {
+    this.taskService.getTaskChildren(parentId).subscribe({
+      next: (res: any) => {
+        console.log(res)
+        this.listChildrenTask = res.data;
+      }, error: (err: any) => {
+        this.createErrorToast('Lỗi', err.message);
+      }
+    })
+  }
+
   protected readonly PRIORIES = PRIORIES;
   protected readonly SEVERITIES = SEVERITIES;
+
+  filterTaskSelectedById(id: string) {
+    this.taskSelected = this.listData.find((task: any) => task.id === id);
+    this.getTaskChildren(id);
+  }
 }

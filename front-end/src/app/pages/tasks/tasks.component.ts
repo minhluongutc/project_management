@@ -10,7 +10,7 @@ import {BaseComponent} from "../../share/ui/base-component/base.component";
 export class TasksComponent extends BaseComponent {
   isViewList: boolean = false;
   isViewTree: boolean = false;
-  routerLink: string = './list-view'
+  routerLink: string = 'list-view'
 
   constructor(injector: Injector) {
     console.log('init')
@@ -22,21 +22,17 @@ export class TasksComponent extends BaseComponent {
   changeStage(value: boolean) {
     this.isViewTree = false;
     if (value) {
-      this.routerLink = './list-view'
-      this.router.navigate(['/tasks/list-view'])
+      this.router.navigate(['./list-view'], { relativeTo: this.route })
     } else {
-      this.routerLink = './detail-view'
-      this.router.navigate(['/tasks/detail-view'])
+      this.router.navigate(['./detail-view'], { relativeTo: this.route })
     }
   }
 
   changeStageViewList(value: any) {
     if (value) {
-      this.routerLink = './list-view-tree'
-      this.router.navigate(['/tasks/list-view-tree'])
+      this.router.navigate(['./list-view-tree'], { relativeTo: this.route })
     } else {
-      this.routerLink = './list-view'
-      this.router.navigate(['/tasks/list-view'])
+      this.router.navigate(['./list-view'], { relativeTo: this.route })
     }
   }
 }

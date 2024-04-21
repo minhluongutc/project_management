@@ -32,7 +32,13 @@ export class ListViewComponent extends BaseComponent implements OnInit {
   }
 
   getTasks(queryParams: any) {
-    this.taskService.getTasks(queryParams.params).subscribe({
+    console.log(queryParams)
+    let data = queryParams.params;
+    const projectId = this.route.snapshot?.parent?.parent?.paramMap.get('id') || null;
+    if (projectId != null) {
+      data = { ...data, projectId: projectId }
+    }
+    this.taskService.getTasks(data).subscribe({
       next: (res: any) => {
         console.log('res:', res);
         this.listData = res?.data || [];

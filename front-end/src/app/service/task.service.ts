@@ -40,4 +40,8 @@ export class TaskService extends BaseService {
   updateTask(id: string, data: any) {
     return this.putRequest(`${this.SERVICE_URL}/${id}`, data);
   }
+
+  getTaskChildren(id: string) {
+    return this.getRequest(`${this.SERVICE_URL}/${id}/children`);
+  }
 }

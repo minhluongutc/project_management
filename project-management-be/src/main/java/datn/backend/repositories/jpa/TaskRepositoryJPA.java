@@ -32,8 +32,6 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             " and (:#{#dto.date} is null or date(:#{#dto.date}) >= date(t.startDate) and date(:#{#dto.date}) <= date(t.dueDate))")
     Page<TaskEntity> getTaskEntityByProjectId(@Param("dto") TaskDTO.TaskQueryDTO dto, Pageable pageable);
 
-    List<TaskEntity> getTaskEntitiesByParentIdAndEnabled(String parentId, Integer enabled);
-
     @Query("select new datn.backend.dto.TaskDTO$TaskResponseDTO(t.id, t.taskCode, p.name, t.subject, t.description, t2.name, s.name, t.priority, t.severity, t3.subject, u.username, u2.username, c.name, t.startDate, t.dueDate, t.createTime, t.updateTime, u3.username, u4.username, t.isPublic, t.projectId) " +
             " from TaskEntity t" +
             " left join ProjectEntity p on t.projectId = p.id" +
@@ -59,8 +57,9 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             " and (t.enabled = :enabled)")
     List<TaskDTO.TaskResponseDTO> getTasksLevel(TaskDTO.TaskQueryDTO dto, String parentId, String userId, Integer enabled);
 
+    List<TaskEntity> getTaskEntitiesByParentIdAndEnabled(String parentId, Integer enabled);
 
-    @Query("select new datn.backend.dto.TaskDTO$TaskResponseDTO(t.id, t.taskCode, p.name, t.subject, t.description, t2.name, s.name, t.priority, t.severity, t3.subject, u.username, u2.username, c.name, t.startDate, t.dueDate, t.createTime, t.updateTime, u3.username, u4.username, t.isPublic, t.projectId, t3.taskCode, t3.subject) " +
+    @Query("select new datn.backend.dto.TaskDTO$TaskResponseDTO(t.id, t.taskCode, p.name, t.subject, t.description, t2.name, s.name, t.priority, t.severity, t3.subject, u.username, u2.username, c.name, t.startDate, t.dueDate, t.createTime, t.updateTime, u3.username, u4.username, t.isPublic, t.projectId, t3.taskCode, t3.subject, t.parentId) " +
             " from TaskEntity t" +
             " left join ProjectEntity p on t.projectId = p.id" +
             " join ProjectUserEntity p2 on p.id = p2.projectId" +
@@ -93,4 +92,7 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
     Optional<TaskDTO.TaskDetailResponseDTO> getTaskDetail(String id);
 
     List<TaskEntity> getTaskEntitiesByProjectId(String projectId);
+
+    @Query("select t from TaskEntity t where t.parentId = :parentId")
+    List<TaskEntity> getChildrenTaskByParentId(String parentId);
 }

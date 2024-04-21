@@ -24,7 +24,6 @@
                   placeholder="Chọn"
                   [options]="issueTypes"
                   [showClear]="true"
-                  [disabled]="projectIdSelected == undefined"
                   (onChange)="updateDropdownValue($event, 'typeId')"
       />
     </div>
@@ -82,7 +81,6 @@
                   formControlName="assignUserId"
                   [options]="assignees"
                   [showClear]="true"
-                  [disabled]="projectIdSelected === undefined"
                   (onChange)="updateDropdownValue($event, 'assignUserId')"
       />
     </div>
@@ -94,7 +92,6 @@
                   formControlName="reviewUserId"
                   [options]="reviewers"
                   [showClear]="true"
-                  [disabled]="projectIdSelected === undefined"
                   (onChange)="updateDropdownValue($event, 'reviewUserId')"
       />
     </div>
@@ -106,7 +103,6 @@
                   formControlName="statusIssueId"
                   [showClear]="true"
                   [options]="statuses"
-                  [disabled]="projectIdSelected === undefined"
                   (onChange)="updateDropdownValue($event, 'statusIssueId')"
       />
     </div>
@@ -118,7 +114,6 @@
                   formControlName="categoryId"
                   [options]="categories"
                   [showClear]="true"
-                  [disabled]="projectIdSelected === undefined"
                   (onChange)="updateDropdownValue($event, 'categoryId')"
       />
     </div>
@@ -130,7 +125,6 @@
                     formControlName="parentId"
                     ariaLabelledBy="name"
                     placeholder="Chọn"
-                    [disabled]="projectIdSelected === undefined"
                     [options]="listTask"
       />
     </div>
@@ -146,6 +140,7 @@
         <p-fileUpload [name]="'fileList'" url="https://www.primefaces.org/cdn/api/upload.php"
                       [multiple]="true"
                       [showUploadButton]="false"
+                      [showCancelButton]="false"
                       [chooseLabel]="'chọn file'"
                       [cancelLabel]="'hủy bỏ'"
                       [accept]="'image/*, .pdf, .xlsx, .xls, .doc, .docx, .pdf, .ppt, .pptx, .txt, .zip, .rar'"
@@ -360,7 +355,7 @@
                   -
                   <p>{{ file.size | fileSize }}</p>
                 </div>
-                <i class="pi-trash pi cursor-pointer" style="font-size: 1.5rem" (click)="onRemoveFile(file)"></i>
+                <i class="pi-trash pi cursor-pointer" style="font-size: 1.5rem" (click)="confirmDeleteFile(file, $event)"></i>
               </div>
             }
           </ng-template>
@@ -390,3 +385,4 @@
         </div>
     </div>
 </div>
+<p-confirmDialog></p-confirmDialog>

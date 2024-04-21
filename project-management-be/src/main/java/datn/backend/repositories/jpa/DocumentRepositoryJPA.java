@@ -4,6 +4,7 @@ import datn.backend.dto.AttachmentDTO;
 import datn.backend.dto.AttachmentDTO.AttachmentResponseDTO;
 import datn.backend.entities.DocumentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -26,4 +27,5 @@ public interface DocumentRepositoryJPA extends JpaRepository<DocumentEntity, Str
 
     @Query("select d.filePath from DocumentEntity d where d.id = :id and d.enabled = 1")
     Optional<String> getFilePathById(String id);
+
 }

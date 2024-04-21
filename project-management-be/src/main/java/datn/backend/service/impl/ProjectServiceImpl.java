@@ -4,9 +4,12 @@ import datn.backend.dto.ProjectDTO;
 import datn.backend.dto.TreeDTO;
 import datn.backend.entities.ProjectEntity;
 import datn.backend.entities.ProjectUserEntity;
+import datn.backend.entities.StatusIssueEntity;
 import datn.backend.repositories.jpa.ProjectRepositoryJPA;
 import datn.backend.repositories.jpa.ProjectUserRepositoryJPA;
+import datn.backend.repositories.jpa.StatusIssueRepositoryJPA;
 import datn.backend.service.ProjectService;
+import datn.backend.service.jpa.StatusIssueJPA;
 import datn.backend.utils.AuditUtils;
 import datn.backend.utils.Constants;
 import lombok.AccessLevel;
@@ -27,6 +30,7 @@ import java.util.Random;
 public class ProjectServiceImpl implements ProjectService {
     final ProjectRepositoryJPA projectRepositoryJPA;
     final ProjectUserRepositoryJPA projectUserRepositoryJPA;
+    final StatusIssueRepositoryJPA statusIssueRepositoryJPA;
 
     final ModelMapper modelMapper;
 
@@ -72,7 +76,13 @@ public class ProjectServiceImpl implements ProjectService {
         projectUserEntity.setCreateTime(AuditUtils.createTime());
         projectUserEntity.setCreateUserId(AuditUtils.createUserId(authentication));
         projectUserRepositoryJPA.save(projectUserEntity);
+        this.cloneBaseDataProject(projectEntity.getId());
         return "ok";
+    }
+
+    @Override
+    public Object getProjectById(String id) {
+        return projectRepositoryJPA.getProjectById(id).orElseThrow(() -> new RuntimeException("Project not found"));
     }
 
     private String generateProjectCodeUniqueEachCompany(String companyId) {
@@ -90,5 +100,26 @@ public class ProjectServiceImpl implements ProjectService {
             generateProjectCodeUniqueEachCompany(companyId);
         }
         return stringBuilder.toString();
+    }
+
+    private void cloneBaseDataProject(String projectId) {
+        // create status issue
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.NEW.name, Constants.STATUS_ISSUE.NEW.value);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.CONFIRMED.name, Constants.STATUS_ISSUE.CONFIRMED.value);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.DEPLOY_WAITING.name, Constants.STATUS_ISSUE.DEPLOY_WAITING.value);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.RESOLVE.name, Constants.STATUS_ISSUE.RESOLVE.value);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.REOPEN.name, Constants.STATUS_ISSUE.REOPEN.value);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.DONE.name, Constants.STATUS_ISSUE.DONE.value);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.REJECT.name, Constants.STATUS_ISSUE.REJECT.value);
+    }
+
+    private void createStatusIssue(String projectId, String name, Integer code) {
+        StatusIssueEntity statusIssueEntity = new StatusIssueEntity();
+        statusIssueEntity.setId(AuditUtils.generateUUID());
+        statusIssueEntity.setProjectId(projectId);
+        statusIssueEntity.setName(name);
+        statusIssueEntity.setCode(code);
+        statusIssueEntity.setEnabled(Constants.STATUS.ACTIVE.value);
+        statusIssueRepositoryJPA.save(statusIssueEntity);
     }
 }
