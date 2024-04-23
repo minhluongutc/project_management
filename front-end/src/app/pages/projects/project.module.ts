@@ -10,15 +10,21 @@ import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
 import {TreeSelectModule} from "primeng/treeselect";
 import {ProjectRoutingModule} from "./project.routing";
-import {NgForOf, NgIf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {JiraInputTextComponent} from "../../share/ui/jira-input-text/jira-input-text.component";
 import {ToastModule} from "primeng/toast";
 import { KanbanBoardComponent } from './project-detail/kanban-board/kanban-board.component';
 import { BacklogComponent } from './project-detail/backlog/backlog.component';
-import { SettingComponent } from './project-detail/setting/setting.component';
-import { PermissionComponent } from './project-detail/permission/permission.component';
+import { UsersComponent } from './project-detail/users/users.component';
 import { StatisticsComponent } from './project-detail/statistics/statistics.component';
+import { CategoryComponent } from './project-detail/setting/category/category.component';
+import { IssueTypeComponent } from './project-detail/setting/project-type/issue-type.component';
+import {TableModule} from "primeng/table";
+import {AutofocusDirective} from "../../share/directives/auto-focus.directive";
+import {RippleModule} from "primeng/ripple";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import { StatusIssueComponent } from './project-detail/setting/status-issue/status-issue.component';
 
 @NgModule({
   declarations: [
@@ -27,26 +33,33 @@ import { StatisticsComponent } from './project-detail/statistics/statistics.comp
     ProjectDetailComponent,
     KanbanBoardComponent,
     BacklogComponent,
-    SettingComponent,
-    PermissionComponent,
+    UsersComponent,
     StatisticsComponent,
+    CategoryComponent,
+    IssueTypeComponent,
+    StatusIssueComponent,
   ],
-    imports: [
-        IconFieldModule,
-        InputIconModule,
-        InputTextModule,
-        TreeTableModule,
-        ButtonModule,
-        DropdownModule,
-        TreeSelectModule,
-        ProjectRoutingModule,
-        NgForOf,
-        NgIf,
-        ReactiveFormsModule,
-        JiraInputTextComponent,
-        ToastModule,
-        FormsModule
-    ],
+  imports: [
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
+    TreeTableModule,
+    ButtonModule,
+    DropdownModule,
+    TreeSelectModule,
+    ProjectRoutingModule,
+    NgForOf,
+    NgIf,
+    ReactiveFormsModule,
+    JiraInputTextComponent,
+    ToastModule,
+    FormsModule,
+    TableModule,
+    DatePipe,
+    AutofocusDirective,
+    RippleModule,
+    ConfirmDialogModule
+  ],
 })
 export class ProjectModule {
 }

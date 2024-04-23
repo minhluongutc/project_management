@@ -3,7 +3,8 @@
     <div class="col-span-3">
       <p-table [value]="listData"
                [paginator]="true"
-               [rows]="rows" [style]="{'border-right': '2px solid var(--primary-400)'}">
+               [rows]="rows"
+               [style]="{'border-right': '2px solid var(--primary-400)'}">
         <ng-template pTemplate="header" let-columns>
           <tr class="text-sm">
             <th pSortableColumn="subject">Tiêu đề<p-sortIcon field="subject"></p-sortIcon></th>
@@ -20,7 +21,13 @@
     </div>
     @if (taskSelected) {
       <div class="col-span-5">
-        <p class="text-base pb-2"><strong>{{taskSelected?.projectName}}</strong> / {{taskSelected?.taskCode}}</p>
+        <p class="text-base pb-2">
+          <strong class="hover:underline cursor-pointer"
+                  routerLink="/projects/{{taskSelected.projectId}}">
+            {{taskSelected?.projectName}}
+          </strong>
+          / {{taskSelected?.taskCode}}
+        </p>
         <h3 class="text-2xl pb-3">{{taskSelected.subject}}</h3>
         <div class="flex gap-2 pb-3">
           <p-button label="Chỉnh sửa"

@@ -20,4 +20,16 @@ export class TypeService extends BaseService {
       params: this.buildParams(queryParams)
     });
   }
+
+  createType(data: any) {
+    return this.postRequest(this.SERVICE_URL, data);
+  }
+
+  updateType(id: string, data: any) {
+    return this.putRequest(`${this.SERVICE_URL}/${id}`, data);
+  }
+
+  deleteType(id: string) {
+    return this.deleteRequest(`${this.SERVICE_URL}/${id}`);
+  }
 }

@@ -28,4 +28,7 @@ public interface ProjectRepositoryJPA extends JpaRepository<ProjectEntity, Strin
             "where p.id = :id and p.enabled = 1")
     Optional<ProjectEntity> getProjectById(String id);
 
+    Optional<ProjectEntity> findByIdAndEnabled(String id, Integer enabled);
+
+
 }

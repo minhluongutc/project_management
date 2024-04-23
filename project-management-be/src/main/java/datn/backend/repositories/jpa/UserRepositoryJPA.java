@@ -1,5 +1,6 @@
 package datn.backend.repositories.jpa;
 
+import datn.backend.entities.ProjectUserEntity;
 import datn.backend.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,11 +18,12 @@ public interface UserRepositoryJPA extends JpaRepository<UserEntity, String> {
     @Query("SELECT u.id FROM UserEntity u WHERE u.username = ?1 and u.enabled=1")
     String getIdByUsername(String username);
 
-    UserEntity findByIdAndEnabled(String id, Integer enabled);
+    Optional<UserEntity> findByIdAndEnabled(String id, Integer enabled);
 
     List<UserEntity> getUserEntitiesByEnabled(Integer enabled);
 
     @Query("SELECT u.companyId FROM UserEntity u WHERE u.username = ?1 and u.enabled=1")
     String getCompanyIdByUsername(String username);
 //    String getCompanyIdByUsername(String name);
+
 }

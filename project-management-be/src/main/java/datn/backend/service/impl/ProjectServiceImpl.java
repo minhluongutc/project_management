@@ -9,6 +9,7 @@ import datn.backend.repositories.jpa.ProjectRepositoryJPA;
 import datn.backend.repositories.jpa.ProjectUserRepositoryJPA;
 import datn.backend.repositories.jpa.StatusIssueRepositoryJPA;
 import datn.backend.service.ProjectService;
+import datn.backend.service.ProjectUserService;
 import datn.backend.service.jpa.StatusIssueJPA;
 import datn.backend.utils.AuditUtils;
 import datn.backend.utils.Constants;
@@ -31,6 +32,8 @@ public class ProjectServiceImpl implements ProjectService {
     final ProjectRepositoryJPA projectRepositoryJPA;
     final ProjectUserRepositoryJPA projectUserRepositoryJPA;
     final StatusIssueRepositoryJPA statusIssueRepositoryJPA;
+
+    final ProjectUserService projectUserService;
 
     final ModelMapper modelMapper;
 
@@ -70,14 +73,16 @@ public class ProjectServiceImpl implements ProjectService {
         projectEntity.setEnabled(Constants.STATUS.ACTIVE.value);
         projectRepositoryJPA.save(projectEntity);
 
-        ProjectUserEntity projectUserEntity = new ProjectUserEntity();
-        projectUserEntity.setProjectId(projectEntity.getId());
-        projectUserEntity.setUserId(AuditUtils.createUserId(authentication));
-        projectUserEntity.setCreateTime(AuditUtils.createTime());
-        projectUserEntity.setCreateUserId(AuditUtils.createUserId(authentication));
-        projectUserRepositoryJPA.save(projectUserEntity);
-        this.cloneBaseDataProject(projectEntity.getId());
-        return "ok";
+        // add user in parent project to current project
+        if (dto.getParentId() != null) {
+            List<ProjectUserEntity> projectUserEntities = projectUserRepositoryJPA.getProjectUserEntitiesByProjectId(dto.getParentId());
+            for (ProjectUserEntity projectUser : projectUserEntities) {
+                projectUserService.addUserToProject(authentication, projectUser.getUserId(), projectEntity.getId());
+            }
+        } else {
+            projectUserService.addUserToProject(authentication, AuditUtils.createUserId(authentication), projectEntity.getId());
+        }
+        return "Create project success!";
     }
 
     @Override
@@ -122,4 +127,5 @@ public class ProjectServiceImpl implements ProjectService {
         statusIssueEntity.setEnabled(Constants.STATUS.ACTIVE.value);
         statusIssueRepositoryJPA.save(statusIssueEntity);
     }
+
 }

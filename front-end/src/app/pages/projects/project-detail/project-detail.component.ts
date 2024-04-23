@@ -34,36 +34,33 @@ export class ProjectDetailComponent extends BaseComponent implements OnInit{
       sub_menu: []
     },
     {
-      link_name: "Kiểm soát quền",
-      link: "./permissions",
+      link_name: "Thành viên",
+      link: "./users",
       icon: "pi pi-user",
       sub_menu: []
     },
     {
       link_name: "Thống kê",
-      link: "statistics",
+      link: "./statistics",
       icon: "pi pi-chart-line",
       sub_menu: []
     },
     {
-      link_name: "Project setting",
-      link: "setting",
-      icon: "pi pi-cog",
-      sub_menu: []
-    },{
-      link_name: "demo dropdown",
+      link_name: "Cấu hình dự án",
       link: null,
-      icon: "pi pi-check",
+      icon: "pi pi-cog",
       sub_menu: [
         {
-          link_name: "HTML & CSS",
-          link: "/html-n-css",
-        }, {
-          link_name: "JavaScript",
-          link: "/javascript",
-        }, {
-          link_name: "PHP & MySQL",
-          link: "/php-n-mysql",
+          link_name: "Danh mục",
+          link: "./category",
+        },
+        {
+          link_name: "Loại công việc",
+          link: "./issue-type",
+        },
+        {
+          link_name: "Trạng thái công việc",
+          link: "./status-issue",
         }
       ]
     }
@@ -87,7 +84,7 @@ export class ProjectDetailComponent extends BaseComponent implements OnInit{
         console.log('res:', res);
         this.project = res.data;
       }, error: (err: any) => {
-        this.createErrorToast("Lỗi", err.message);
+        this.createErrorToast("Lỗi", "Không tìm thấy dự án");
       }
     })
   }

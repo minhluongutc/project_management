@@ -13,8 +13,8 @@ import java.util.List;
 public class StatusIssueJPA {
     final StatusIssueRepositoryJPA statusIssueRepositoryJPA;
 
-    public List<StatusIssueEntity> getStatusIssueEntitiesByProjectId(String projectId) {
-        return statusIssueRepositoryJPA.getStatusIssueEntitiesByProjectIdAndEnabledOrderByCodeAsc(projectId, Constants.STATUS.ACTIVE.value);
+    public List<StatusIssueEntity> getStatusIssue(String projectId, String keySearch) {
+        return statusIssueRepositoryJPA.getStatusIssue(projectId, keySearch);
     }
 
 }

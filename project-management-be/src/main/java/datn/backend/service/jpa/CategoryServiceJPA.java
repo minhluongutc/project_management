@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class CategoryServiceJPA {
     final CategoryRepositoryJPA categoryRepositoryJPA;
 
-    public Object getCategoryEntitiesByProjectId(String projectId) {
-        return categoryRepositoryJPA.getCategoryEntitiesByProjectIdAndEnabled(projectId, Constants.STATUS.ACTIVE.value);
+    public Object getCategoryEntitiesByProjectId(String projectId, String keySearch) {
+        return categoryRepositoryJPA.getCategories(projectId, keySearch);
     }
 }

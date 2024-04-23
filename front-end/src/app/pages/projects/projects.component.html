@@ -32,7 +32,7 @@
       pTemplate="body"
       let-rowNode
       let-rowData="rowData">
-      <tr [ttRow]="rowNode">
+      <tr [ttRow]="rowNode" style="height: 35px">
         <td>
           <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
           <a (click)="onDetailProject(rowData.id)" class="text-blue-700 cursor-pointer">

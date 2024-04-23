@@ -9,9 +9,11 @@ import {TasksComponent} from "../tasks/tasks.component";
 import {ListViewTreeComponent} from "../tasks/list-view-tree/list-view-tree.component";
 import {ListViewComponent} from "../tasks/list-view/list-view.component";
 import {BacklogComponent} from "./project-detail/backlog/backlog.component";
-import {PermissionComponent} from "./project-detail/permission/permission.component";
+import {UsersComponent} from "./project-detail/users/users.component";
 import {StatisticsComponent} from "./project-detail/statistics/statistics.component";
-import {SettingComponent} from "./project-detail/setting/setting.component";
+import {CategoryComponent} from "./project-detail/setting/category/category.component";
+import {IssueTypeComponent} from "./project-detail/setting/project-type/issue-type.component";
+import {StatusIssueComponent} from "./project-detail/setting/status-issue/status-issue.component";
 
 const routes: Routes = [
   {
@@ -27,6 +29,11 @@ const routes: Routes = [
     component: ProjectDetailComponent,
     children: [
       {
+        path: '',
+        redirectTo: 'kanban-board',
+        pathMatch: 'full'
+      },
+      {
         path: 'kanban-board',
         component: KanbanBoardComponent
       },
@@ -35,16 +42,24 @@ const routes: Routes = [
         component: BacklogComponent
       },
       {
-        path: 'permissions',
-        component: PermissionComponent
+        path: 'users',
+        component: UsersComponent
       },
       {
         path: 'statistics',
         component: StatisticsComponent
       },
       {
-        path: 'setting',
-        component: SettingComponent
+        path: 'category',
+        component: CategoryComponent
+      },
+      {
+        path: 'issue-type',
+        component: IssueTypeComponent
+      },
+      {
+        path: 'status-issue',
+        component: StatusIssueComponent
       },
       {
         path: 'tasks',
@@ -53,7 +68,8 @@ const routes: Routes = [
           {
             path: '',
             redirectTo: 'detail-view',
-            pathMatch: 'full'},
+            pathMatch: 'full'
+          },
           {
             path: 'detail-view',
             component: DetailViewComponent

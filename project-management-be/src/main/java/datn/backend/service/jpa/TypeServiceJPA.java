@@ -13,7 +13,7 @@ import java.util.List;
 public class TypeServiceJPA {
     final TypeRepositoryJPA typeRepositoryJPA;
 
-    public List<TypeEntity> getTypeEntitiesByProjectIdAndEnabled(String projectId) {
-        return typeRepositoryJPA.getTypeEntitiesByProjectIdAndEnabled(projectId, Constants.STATUS.ACTIVE.value);
+    public List<TypeEntity> getTypes(String projectId, String keySearch) {
+        return typeRepositoryJPA.getTypes(projectId, keySearch);
     }
 }

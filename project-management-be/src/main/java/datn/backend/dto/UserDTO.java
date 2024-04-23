@@ -15,12 +15,13 @@ public class UserDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class UserResponseDTO {
-        public String id;
-        public String username;
-        public String email;
-        public String firstName;
-        public String lastName;
-        public String avatarId;
-        public String role;
+        String userId;
+        String username;
+        String email;
+        String firstName;
+        String lastName;
+        String avatarId;
+        String role;
+        Integer professionalLevel;
     }
 }

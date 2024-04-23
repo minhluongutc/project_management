@@ -20,6 +20,9 @@ import java.util.Date;
 public class ProjectUserEntity implements Serializable {
 
     @Id
+    @Column(name = "ID")
+    String id;
+
     @Column(name = "PROJECT_ID")
     String projectId;
 

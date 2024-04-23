@@ -20,4 +20,12 @@ export class ProjectUserService extends BaseService {
       params: this.buildParams(queryParams)
     });
   }
+
+  changeProfessionalLevelProject(userId: string, projectId: string, professionalLevel: number) {
+    const data = {
+      projectId: projectId,
+      professionalLevel: professionalLevel
+    }
+    return this.putRequest(`${this.SERVICE_URL}/${userId}`, data);
+  }
 }

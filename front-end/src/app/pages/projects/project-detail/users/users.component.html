@@ -1,0 +1,85 @@
+<div class="pl-6 pr-6">
+  <h3 class="font-bold text-2xl pt-4 pb-4">Quản lý thành viên</h3>
+  <div class="grid grid-cols-4 w-full pb-4 pt-2">
+    <p-iconField iconPosition="right">
+      <p-inputIcon styleClass="pi pi-search cursor-pointer" (click)="getUsers()"/>
+      <input type="text"
+             class="w-full"
+             pInputText placeholder="Nhập tên, email"
+             AutofocusCustom
+             [(ngModel)]="keySearch"
+             (keydown.enter)="getUsers()"
+      />
+    </p-iconField>
+  </div>
+  <p-table [value]="listData"
+           [paginator]="true"
+           [rows]="rows"
+           editMode="row"
+           dataKey="id"
+           styleClass="p-datatable-striped">
+    <ng-template pTemplate="header" let-columns>
+      <tr class="text-sm">
+        <th pSortableColumn="lastName">Tên thành viên
+          <p-sortIcon field="lastName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="username">Username
+          <p-sortIcon field="username"></p-sortIcon>
+        </th>
+        <th pSortableColumn="email">email
+          <p-sortIcon field="email"></p-sortIcon>
+        </th>
+        <th pSortableColumn="professionalLevel">Trình độ
+          <p-sortIcon field="professionalLevel"></p-sortIcon>
+        </th>
+        <th class="text-center">Thao tác</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+      <tr class="h-[48px] hover:bg-gray-300 cursor-pointer" [pEditableRow]="item">
+        <td class="text-sm">
+          {{item.firstName}} {{item.lastName}}
+        </td>
+        <td class="text-sm">
+          {{item.username}}
+        </td>
+        <td class="text-sm">
+          {{item.email}}
+        </td>
+        <td class="text-sm">
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-dropdown [options]="PROFESSIONAL_LEVELS"
+                          optionLabel="name"
+                          optionValue="id"
+                          appendTo="body"
+                          [(ngModel)]="item.professionalLevel"
+                          [style]="{'width':'100%'}">
+              </p-dropdown>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ findProfessionalLevelById(item.professionalLevel) }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <div class="flex justify-center items-center gap-2">
+            <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-filter"
+                    class="p-button-secondary p-button-text"></button>
+            <button #addButton *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                    (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                    (click)="onRowEditSave(item)"
+                    class="p-button-rounded p-button-text p-button-success mr-2"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                    (click)="onRowEditCancel(item)"
+                    class="p-button-rounded p-button-text p-button-danger"></button>
+            <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-trash"
+                    (click)="confirmDelete(item, $event)"
+                    class="p-button-rounded p-button-text p-button-danger"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
