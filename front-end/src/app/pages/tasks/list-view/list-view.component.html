@@ -1,1 +1,77 @@
-<p>list-view works!</p>
+<div class="pl-4 pr-4 pt-4">
+  <div class="grid grid-cols-4 gap-4 pb-7">
+    <p-iconField iconPosition="right">
+      <p-inputIcon styleClass="pi pi-search"/>
+      <input type="text" pInputText placeholder="Tìm kiếm"/>
+    </p-iconField>
+  </div>
+  <p-table [value]="listData"
+           [paginator]="true"
+           [rows]="rows"
+           [first]="first"
+           [showCurrentPageReport]="true"
+           [tableStyle]="{ 'min-width': '50rem' }"
+           [styleClass]="'p-datatable-sm'"
+           currentPageReportTemplate="Hiển thị {first} - {last} trên {totalRecords} bản ghi."
+           [rowsPerPageOptions]="[10, 25, 50]"
+           [exportHeader]="'customExportHeader'"
+           #dt
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <button type="button" pButton pRipple icon="pi pi-file" (click)="dt.exportCSV()" class="mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
+        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+        <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom"></button>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr class="text-sm">
+        <th>taskCode</th>
+        <th pSortableColumn="projectName">Dự án<p-sortIcon field="projectName"></p-sortIcon></th>
+        <th pSortableColumn="subject">Tiêu đề<p-sortIcon field="subject"></p-sortIcon></th>
+        <th pSortableColumn="statusIssueName">Trạng thái<p-sortIcon field="statusIssueName"></p-sortIcon></th>
+        <th pSortableColumn="priority">Độ ưu tiên<p-sortIcon field="priority"></p-sortIcon></th>
+        <th pSortableColumn="severity">Độ nghiêm trọng<p-sortIcon field="severity"></p-sortIcon></th>
+        <th pSortableColumn="assignUserName">Người được giao<p-sortIcon field="assignUserName"></p-sortIcon></th>
+        <th pSortableColumn="reviewUserName">Người giám sát<p-sortIcon field="reviewUserName"></p-sortIcon></th>
+        <th pSortableColumn="categoryName">Danh mục<p-sortIcon field="categoryName"></p-sortIcon></th>
+        <th pSortableColumn="startDate">Ngày bắt đầu<p-sortIcon field="startDate"></p-sortIcon></th>
+        <th pSortableColumn="dueDate">Ngày kết thúc<p-sortIcon field="dueDate"></p-sortIcon></th>
+        <th>Thao tác</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>{{item.taskCode}}</td>
+        <td>{{item.projectName}}</td>
+        <td>{{item.subject}}</td>
+        <td>{{item.statusIssueName}}</td>
+        <td>
+          <p-tag [style]="{ 'background': getColorTag(item.priority)}"
+                 [value]="convertValueById(item.priority, 'name', PRIORIES)"
+                 [rounded]="true"/>
+        </td>
+        <td>
+          <p-tag [style]="{ 'background': getColorTag(item.severity)}"
+                 [value]="convertValueById(item.severity, 'name', PRIORIES)"
+                 [rounded]="true"/>
+        </td>
+        <td>{{item.assignUserName}}</td>
+        <td>{{item.reviewUserName}}</td>
+        <td>{{item.categoryName}}</td>
+        <td>{{item.startDate | date: 'dd/MM/yyyy'}}</td>
+        <td>{{item.dueDate | date: 'dd/MM/yyyy'}}</td>
+        <td>
+          <p-button icon="pi pi-pencil" [rounded]="true" severity="secondary" [style]="{ 'margin-right': '.5em' }"/>
+          <p-button icon="pi pi-trash" [rounded]="true" severity="secondary"/>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="paginatorleft">
+      <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+    </ng-template>
+    <ng-template pTemplate="paginatorright">
+      <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+    </ng-template>
+  </p-table>
+</div>

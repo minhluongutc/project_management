@@ -1,1 +1,39 @@
-<p>project-detail works!</p>
+<div class="sidebar" [class.sidebar-close]="!openSidebar">
+  <div class="logo-details">
+    <div class="logo">{{ project.name }}</div>
+    <div class="hamburger-menu">
+      <input type="checkbox" id="checkbox-hamburger-menu" [(ngModel)]="openSidebar"/>
+      <label class="label-hamburger-menu" for="checkbox-hamburger-menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </label>
+    </div>
+  </div>
+  <ul class="nav-links" id="nav-links">
+    <li *ngFor="let item of menuSidebar" #itemEl routerLinkActive="active">
+      <div *ngIf="item.sub_menu.length == 0" class="dropdown-title">
+        <a [routerLink]="[item.link]">
+          <i [class]="item.icon"></i>
+          <span class="link_name">{{ item.link_name }}</span>
+        </a>
+      </div>
+      <div *ngIf="item.sub_menu.length > 0" class="dropdown-title cursor-pointer" (click)="showSubmenu(itemEl)">
+        <a>
+          <i [class]="item.icon"></i>
+          <span class="link_name">{{ item.link_name }}</span>
+        </a>
+        <i class='pi pi-angle-down'></i>
+      </div>
+      <ul class="sub-menu" [class.blank]="item.sub_menu.length == 0">
+        <li><a class="link_name">{{ item.link_name }}</a></li>
+        <li *ngFor="let item_sub of item.sub_menu" routerLinkActive="active">
+          <a [routerLink]="[item_sub.link]">{{ item_sub.link_name }}</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<section class="home-section">
+  <router-outlet></router-outlet>
+</section>

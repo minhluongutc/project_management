@@ -1,7 +1,6 @@
 import {Component, Injector} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {BaseComponent} from "../../share/ui/base-component/base.component";
-import {SelectButtonChangeEvent} from "primeng/selectbutton";
 
 @Component({
   selector: 'app-tasks',
@@ -9,18 +8,31 @@ import {SelectButtonChangeEvent} from "primeng/selectbutton";
   styleUrls: ['./tasks.component.scss']
 })
 export class TasksComponent extends BaseComponent {
-  stateView: any[] = [{label: 'listView', value: 0}, {label: 'detailView', value: 1}];
-  value: number = 0;
+  isViewList: boolean = false;
+  isViewTree: boolean = false;
+  routerLink: string = 'list-view'
 
   constructor(injector: Injector) {
+    console.log('init')
     super(injector);
+    // this.changeStage(this.isViewList);
+    // this.changeStageViewList(this.isViewTree)
   }
 
-  checkChange($event: SelectButtonChangeEvent) {
-    if ($event.value === 0) {
-      this.router.navigate(['/tasks/list-view'])
+  changeStage(value: boolean) {
+    this.isViewTree = false;
+    if (value) {
+      this.router.navigate(['./list-view'], { relativeTo: this.route })
     } else {
-      this.router.navigate(['/tasks/detail-view'])
+      this.router.navigate(['./detail-view'], { relativeTo: this.route })
+    }
+  }
+
+  changeStageViewList(value: any) {
+    if (value) {
+      this.router.navigate(['./list-view-tree'], { relativeTo: this.route })
+    } else {
+      this.router.navigate(['./list-view'], { relativeTo: this.route })
     }
   }
 }

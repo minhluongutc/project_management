@@ -59,14 +59,14 @@ export class AuthService {
     const userDataString: string | null = localStorage.getItem('userData');
 
     const userData: {
-      id: number;
+      id: string;
       username: string;
       firstName: string;
       lastName: string;
       email: string;
       roles: string[];
-      companyId: number;
-      avatarId: number;
+      companyId: string;
+      avatarId: string;
       _token: string;
       _tokenExpirationData: string;
     } = userDataString ? JSON.parse(userDataString) : null;
@@ -115,14 +115,14 @@ export class AuthService {
   }
 
   private handleAuthentication(
-    id: number,
+    id: string,
     username: string,
     firstName: string,
     lastName: string,
     email: string,
     roles: string[],
-    companyId: number,
-    avatarId: number,
+    companyId: string,
+    avatarId: string,
     accessToken: string,
     expiresIn: number,
   ) {

@@ -23,7 +23,7 @@ import {ToastModule} from "primeng/toast";
     PagesModule,
     AuthModule,
     ServiceModule,
-    ToastModule
+    ToastModule,
   ],
   providers: [MessageService],
   bootstrap: [AppComponent]

@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'variables';
+@import "quill/dist/quill.snow.css";
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
@@ -9,11 +10,27 @@
 
 @layer reset, primeng;
 
+.layout {
+  min-height: calc(100vh - 116.16px);
+}
+
 @layer reset {
 
   h1, h2, h3, h4, h5, p, label {
+    margin: 0;
+    padding: 0;
     color: $--ds-text-subtle;
   }
+
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 5px;
+  }
+
+  tr {
+    padding: 0;
+    margin: 0;
+  }
+
   .p-overlaypanel .p-overlaypanel-content {
     padding: 0.75rem ;
   }
@@ -52,6 +69,10 @@
         }
       }
     }
+  }
+
+  .p-calendar {
+    width: 100%
   }
 
   .input[disabled]:hover {
@@ -131,6 +152,13 @@
     display: contents;
   }
 
+  .border-t-2-primary {
+    border-top: 3px solid $bg-primary-link;
+    &:hover {
+      background-color: $--button-hover!important;
+    }
+  }
+
   .p-dropdown,
   .p-treeselect {
     width: 100%;
@@ -192,6 +220,14 @@
     }
 
     //}
+  }
+
+  .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    padding: 10px
+  }
+
+  .p-treetable .p-treetable-tbody > tr > td {
+    padding: 0.3rem 1rem
   }
 }
 

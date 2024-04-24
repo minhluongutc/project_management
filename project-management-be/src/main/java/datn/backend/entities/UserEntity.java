@@ -20,8 +20,7 @@ public class UserEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    String id;
 
     @Column(name = "USERNAME")
     String username;
@@ -30,7 +29,7 @@ public class UserEntity implements Serializable {
     String password;
 
     @Column(name = "SETTING_ID")
-    Integer settingId;
+    String settingId;
 
     @Column(name = "FIRST_NAME")
     String firstName;
@@ -48,10 +47,10 @@ public class UserEntity implements Serializable {
     Integer gender;
 
     @Column(name = "AVATAR_ID")
-    Integer avatarId;
+    String avatarId;
 
     @Column(name = "BACKGROUND_ID")
-    Integer backgroundId;
+    String backgroundId;
 
     @Column(name = "DATE_OF_BIRTH")
     Date dateOfBirth;
@@ -60,16 +59,16 @@ public class UserEntity implements Serializable {
     String address;
 
     @Column(name = "COMPANY_ID")
-    Integer companyId;
+    String companyId;
 
     @Column(name = "CREATE_USER_ID")
-    Integer createUserId;
+    String createUserId;
 
     @Column(name = "CREATE_TIME")
     Date createTime;
 
     @Column(name = "UPDATE_USER_ID")
-    Integer updateUserId;
+    String updateUserId;
 
     @Column(name = "UPDATE_TIME")
     Date updateTime;

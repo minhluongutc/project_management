@@ -1,6 +1,6 @@
-<div class="pl-8 pr-8">
+<div class="pl-6 pr-6">
   <div class="flex justify-between items-center">
-    <h3 class="pt-2 font-bold text-2xl">Danh sách dự án</h3>
+    <h3 class="pt-4 pb-4 font-bold text-2xl">Danh sách dự án</h3>
     <p-button label="Thêm mới dự án" routerLink="/projects/create"></p-button>
   </div>
   <div class="grid grid-cols-4 gap-4 pb-7">
@@ -23,25 +23,23 @@
 
     <ng-template pTemplate="header" let-columns>
       <tr>
-        <th *ngFor="let col of columns">
-          {{ col.header }}
-        </th>
+        <th>Tên dự án</th>
+        <th>Mô tả</th>
       </tr>
     </ng-template>
 
     <ng-template
       pTemplate="body"
       let-rowNode
-      let-rowData="rowData"
-      let-columns="columns">
-      <tr>
-        <td *ngFor="let col of columns; let i = index">
-          <p-treeTableToggler
-            [rowNode]="rowNode"
-            *ngIf="i == 0">
-          </p-treeTableToggler>
-          {{ rowData[col.field] }}
+      let-rowData="rowData">
+      <tr [ttRow]="rowNode" style="height: 35px">
+        <td>
+          <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+          <a (click)="onDetailProject(rowData.id)" class="text-blue-700 cursor-pointer">
+            {{ rowData.name }}
+          </a>
         </td>
+        <td>{{ rowData.description }}</td>
       </tr>
     </ng-template>
   </p-treeTable>

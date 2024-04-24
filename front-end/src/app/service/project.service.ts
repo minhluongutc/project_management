@@ -14,10 +14,14 @@ export class ProjectService extends BaseService {
     return `${Environment.baseUrl}/api`;
   }
 
-  getProjects(userId: number, queryParams: Record<string, any>) {
+  getProjects(userId: string, queryParams: Record<string, any>) {
     return this.getRequest(`${this.SERVICE_URL}/${userId}/projects`, {
       params: this.buildParams(queryParams)
     });
+  }
+
+  getProject(projectId: string) {
+    return this.getRequest(`${this.SERVICE_URL}/projects/${projectId}`);
   }
 
   createProject(data: Project) {

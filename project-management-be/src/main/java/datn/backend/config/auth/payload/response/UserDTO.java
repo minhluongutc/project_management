@@ -10,13 +10,13 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class UserDTO {
-    Integer id;
+    String id;
     String username;
     String password;
     String firstName;
     String lastName;
     String email;
-    Integer avatarId;
-    Integer companyId;
+    String avatarId;
+    String companyId;
     List<String> roles;
 }

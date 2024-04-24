@@ -84,14 +84,4 @@ export class ProjectCreateComponent extends BaseComponent implements OnInit {
       }
     )
   }
-
-  showError(formControlName: string): boolean {
-    const control = this.form.controls[formControlName];
-    return !!(control.touched && control?.errors);
-  }
-
-  getError(formControlName: string) {
-    const control = this.form.controls[formControlName];
-    return control.touched ? control?.errors : undefined;
-  }
 }

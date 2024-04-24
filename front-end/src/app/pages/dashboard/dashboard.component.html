@@ -1,1 +1,35 @@
-<p>dashboard works!</p>
+<div class="pl-6 pr-6">
+  <h3 class="font-bold text-2xl pt-4 pb-4">Thông tin chung</h3>
+  <div class="grid grid-cols-2 gap-4">
+    <div class="col-start-1 col-end-2">
+      <p-accordion [multiple]="true" [activeIndex]="[0, 1, 2]">
+        <div class="col-start-1 col-end-2"></div>
+        <p-accordionTab header="Giới thiệu" [headerStyleClass]="'bg-white p-3 text-sm border-solid border-t-2-primary'">
+          Welcome to my app
+        </p-accordionTab>
+        <p-accordionTab header="Các dự án" [headerStyleClass]="'bg-white p-3 text-sm border-solid border-t-2-primary'">
+          Content 2
+        </p-accordionTab>
+        <p-accordionTab header="Biểu đồ tiến độ" [headerStyleClass]="'bg-white p-3 text-sm border-solid border-t-2-primary'">
+          Content 3
+        </p-accordionTab>
+      </p-accordion>
+    </div>
+    <div class="col-start-2 col-end-3">
+      <p-accordion [multiple]="true" [activeIndex]="[0, 1, 2]">
+        <div class="col-start-1 col-end-2"></div>
+        <p-accordionTab header="Công việc được giao (chưa hoàn thành)" [headerStyleClass]="'bg-white p-3 text-sm border-solid border-t-2-primary'">
+          Content 1
+        </p-accordionTab>
+        <p-accordionTab header="Hoạt động gần đây" [headerStyleClass]="'bg-white p-3 text-sm border-solid border-t-2-primary'">
+          Content 2
+        </p-accordionTab>
+        <p-accordionTab header="Header 3" [headerStyleClass]="'bg-white p-3 text-sm border-solid border-t-2-primary'">
+          Content 3
+        </p-accordionTab>
+      </p-accordion>
+    </div>
+  </div>
+
+
+</div>

@@ -6,15 +6,29 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface ProjectRepositoryJPA extends JpaRepository<ProjectEntity, Integer> {
+public interface ProjectRepositoryJPA extends JpaRepository<ProjectEntity, String> {
 
     @Query("select p " +
             "from ProjectEntity p join ProjectUserEntity pu on p.id = pu.projectId " +
             "where pu.userId = :userId and p.parentId is null and p.enabled = 1")
-    List<ProjectEntity> getProjectParentByUserId(Integer userId);
+    List<ProjectEntity> getProjectParentByUserId(String userId);
 
-    List<ProjectEntity> getProjectEntitiesByParentIdAndEnabled(Integer parentId, Integer enabled);
+    List<ProjectEntity> getProjectEntitiesByParentIdAndEnabled(String parentId, Integer enabled);
+
+    List<ProjectEntity> getProjectEntitiesByCompanyId(String companyId);
+
+    @Query("select p.code from ProjectEntity p where p.id = :id")
+    String getProjectCodeById(String id);
+
+    @Query("select p " +
+            "from ProjectEntity p " +
+            "where p.id = :id and p.enabled = 1")
+    Optional<ProjectEntity> getProjectById(String id);
+
+    Optional<ProjectEntity> findByIdAndEnabled(String id, Integer enabled);
+
 
 }

@@ -1,35 +1,36 @@
-<p-toolbar>
-  <div class="p-toolbar-group-start button-list">
-    <p-button label="Dashboard" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
-              size="small" class="header-drop"></p-button>
-    <p-button label="Dự án" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
-              size="small" class="header-drop" routerLink="/projects"></p-button>
-    <p-button label="Công việc" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
-              size="small" class="header-drop" routerLink="/tasks"></p-button>
-    <p-button label="Tempo" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
-              size="small" class="header-drop"></p-button>
-    <p-button label="Boards" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
-              size="small" class="header-drop"></p-button>
-    <p-button label="Calendar" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
-              size="small" class="header-drop"></p-button>
-    <p-button label="Plain" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
-              size="small" class="header-drop"></p-button>
-    <p-button label="Teams" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
-              size="small" class="header-drop"></p-button>
-    <p-button label="Thêm mới" (click)="showCreateTask()" [raised]="true" size="small"></p-button>
-  </div>
-  <div class="p-toolbar-group-end">
-    <div class="flex align-items-center gap-2">
-      <p-avatar class="header-right" icon="pi pi-bell" [style]="{width: 36, height: 36}" shape="circle"></p-avatar>
-      <p-avatar class="header-right" icon="pi pi-question-circle" [style]="{width: 36, height: 36}"
-                shape="circle"></p-avatar>
-      <p-avatar class="header-right" icon="pi pi-cog" [style]="{width: 36, height: 36}" shape="circle"></p-avatar>
-      <p-avatar class="header-right" [style]="{width: 36, height: 36}" (click)="op.toggle($event)"
-                image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle"
-                size="normal"></p-avatar>
+<div class="sticky top-0 z-20">
+  <p-toolbar>
+    <div class="p-toolbar-group-start button-list">
+      <p-button label="Chung" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
+                size="small" class="header-drop" routerLink="/dashboard"></p-button>
+      <p-button label="Dự án" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
+                size="small" class="header-drop" routerLink="/projects"></p-button>
+      <p-button label="Công việc" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
+                size="small" class="header-drop" routerLink="/tasks"></p-button>
+      <p-button label="Tempo" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
+                size="small" class="header-drop"></p-button>
+      <p-button label="Boards" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
+                size="small" class="header-drop"></p-button>
+      <p-button label="Calendar" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
+                size="small" class="header-drop"></p-button>
+      <p-button label="Plain" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
+                size="small" class="header-drop"></p-button>
+      <p-button label="Teams" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"
+                size="small" class="header-drop"></p-button>
+      <p-button label="Thêm mới" (click)="showCreateTask()" [raised]="true" size="small"></p-button>
     </div>
-  </div>
-</p-toolbar>
+    <div class="p-toolbar-group-end">
+      <div class="flex align-items-center gap-2">
+        <p-avatar class="header-right" icon="pi pi-bell" [style]="{width: 36, height: 36}" shape="circle"></p-avatar>
+        <p-avatar class="header-right" icon="pi pi-question-circle" [style]="{width: 36, height: 36}"
+                  shape="circle"></p-avatar>
+        <p-avatar class="header-right" icon="pi pi-cog" [style]="{width: 36, height: 36}" shape="circle"></p-avatar>
+        <p-avatar class="header-right" [style]="{width: 36, height: 36}" (click)="op.toggle($event)"
+                  image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle"
+                  size="normal"></p-avatar>
+      </div>
+    </div>
+  </p-toolbar>
 
   <p-overlayPanel [style]="{'padding': '0'}" #op>
     <ng-template pTemplate="content">
@@ -39,3 +40,5 @@
       </ul>
     </ng-template>
   </p-overlayPanel>
+
+</div>

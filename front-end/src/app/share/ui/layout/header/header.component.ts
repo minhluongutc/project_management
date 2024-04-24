@@ -1,10 +1,4 @@
-import { Component } from '@angular/core';
-import {Footer, SharedModule} from "primeng/api";
-import {AvatarModule} from "primeng/avatar";
-import {ButtonModule} from "primeng/button";
-import {InputTextModule} from "primeng/inputtext";
-import {ToolbarModule} from "primeng/toolbar";
-import {SplitButtonModule} from "primeng/splitbutton";
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../../auth/auth.service";
 import {User} from "../../../auth/user.model";
 import {Router} from "@angular/router";
@@ -17,7 +11,7 @@ import {TaskCreateComponent} from "../../../../pages/tasks/task-create/task-crea
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   userSub: Subscription;
   isAuthenticated: boolean = false;
   userData: Partial<User> = {};
@@ -29,6 +23,7 @@ export class HeaderComponent {
     public dialogService: DialogService
   ) {
     this.userSub = Subscription.EMPTY;
+    // this.showCreateTask();
   }
 
   ngOnInit(): void {
@@ -40,21 +35,17 @@ export class HeaderComponent {
     if (!this.isAuthenticated) {
       this.router.navigate(['/login']);
     }
-    this.showCreateTask();
   }
 
   showCreateTask() {
     this.ref = this.dialogService.open(TaskCreateComponent, {
       header: 'Thêm mới công việc',
       width: '60vw',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'auto', 'margin-bottom': '69px' },
       breakpoints: {
         '960px': '75vw',
         '640px': '90vw'
       },
-      templates: {
-        footer: Footer
-      }
     })
   }
 
