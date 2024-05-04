@@ -16,5 +16,6 @@ public class StatusIssueDTO {
         String name;
         String description;
         String projectId;
+        Integer progress;
     }
 }

@@ -124,4 +124,8 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
     this.taskSelected = this.listData.find((task: any) => task.id === id);
     this.getTaskChildren(id);
   }
+
+  openNewTab(id: any) {
+    window.open(`/tasks/${id}/attachments/null`, '_blank');
+  }
 }

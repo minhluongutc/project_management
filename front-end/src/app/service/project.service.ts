@@ -28,5 +28,9 @@ export class ProjectService extends BaseService {
     return this.postRequest(`${this.SERVICE_URL}/projects`, data);
   }
 
+  updateProject(projectId: string, data: Project) {
+    return this.putRequest(`${this.SERVICE_URL}/projects/${projectId}`, data);
+  }
+
 
 }

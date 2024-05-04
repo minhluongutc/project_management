@@ -32,8 +32,11 @@ public class ProjectEntity implements Serializable {
     @Column(name = "PARENT_ID")
     String parentId;
 
-    @Column(name = "COMPANY_ID")
-    String companyId;
+    @Column(name = "WARNING_TIME")
+    Integer warningTime;
+
+    @Column(name = "DANGER_TIME")
+    Integer dangerTime;
 
     @Column(name = "CREATE_USER_ID")
     String createUserId;

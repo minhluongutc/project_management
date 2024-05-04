@@ -1,20 +1,14 @@
-<div class="pl-4 pr-4 pt-4">
-  <div class="grid grid-cols-4 gap-4 pb-7">
-    <p-iconField iconPosition="right">
-      <p-inputIcon styleClass="pi pi-search"/>
-      <input type="text" pInputText placeholder="Tìm kiếm"/>
-    </p-iconField>
-  </div>
+<div class="pl-4 pr-4 pt-2">
   <p-table [value]="listData"
            [paginator]="true"
            [rows]="rows"
            [first]="first"
            [showCurrentPageReport]="true"
            [tableStyle]="{ 'min-width': '50rem' }"
-           [styleClass]="'p-datatable-sm'"
            currentPageReportTemplate="Hiển thị {first} - {last} trên {totalRecords} bản ghi."
            [rowsPerPageOptions]="[10, 25, 50]"
            [exportHeader]="'customExportHeader'"
+           styleClass="p-datatable-striped p-datatable-gridlines p-datatable-sm"
            #dt
   >
     <ng-template pTemplate="caption">
@@ -27,51 +21,81 @@
     <ng-template pTemplate="header" let-columns>
       <tr class="text-sm">
         <th>taskCode</th>
-        <th pSortableColumn="projectName">Dự án<p-sortIcon field="projectName"></p-sortIcon></th>
-        <th pSortableColumn="subject">Tiêu đề<p-sortIcon field="subject"></p-sortIcon></th>
-        <th pSortableColumn="statusIssueName">Trạng thái<p-sortIcon field="statusIssueName"></p-sortIcon></th>
-        <th pSortableColumn="priority">Độ ưu tiên<p-sortIcon field="priority"></p-sortIcon></th>
-        <th pSortableColumn="severity">Độ nghiêm trọng<p-sortIcon field="severity"></p-sortIcon></th>
-        <th pSortableColumn="assignUserName">Người được giao<p-sortIcon field="assignUserName"></p-sortIcon></th>
-        <th pSortableColumn="reviewUserName">Người giám sát<p-sortIcon field="reviewUserName"></p-sortIcon></th>
-        <th pSortableColumn="categoryName">Danh mục<p-sortIcon field="categoryName"></p-sortIcon></th>
-        <th pSortableColumn="startDate">Ngày bắt đầu<p-sortIcon field="startDate"></p-sortIcon></th>
-        <th pSortableColumn="dueDate">Ngày kết thúc<p-sortIcon field="dueDate"></p-sortIcon></th>
-        <th>Thao tác</th>
+        <th class="text-sm min-w-[82px]" pSortableColumn="projectName">Dự án
+          <p-sortIcon field="projectName"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[92px]" pSortableColumn="subject">Tiêu đề
+          <p-sortIcon field="subject"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[140px]" pSortableColumn="typeName">Loại công việc
+          <p-sortIcon field="typeName"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[112px]" pSortableColumn="statusIssueName">Trạng thái
+          <p-sortIcon field="statusIssueName"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[112px]" pSortableColumn="priority">Độ ưu tiên
+          <p-sortIcon field="priority"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[155px]" pSortableColumn="severity">Độ nghiêm trọng
+          <p-sortIcon field="severity"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[156px]" pSortableColumn="assignUserName">Người được giao
+          <p-sortIcon field="assignUserName"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[146px]" pSortableColumn="reviewUserName">Người giám sát
+          <p-sortIcon field="reviewUserName"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[111px]" pSortableColumn="categoryName">Danh mục
+          <p-sortIcon field="categoryName"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[134px]" pSortableColumn="startDate">Ngày bắt đầu
+          <p-sortIcon field="startDate"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[137px]" pSortableColumn="dueDate">Ngày kết thúc
+          <p-sortIcon field="dueDate"></p-sortIcon>
+        </th>
+        <th class="text-sm min-w-[79px]">Thao tác</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item>
-      <tr>
-        <td>{{item.taskCode}}</td>
-        <td>{{item.projectName}}</td>
-        <td>{{item.subject}}</td>
-        <td>{{item.statusIssueName}}</td>
-        <td>
+      <tr class="h-[48px] hover:bg-gray-300 cursor-pointer">
+        <td class="text-sm">{{ item.taskCode }}</td>
+        <td class="text-sm">{{ item.projectName }}</td>
+        <td class="text-sm">{{ item.subject }}</td>
+        <td class="text-sm">{{ item.typeName }}</td>
+        <td class="text-sm">{{ item.statusIssueName }}</td>
+        <td class="text-sm">
           <p-tag [style]="{ 'background': getColorTag(item.priority)}"
                  [value]="convertValueById(item.priority, 'name', PRIORIES)"
                  [rounded]="true"/>
         </td>
-        <td>
+        <td class="text-sm">
           <p-tag [style]="{ 'background': getColorTag(item.severity)}"
                  [value]="convertValueById(item.severity, 'name', PRIORIES)"
                  [rounded]="true"/>
         </td>
-        <td>{{item.assignUserName}}</td>
-        <td>{{item.reviewUserName}}</td>
-        <td>{{item.categoryName}}</td>
-        <td>{{item.startDate | date: 'dd/MM/yyyy'}}</td>
-        <td>{{item.dueDate | date: 'dd/MM/yyyy'}}</td>
-        <td>
-          <p-button icon="pi pi-pencil" [rounded]="true" severity="secondary" [style]="{ 'margin-right': '.5em' }"/>
-          <p-button icon="pi pi-trash" [rounded]="true" severity="secondary"/>
+        <td class="text-sm">{{ item.assignUserName }}</td>
+        <td class="text-sm">{{ item.reviewUserName }}</td>
+        <td class="text-sm">{{ item.categoryName }}</td>
+        <td class="text-sm">{{ item.startDate | date: 'dd/MM/yyyy' }}</td>
+        <td class="text-sm">{{ item.dueDate | date: 'dd/MM/yyyy' }}</td>
+        <td class="text-sm">
+          <div class="flex align-items-center justify-center gap-0">
+            <button pButton
+                    pRipple
+                    type="button"
+                    icon="pi pi-pencil"
+                    class="p-button-rounded p-button-text">
+            </button>
+            <button pButton
+                    pRipple
+                    type="button"
+                    icon="pi pi-trash"
+                    class="p-button-rounded p-button-text p-button-danger">
+            </button>
+          </div>
         </td>
       </tr>
-    </ng-template>
-    <ng-template pTemplate="paginatorleft">
-      <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
-    </ng-template>
-    <ng-template pTemplate="paginatorright">
-      <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
     </ng-template>
   </p-table>
 </div>

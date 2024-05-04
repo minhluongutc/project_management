@@ -29,6 +29,9 @@ public class ProjectUserEntity implements Serializable {
     @Column(name = "USER_ID")
     String userId;
 
+    @Column(name = "PERMISSION")
+    Integer permission;
+
 //    @Column(name = "IS_TEAM_LEADER")
 //    Integer isTeamLeader;
 

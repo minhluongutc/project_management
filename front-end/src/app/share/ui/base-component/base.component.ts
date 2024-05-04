@@ -57,10 +57,68 @@ export class BaseComponent implements OnDestroy {
     this.user = this.authService.user.value
   }
 
+  findProject(list: any[], projectId: string): any {
+    for (let item of list) {
+      if (item.key === projectId) {
+        return item;
+      }
+
+      if (item.children) {
+        let found = this.findProject(item.children, projectId);
+        if (found) {
+          return found;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  getFileType(fileType: string) {
+    if (fileType == "pdf" || fileType == "application/pdf") {
+      return "pdf";
+    } else if (fileType == "docx" || fileType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+      return "docx";
+    } else if (fileType == "pptx" || fileType == "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+      return "pptx";
+    } else if (fileType == "rar" || fileType == "application/x-compressed") {
+      return "rar";
+    } else if (fileType == "zip" || fileType == "application/x-zip-compressed") {
+      return "zip";
+    } else if (fileType.startsWith("image/") || fileType == "jpg" || fileType == "png") {
+      return "image";
+    } else if (fileType == "xlsx" || fileType == "application/vnd.ms-excel" || fileType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || fileType == "xsl") {
+      return "xlsx";
+    } else if (fileType == "mp4" || fileType.startsWith("video/") || fileType == "video/mp4") {
+      return "video";
+    } else {
+      return "other"
+    }
+  }
+
+  compareDateTask(date: Date, warningTime: number, dangerTime: number) {
+    const currentDate = new Date();
+    const diffTime = Math.round(new Date(date).getTime() - currentDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays <= dangerTime) {
+      return 'danger';
+    } else if (diffDays <= warningTime) {
+      return 'warning';
+    } else {
+      return 'normal';
+    }
+  }
+
+  compareCurrentTime(data: Date): boolean {
+    const currentDate = new Date();
+    const diffTime = Math.round(new Date(data).getTime() - currentDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays < 0;
+  }
+
   handleDestroy() {}
 
   createSuccessToast(summary: string, message: string) {
-    console.log('ok2');
     this.toast.add({severity: 'success', summary: summary, detail: message});
   }
 
@@ -86,12 +144,12 @@ export class BaseComponent implements OnDestroy {
     return control.touched ? control?.errors : undefined;
   }
 
-  showErrorCustom(formControlName: string, formCustom: FormGroup): boolean {
+  showErrorCustom(formCustom: FormGroup, formControlName: string): boolean {
     const control = formCustom.controls[formControlName];
     return !!(control.touched && control?.errors);
   }
 
-  getErrorCustom(formControlName: string, formCustom: FormGroup) {
+  getErrorCustom(formCustom: FormGroup, formControlName: string) {
     const control = formCustom.controls[formControlName];
     return control.touched ? control?.errors : undefined;
   }
@@ -103,10 +161,11 @@ export class BaseComponent implements OnDestroy {
   }
 
   updateDropdownValue($event: DropdownChangeEvent, formControlName: string) {
-    console.log($event)
     this.form.controls[formControlName].setValue($event.value);
-    console.log(formControlName)
-    console.log(this.form.value)
+  }
+
+  updateDropdownValueCustom($event: DropdownChangeEvent, formCustom: FormGroup, formControlName: string) {
+    formCustom.controls[formControlName].setValue($event.value);
   }
 
   convertValueById(id: any, name: any, array: any[]) {

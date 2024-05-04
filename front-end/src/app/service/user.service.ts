@@ -16,4 +16,26 @@ export class UserService extends BaseService {
   get SERVICE_URL(): string {
     return `${Environment.baseUrl}/api/users`;
   }
+
+  checkExistUsernames(username: string) {
+    return this.getRequest(`${this.SERVICE_URL}/exist-username`, {
+      params: this.buildParams({username})
+    });
+  }
+
+  checkExistEmails(email: string) {
+    return this.getRequest(`${this.SERVICE_URL}/exist-email`, {
+      params: this.buildParams({email})
+    });
+  }
+
+  checkExistEmailsInProject(projectId: string, email: string) {
+    return this.getRequest(`${this.SERVICE_URL}/exist-email/${projectId}`, {
+      params: this.buildParams({email})
+    });
+  }
+
+  getUserById(id: string) {
+    return this.get(id);
+  }
 }

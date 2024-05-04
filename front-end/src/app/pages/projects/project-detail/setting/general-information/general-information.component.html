@@ -1,0 +1,48 @@
+<div class="pl-8 pr-8">
+  <h3 class="pt-2 font-bold text-2xl">Thêm mới dự án</h3>
+
+  <form [formGroup]="form">
+    <div class="grid grid-cols-3 gap-4">
+      <div class="col-start-2 col-span-1 flex flex-col gap-3">
+        <div class="flex flex-col gap-2">
+          <jira-input-text jiraLabelText="Tên dự án"
+                           formControlName="name"
+                           [jiraIsInputText]="true"
+                           [jiraRequired]="true"
+                           [jiraErrors]="getError('name')"
+                           [jiraShowError]="showError('name')"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <jira-input-text jiraLabelText="Mô tả"
+                           formControlName="description"
+                           [jiraIsInputText]="true"
+                           [jiraErrors]="getError('description')"
+                           [jiraShowError]="showError('description')"></jira-input-text>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+              <jira-input-text jiraLabelText="Thời gian cảnh báo"
+                               formControlName="warningTime"
+                               [jiraIsInputNumber]="true"
+                               [jiraErrors]="getError('warningTime')"
+                               [jiraShowError]="showError('warningTime')"
+                               [jiraSuffix]="' ngày'"/>
+            </div>
+            <div class="flex flex-col gap-2">
+              <jira-input-text jiraLabelText="Thời gian nguy hiểm"
+                               formControlName="dangerTime"
+                               [jiraIsInputNumber]="true"
+                               [jiraErrors]="getError('dangerTime')"
+                               [jiraShowError]="showError('dangerTime')"
+                               [jiraSuffix]="' ngày'"/>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2 pt-4">
+          <p-button label="Thêm mới" (click)="handleSave(form)" [disabled]="form.invalid"></p-button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

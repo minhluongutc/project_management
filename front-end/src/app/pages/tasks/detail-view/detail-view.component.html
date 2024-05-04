@@ -48,9 +48,15 @@
                     icon="pi pi-plus"
           />
         </div>
-        <p class="text-base">Mô tả</p>
+        <p class="text-base font-bold">Mô tả</p>
         <div [innerHTML]="taskSelected?.description"></div>
-        <p class="text-base mt-4">Tệp định kèm</p>
+        <div class="flex gap-4 items-center pt-4">
+          <p class="text-base font-bold">Tệp đính kèm</p>
+          <i class="pi pi-eye text-2xl text-gray-500 hover:text-gray-700 cursor-pointer"
+             pTooltip="Xem tệp đính kèm"
+             (click)="openNewTab(taskSelected?.id)">
+          </i>
+        </div>
         @if (attachments.length == 0) {
           <p class="text-base">N/A</p>
         } @else {
@@ -91,15 +97,22 @@
         </div>
       </div>
       <div class="col-span-4 flex flex-col gap-4">
-        <p-button [text]="true"
-                  [plain]="true"
-                  size="small"
-                  class="import-button font-light"
-                  [styleClass]="'h-[32px]'"
-                  icon="pi pi-angle-down"
-                  iconPos="right"
-                  [label]="taskSelected.statusIssueName"
-        />
+        <div class="flex items-center gap-4">
+          <p-button [text]="true"
+                    [plain]="true"
+                    size="small"
+                    class="import-button font-light"
+                    [styleClass]="'h-[32px]'"
+                    icon="pi pi-angle-down"
+                    iconPos="right"
+                    [label]="taskSelected.statusIssueName"
+          />
+          <div class="w-full relative">
+            <p-progressBar [value]="taskSelected.progress" [showValue]="false"></p-progressBar>
+            <p class="absolute top-[50%] left-[50%]"
+               style="transform: translate(-50%, -50%)">{{ taskSelected.progress || 0 }}%</p>
+          </div>
+        </div>
         <p-accordion [multiple]="true" [activeIndex]="[0]">
           <div class="col-start-1 col-end-2"></div>
           <p-accordionTab header="Chi tiết" [headerStyleClass]="'bg-white p-3 text-sm border-solid border-t-2-primary'">
@@ -120,8 +133,29 @@
                 <p class="text-base">{{taskSelected.categoryName}}</p>
                 <p class="text-base">{{taskSelected.createUserName}}</p>
                 <p class="text-base">{{taskSelected.assignUserName}}</p>
-                <p class="text-base">{{taskSelected.startDate | date: 'dd/MM/yyyy'}}</p>
-                <p class="text-base">{{taskSelected.dueDate | date: 'dd/MM/yyyy'}}</p>
+                @if (taskSelected.startDate != 'N/A') {
+                  <p class="text-base">{{ taskSelected.startDate | date: 'dd/MM/yyyy' }}</p>
+                } @else {
+                  <p class="text-base">N/A</p>
+                }
+                @if (taskSelected.dueDate != 'N/A') {
+                  <div class="flex gap-2">
+                    <p class="text-base"
+                       [class.text-yellow-400]="compareDateTask(taskSelected.dueDate, taskSelected.warningTime, taskSelected.dangerTime)=='warning'"
+                       [class.text-red-600]="compareDateTask(taskSelected.dueDate, taskSelected.warningTime, taskSelected.dangerTime)=='danger'"
+                       [class.text-green-500]="compareDateTask(taskSelected.dueDate, taskSelected.warningTime, taskSelected.dangerTime)=='normal'"
+                    >
+                      {{ taskSelected.dueDate | date: 'dd/MM/yyyy' }}
+                    </p>
+                    @if (compareCurrentTime(taskSelected.dueDate)) {
+                      <p-tag value="Hết hạn" [rounded]="true" severity="danger"></p-tag>
+                    }
+                  </div>
+                } @else {
+                  <p class="text-base">
+                    N/A
+                  </p>
+                }
                 <p class="text-base">{{convertValueById(taskSelected.priority, 'name', PRIORIES)}}</p>
                 <p class="text-base">{{convertValueById(taskSelected.severity, 'name', SEVERITIES)}}</p>
                 <p class="text-base">{{taskSelected.typeName}}</p>
@@ -161,7 +195,7 @@
                         </a>
                       </td>
                       <td>{{ rowData.subject }}</td>
-                      <td>Tiến độ ...</td>
+                      <td>{{ rowData.progress }}%</td>
                     </tr>
                   </ng-template>
                 </p-treeTable>

@@ -58,9 +58,6 @@ public class UserEntity implements Serializable {
     @Column(name = "ADDRESS")
     String address;
 
-    @Column(name = "COMPANY_ID")
-    String companyId;
-
     @Column(name = "CREATE_USER_ID")
     String createUserId;
 

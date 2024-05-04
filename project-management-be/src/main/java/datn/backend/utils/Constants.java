@@ -49,4 +49,29 @@ public class Constants {
             this.name = name;
         }
     }
+
+    public enum PROFESSIONAL_LEVEL {
+        INTERN(1),
+        FRESHER(2),
+        JUNIOR(3),
+        MIDDLE(4),
+        SENIOR(5);
+        public final int value;
+
+        PROFESSIONAL_LEVEL(int value) {
+            this.value = value;
+        }
+    }
+
+    public enum PERMISSION {
+        MEMBER(1),
+        LEADER(2),
+        PROJECT_MANAGEMENT(3),
+        ADMIN(4);
+        public final int value;
+
+        PERMISSION(int value) {
+            this.value = value;
+        }
+    }
 }

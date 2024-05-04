@@ -25,6 +25,14 @@ import {AutofocusDirective} from "../../share/directives/auto-focus.directive";
 import {RippleModule} from "primeng/ripple";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import { StatusIssueComponent } from './project-detail/setting/status-issue/status-issue.component';
+import {TagModule} from "primeng/tag";
+import {DialogModule} from "primeng/dialog";
+import {RadioButtonModule} from "primeng/radiobutton";
+import {UiModule} from "../../share/ui/ui.module";
+import {CalendarModule} from "primeng/calendar";
+import { GeneralInformationComponent } from './project-detail/setting/general-information/general-information.component';
+import {InputNumberModule} from "primeng/inputnumber";
+import {StyleClassModule} from "primeng/styleclass";
 
 @NgModule({
   declarations: [
@@ -38,6 +46,7 @@ import { StatusIssueComponent } from './project-detail/setting/status-issue/stat
     CategoryComponent,
     IssueTypeComponent,
     StatusIssueComponent,
+    GeneralInformationComponent,
   ],
   imports: [
     IconFieldModule,
@@ -58,7 +67,14 @@ import { StatusIssueComponent } from './project-detail/setting/status-issue/stat
     DatePipe,
     AutofocusDirective,
     RippleModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    TagModule,
+    DialogModule,
+    RadioButtonModule,
+    UiModule,
+    CalendarModule,
+    InputNumberModule,
+    StyleClassModule
   ],
 })
 export class ProjectModule {

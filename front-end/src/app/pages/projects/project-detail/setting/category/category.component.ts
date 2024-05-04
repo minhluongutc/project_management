@@ -25,6 +25,7 @@ export class CategoryComponent extends BaseComponent implements OnInit {
               private confirmationService: ConfirmationService,
   ) {
     super(injector);
+    console.log(this.route.snapshot?.parent?.paramMap.get('id'))
     this.projectId = this.route.snapshot?.parent?.paramMap.get('id') || null;
   }
 

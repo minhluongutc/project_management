@@ -33,11 +33,13 @@ public class TaskDTO {
         Date createTime;
         String createUserId;
         Date updateTime;
+        String categoryId;
 
         Integer statusIssueCode;
         Boolean statusIssueCodeIsEqual;
 
         String otherTaskId;
+        String keyword;
 
         String sortBy;
         String sortDir;
@@ -86,6 +88,7 @@ public class TaskDTO {
         String categoryId;
         Date startDate;
         Date dueDate;
+        Integer estimateTime;
     }
 
     @Data
@@ -118,9 +121,10 @@ public class TaskDTO {
         String projectParentTaskCode;
         String projectParentSubject;
         String parentId;
+        Integer progress;
+        Integer warningTime;
+        Integer dangerTime;
         List<AttachmentDTO.AttachmentResponseDTO> attachments;
-
-
 
         public TaskResponseDTO(String id, String taskCode, String projectName, String subject, String description, String typeName, String statusIssueName, Integer priority, Integer severity, String parentTaskSubject, String assignUserName, String reviewUserName, String categoryName, Date startDate, Date dueDate, Date createTime, Date updateTime, String createUserName, String updateUserName, Boolean isPublic, String projectId) {
             this.id = id;
@@ -146,7 +150,15 @@ public class TaskDTO {
             this.projectId = projectId;
         }
 
-        public TaskResponseDTO(String id, String taskCode, String projectName, String subject, String description, String typeName, String statusIssueName, Integer priority, Integer severity, String parentTaskSubject, String assignUserName, String reviewUserName, String categoryName, Date startDate, Date dueDate, Date createTime, Date updateTime, String createUserName, String updateUserName, Boolean isPublic, String projectId, String projectParentTaskCode, String projectParentSubject, String parentId) {
+        // getTasks
+        public TaskResponseDTO(
+                String id, String taskCode, String projectName, String subject,
+                String description, String typeName, String statusIssueName, Integer priority,
+                Integer severity, String parentTaskSubject, String assignUserName,
+                String reviewUserName, String categoryName, Date startDate, Date dueDate,
+                Date createTime, Date updateTime, String createUserName, String updateUserName,
+                Boolean isPublic, String projectId, String projectParentTaskCode, String projectParentSubject,
+                String parentId, Integer progress, Integer warningTime, Integer dangerTime) {
             this.id = id;
             this.taskCode = taskCode;
             this.projectName = projectName;
@@ -171,6 +183,9 @@ public class TaskDTO {
             this.projectParentTaskCode = projectParentTaskCode;
             this.projectParentSubject = projectParentSubject;
             this.parentId = parentId;
+            this.progress = progress;
+            this.warningTime = warningTime;
+            this.dangerTime = dangerTime;
         }
     }
 
@@ -205,6 +220,31 @@ public class TaskDTO {
         String updateUserId;
         Date updateTime;
         Integer enabled;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class TaskResponseGetChildren {
+        String id;
+        String taskCode;
+        String projectId;
+        String subject;
+        String description;
+        Boolean isPublic;
+        String typeId;
+        String statusIssueId;
+        Integer priority;
+        Integer severity;
+        String parentId;
+        String assignUserId;
+        String reviewUserId;
+        String categoryId;
+        Date startDate;
+        Date dueDate;
+        Integer progress;
     }
 
 

@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import {Component, Injector, OnDestroy, OnInit} from '@angular/core';
 import {ProjectStoreService} from "../project-store.service";
 import {ProjectService} from "../../../service/project.service";
 import {BaseComponent} from "../../../share/ui/base-component/base.component";
@@ -8,8 +8,8 @@ import {BaseComponent} from "../../../share/ui/base-component/base.component";
   templateUrl: './project-detail.component.html',
   styleUrl: './project-detail.component.scss'
 })
-export class ProjectDetailComponent extends BaseComponent implements OnInit{
-  openSidebar: boolean = true;
+export class ProjectDetailComponent extends BaseComponent implements OnInit, OnDestroy{
+  openSidebar: boolean = false;
 
   projectId: any = ''
   project: any = {};
@@ -51,6 +51,10 @@ export class ProjectDetailComponent extends BaseComponent implements OnInit{
       icon: "pi pi-cog",
       sub_menu: [
         {
+          link_name: "Thông tin chung",
+          link: "./general-information",
+        },
+        {
           link_name: "Danh mục",
           link: "./category",
         },
@@ -73,9 +77,15 @@ export class ProjectDetailComponent extends BaseComponent implements OnInit{
     super(injector);
     this.projectId = this.route.snapshot.paramMap.get('id');
     this.getProject(this.projectId);
+    this.projectStoreService.id = this.projectId;
   }
 
   ngOnInit() {
+  }
+
+  override ngOnDestroy() {
+    super.ngOnDestroy();
+    this.projectStoreService.resetStore();
   }
 
   getProject(projectId: string) {

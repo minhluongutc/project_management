@@ -1,0 +1,8 @@
+.profile-avatar {
+  // hover to show the edit icon
+  &:hover {
+    .edit-icon {
+      display: block;
+    }
+  }
+}

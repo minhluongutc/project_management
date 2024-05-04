@@ -1,6 +1,8 @@
 package datn.backend.controllers;
 
+import datn.backend.dto.AddUsersToProjectDTO;
 import datn.backend.dto.ProjectUserDTO;
+import datn.backend.dto.UserDTO;
 import datn.backend.service.ProjectUserService;
 import datn.backend.utils.Constants;
 import datn.backend.utils.ResponseUtils;
@@ -26,19 +28,25 @@ public class ProjectUserController {
         return ResponseUtils.getResponseEntity(result);
     }
 
-    @PostMapping(value = "/project-users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/project-users", produces = MediaType.APPLICATION_JSON_VALUE)// sai
     public Object addUsersToProject(Authentication authentication,
-                                    @RequestBody List<String> userIds,
-                                    @RequestBody String projectId) {
-        Object result = projectUserService.addUsersToProject(authentication, userIds, projectId);
+                                    @RequestBody AddUsersToProjectDTO dto) {
+        Object result = projectUserService.addUsersToProject(authentication, dto.getEmails(), dto.getProjectId(), dto.getProfessionalLevel(), dto.getPermission());
+        return ResponseUtils.getResponseEntity(result);
+    }
+
+    @PostMapping(value = "/project-users/add", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Object createAndAddUserToProject(Authentication authentication,
+                                            @RequestBody List<UserDTO.UserRequestDTO> dtos) {
+        Object result = projectUserService.createAndAddUserToProject(authentication, dtos);
         return ResponseUtils.getResponseEntity(result);
     }
 
     @PutMapping(value = "/project-users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Object changeProfessionalLevelProject(Authentication authentication,
+    public Object changeProfessionalLevelAndPermissionProject(Authentication authentication,
                                                  @PathVariable String userId,
                                                  @RequestBody ProjectUserDTO dto) {
-        Object result = projectUserService.changeProfessionalLevelInProject(authentication, userId, dto.getProjectId(), dto.getProfessionalLevel());
+        Object result = projectUserService.changeProfessionalLevelAndPermissionProject(authentication, userId, dto.getProjectId(), dto.getProfessionalLevel(), dto.getPermission());
         return ResponseUtils.getResponseEntity(result);
     }
 

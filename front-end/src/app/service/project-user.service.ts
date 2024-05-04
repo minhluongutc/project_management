@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {BaseService} from "../share/services/base.service";
 import {HttpClient} from "@angular/common/http";
 import {Environment} from "../share/environment/environment";
+import {User} from "../share/auth/user.model";
 
 @Injectable({
   providedIn: 'root'
@@ -21,10 +22,19 @@ export class ProjectUserService extends BaseService {
     });
   }
 
-  changeProfessionalLevelProject(userId: string, projectId: string, professionalLevel: number) {
+  addUserToProject(data: User[]) {
+    return this.postRequest(this.SERVICE_URL, data);
+  }
+
+  createAndAddUserToProject(data: User[]) {
+    return this.postRequest(`${this.SERVICE_URL}/add`, data);
+  }
+
+  changeProfessionalLevelAndPermissionProject(userId: string, projectId: string, professionalLevel: number, permission: number) {
     const data = {
       projectId: projectId,
-      professionalLevel: professionalLevel
+      professionalLevel: professionalLevel,
+      permission: permission
     }
     return this.putRequest(`${this.SERVICE_URL}/${userId}`, data);
   }

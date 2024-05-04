@@ -11,15 +11,10 @@ import datn.backend.service.DocumentService;
 import datn.backend.service.TaskService;
 import datn.backend.utils.AuditUtils;
 import datn.backend.utils.Constants;
-import datn.backend.utils.response.BaseResultSelect;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,8 +50,10 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Object getTasksAccordingLevel(Authentication authentication, TaskDTO.TaskQueryDTO dto) {
         List<TaskDTO.TaskResponseDTO> taskEntities = taskRepositoryJPA.getTasksLevel(dto, null, AuditUtils.getUserId(authentication), Constants.STATUS.ACTIVE.value);
-        if (taskEntities.stream().anyMatch(task -> Objects.equals(task.getId(), dto.getOtherTaskId()))) {
-            taskEntities.removeIf(task -> Objects.equals(task.getId(), dto.getOtherTaskId()));
+        if (dto.getOtherTaskId() != null) {
+            if (taskEntities.stream().anyMatch(task -> Objects.equals(task.getId(), dto.getOtherTaskId()))) {
+                taskEntities.removeIf(task -> Objects.equals(task.getId(), dto.getOtherTaskId()));
+            }
         }
         System.out.println(dto);
         List<TreeDTO> trees = new ArrayList<>();
@@ -87,9 +84,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Object getTasksChildrenByParentId(Authentication authentication, String parentId) {
-        List<TaskEntity> taskEntities = taskRepositoryJPA.getTaskEntitiesByParentIdAndEnabled(parentId, Constants.STATUS.ACTIVE.value);
+        List<TaskDTO.TaskResponseGetChildren> taskEntities = taskRepositoryJPA.getTaskEntitiesByParentIdAndEnabled(parentId);
         List<TreeDTO> trees = new ArrayList<>();
-        for (TaskEntity taskEntity : taskEntities) {
+        for (TaskDTO.TaskResponseGetChildren taskEntity : taskEntities) {
             TreeDTO treeDTO = new TreeDTO();
             treeDTO.setData(taskEntity);
             treeDTO.setChildren(new ArrayList<>());
@@ -99,11 +96,11 @@ public class TaskServiceImpl implements TaskService {
         return trees;
     }
 
-    private void setTaskChildren(Authentication authentication, TreeDTO parentTree, TaskEntity entity) {
-        List<TaskEntity> taskChildren = taskRepositoryJPA.getTaskEntitiesByParentIdAndEnabled(entity.getId(), Constants.STATUS.ACTIVE.value);
+    private void setTaskChildren(Authentication authentication, TreeDTO parentTree, TaskDTO.TaskResponseGetChildren entity) {
+        List<TaskDTO.TaskResponseGetChildren> taskChildren = taskRepositoryJPA.getTaskEntitiesByParentIdAndEnabled(entity.getId());
         parentTree.setChildren(new ArrayList<>());
         if (taskChildren.isEmpty()) return;
-        for (TaskEntity taskChild : taskChildren) {
+        for (TaskDTO.TaskResponseGetChildren taskChild : taskChildren) {
             TreeDTO treeDTO = new TreeDTO();
             treeDTO.setData(taskChild);
             setTaskChildren(authentication, treeDTO, taskChild);
@@ -146,6 +143,8 @@ public class TaskServiceImpl implements TaskService {
         taskEntity.setReviewUserId(dto.getReviewUserId());
         taskEntity.setStartDate(dto.getStartDate());
         taskEntity.setDueDate(dto.getDueDate());
+        taskEntity.setEstimateTime(dto.getEstimateTime());
+        taskEntity.setCategoryId(dto.getCategoryId());
         taskEntity.setUpdateUserId(AuditUtils.updateUserId(authentication));
         taskEntity.setUpdateTime(AuditUtils.updateTime());
         taskRepositoryJPA.save(taskEntity);

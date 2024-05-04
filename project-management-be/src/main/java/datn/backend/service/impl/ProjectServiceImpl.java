@@ -10,7 +10,6 @@ import datn.backend.repositories.jpa.ProjectUserRepositoryJPA;
 import datn.backend.repositories.jpa.StatusIssueRepositoryJPA;
 import datn.backend.service.ProjectService;
 import datn.backend.service.ProjectUserService;
-import datn.backend.service.jpa.StatusIssueJPA;
 import datn.backend.utils.AuditUtils;
 import datn.backend.utils.Constants;
 import lombok.AccessLevel;
@@ -66,21 +65,23 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public Object insertProject(Authentication authentication, ProjectDTO.ProjectInsertDTO dto) {
         ProjectEntity projectEntity = modelMapper.map(dto, ProjectEntity.class);
-        projectEntity.setCode(generateProjectCodeUniqueEachCompany(AuditUtils.getCompanyId(authentication)));
+        projectEntity.setCode(generateProjectCodeUnique());
         projectEntity.setId(AuditUtils.generateUUID());
         projectEntity.setCreateUserId(AuditUtils.createUserId(authentication));
         projectEntity.setCreateTime(AuditUtils.createTime());
         projectEntity.setEnabled(Constants.STATUS.ACTIVE.value);
         projectRepositoryJPA.save(projectEntity);
 
+        this.cloneBaseDataProject(projectEntity.getId());
+
         // add user in parent project to current project
         if (dto.getParentId() != null) {
             List<ProjectUserEntity> projectUserEntities = projectUserRepositoryJPA.getProjectUserEntitiesByProjectId(dto.getParentId());
             for (ProjectUserEntity projectUser : projectUserEntities) {
-                projectUserService.addUserToProject(authentication, projectUser.getUserId(), projectEntity.getId());
+                projectUserService.addUserToProject(authentication, projectUser.getUserId(), projectEntity.getId(), projectUser.getProfessionalLevel(), projectUser.getPermission());
             }
         } else {
-            projectUserService.addUserToProject(authentication, AuditUtils.createUserId(authentication), projectEntity.getId());
+            projectUserService.addUserToProject(authentication, AuditUtils.createUserId(authentication), projectEntity.getId(), Constants.PROFESSIONAL_LEVEL.INTERN.value, Constants.PERMISSION.MEMBER.value);
         }
         return "Create project success!";
     }
@@ -90,7 +91,20 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepositoryJPA.getProjectById(id).orElseThrow(() -> new RuntimeException("Project not found"));
     }
 
-    private String generateProjectCodeUniqueEachCompany(String companyId) {
+    @Override
+    public Object updateProject(Authentication authentication, String id, ProjectDTO.ProjectUpdateDTO dto) {
+        ProjectEntity projectEntity = projectRepositoryJPA.findByIdAndEnabled(id, Constants.STATUS.ACTIVE.value).orElseThrow(() -> new RuntimeException("Project not found"));
+        projectEntity.setName(dto.getName());
+        projectEntity.setDescription(dto.getDescription());
+        projectEntity.setWarningTime(dto.getWarningTime());
+        projectEntity.setDangerTime(dto.getDangerTime());
+        projectEntity.setUpdateTime(AuditUtils.updateTime());
+        projectEntity.setUpdateUserId(AuditUtils.updateUserId(authentication));
+        projectRepositoryJPA.save(projectEntity);
+        return projectEntity;
+    }
+
+    private String generateProjectCodeUnique() {
         StringBuilder stringBuilder = new StringBuilder();
         Random random = new Random();
         int randomNumberOfChar;
@@ -100,9 +114,9 @@ public class ProjectServiceImpl implements ProjectService {
             randomChar = (char) ('A' + randomNumberOfChar);
             stringBuilder.append(randomChar);
         }
-        List<String> projectCodes = projectRepositoryJPA.getProjectEntitiesByCompanyId(companyId).stream().map(ProjectEntity::getCode).toList();
+        List<String> projectCodes = projectRepositoryJPA.findAllByEnabled(Constants.STATUS.ACTIVE.value).stream().map(ProjectEntity::getCode).toList();
         if (projectCodes.contains(stringBuilder.toString())) {
-            generateProjectCodeUniqueEachCompany(companyId);
+            generateProjectCodeUnique();
         }
         return stringBuilder.toString();
     }
@@ -124,6 +138,7 @@ public class ProjectServiceImpl implements ProjectService {
         statusIssueEntity.setProjectId(projectId);
         statusIssueEntity.setName(name);
         statusIssueEntity.setCode(code);
+        statusIssueEntity.setCreateTime(AuditUtils.createTime());
         statusIssueEntity.setEnabled(Constants.STATUS.ACTIVE.value);
         statusIssueRepositoryJPA.save(statusIssueEntity);
     }

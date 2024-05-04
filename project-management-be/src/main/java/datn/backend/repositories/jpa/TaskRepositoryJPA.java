@@ -40,9 +40,9 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             " left join StatusIssueEntity s on t.statusIssueId = s.id" +
             " left join TaskEntity t3 on t.parentId = t3.id" +
             " left join UserEntity u on t.assignUserId = u.id" +
-            " left join UserEntity u2 on t.reviewUserId = u.id" +
-            " left join UserEntity u3 on t.createUserId = u.id" +
-            " left join UserEntity u4 on t.updateUserId = u.id" +
+            " left join UserEntity u2 on t.reviewUserId = u2.id" +
+            " left join UserEntity u3 on t.createUserId = u3.id" +
+            " left join UserEntity u4 on t.updateUserId = u4.id" +
             " left join CategoryEntity c on t.categoryId = c.id" +
             " where ((:parentId is null and t.parentId is null) or t.parentId = :parentId)" +
             " and (p2.userId = :userId)" +
@@ -57,22 +57,33 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             " and (t.enabled = :enabled)")
     List<TaskDTO.TaskResponseDTO> getTasksLevel(TaskDTO.TaskQueryDTO dto, String parentId, String userId, Integer enabled);
 
-    List<TaskEntity> getTaskEntitiesByParentIdAndEnabled(String parentId, Integer enabled);
+    @Query("select new datn.backend.dto.TaskDTO$TaskResponseGetChildren(t.id, t.taskCode, t.projectId, t.subject, t.description, t.isPublic, t.typeId, t.statusIssueId, t.priority, t.severity, t.parentId, t.assignUserId, t.reviewUserId, t.categoryId, t.startDate, t.dueDate, s.progress)" +
+            " from TaskEntity t " +
+            " left join StatusIssueEntity s on t.statusIssueId = s.id" +
+            " where t.parentId = :parentId and t.enabled = 1")
+    List<TaskDTO.TaskResponseGetChildren> getTaskEntitiesByParentIdAndEnabled(String parentId);
 
-    @Query("select new datn.backend.dto.TaskDTO$TaskResponseDTO(t.id, t.taskCode, p.name, t.subject, t.description, t2.name, s.name, t.priority, t.severity, t3.subject, u.username, u2.username, c.name, t.startDate, t.dueDate, t.createTime, t.updateTime, u3.username, u4.username, t.isPublic, t.projectId, t3.taskCode, t3.subject, t.parentId) " +
+    @Query("select new datn.backend.dto.TaskDTO$TaskResponseDTO(" +
+            " t.id, t.taskCode, p.name, t.subject, t.description, t2.name, s.name, " +
+            " t.priority, t.severity, t3.subject, u.username, u2.username, c.name, " +
+            " t.startDate, t.dueDate, t.createTime, t.updateTime, u3.username, u4.username, " +
+            " t.isPublic, t.projectId, t3.taskCode, t3.subject, t.parentId, s.progress, " +
+            " p.warningTime, p.dangerTime) " +
             " from TaskEntity t" +
             " left join ProjectEntity p on t.projectId = p.id" +
-            " join ProjectUserEntity p2 on p.id = p2.projectId" +
             " left join TypeEntity t2 on t.typeId = t2.id" +
             " left join StatusIssueEntity s on t.statusIssueId = s.id" +
             " left join TaskEntity t3 on t.parentId = t3.id" +
             " left join UserEntity u on t.assignUserId = u.id" +
-            " left join UserEntity u2 on t.reviewUserId = u.id" +
-            " left join UserEntity u3 on t.createUserId = u.id" +
-            " left join UserEntity u4 on t.updateUserId = u.id" +
+            " left join UserEntity u2 on t.reviewUserId = u2.id" +
+            " left join UserEntity u3 on t.createUserId = u3.id" +
+            " left join UserEntity u4 on t.updateUserId = u4.id" +
             " left join CategoryEntity c on t.categoryId = c.id" +
-            " where (:#{#dto.parentId} is null or t.parentId = :#{#dto.parentId})" +
-            " and (:#{#dto.projectId} is null or t.projectId = :#{#dto.projectId})" +
+            " where (:#{#dto.parentId} is null or (t.parentId = :#{#dto.parentId}))" +
+            " and (:#{#dto.projectId} is null or (t.projectId = :#{#dto.projectId}))" +
+            " and (:#{#dto.typeId} is null or (t2.id = :#{#dto.typeId}))" +
+            " and (:#{#dto.priority} is null or (t.priority = :#{#dto.priority}))" +
+            " and (:#{#dto.severity} is null or (t.severity = :#{#dto.severity}))" +
             " and (" +
             "       :#{#dto.statusIssueCode} is null " +
             "       or (:#{#dto.statusIssueCodeIsEqual} = true and s.code = :#{#dto.statusIssueCode}) " +
@@ -80,6 +91,9 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             "   )" +
             " and (:#{#dto.assignUserId} is null or (t.assignUserId = :#{#dto.assignUserId}))" +
             " and (:#{#dto.createUserId} is null or (t.createUserId = :#{#dto.createUserId}))" +
+            " and (:#{#dto.statusIssueId} is null or (t.statusIssueId = :#{#dto.statusIssueId}))" +
+            " and (:#{#dto.categoryId} is null or (t.categoryId = :#{#dto.categoryId}))" +
+            " and (:#{#dto.keyword} is null or (lower(t.subject) like lower(concat('%', trim(:#{#dto.keyword}) ,'%'))))" +
             " and (t.enabled = 1)")
     List<TaskDTO.TaskResponseDTO> getTasks(TaskDTO.TaskQueryDTO dto);
 

@@ -12,6 +12,7 @@ import datn.backend.entities.RoleEntity;
 import datn.backend.entities.UserEntity;
 import datn.backend.repositories.jpa.RoleRepositoryJPA;
 import datn.backend.repositories.jpa.UserRepositoryJPA;
+import datn.backend.utils.Constants;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +63,6 @@ public class AuthController {
                 userDetails.getLastName(),
                 userDetails.getEmail(),
                 userDetails.getAvatarId(),
-                userDetails.getCompanyId(),
                 roles);
         return ResponseEntity.ok(new JwtResponse(jwt, user));
     }
@@ -106,6 +106,11 @@ public class AuthController {
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(projectManagerRole);
                         break;
+                    case "LEADER":
+                        RoleEntity leaderRole = roleRepository.findByName(ERole.ROLE_LEADER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(leaderRole);
+                        break;
                     default:
                         RoleEntity userRole = roleRepository.findByName(ERole.ROLE_USER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -122,6 +127,7 @@ public class AuthController {
         user.setAddress(signUpRequest.getAddress());
         user.setCreateTime(new Date());
         user.setRoles(roles);
+        user.setEnabled(Constants.STATUS.ACTIVE.value);
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));

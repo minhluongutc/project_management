@@ -4,7 +4,6 @@ import {TaskService} from "../../../service/task.service";
 import {ParamMap} from "@angular/router";
 import {Column} from "../../../models/column.model";
 import {PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
-import {TablePageEvent} from "primeng/table";
 import FileSaver from 'file-saver';
 
 @Component({
@@ -19,12 +18,12 @@ export class ListViewComponent extends BaseComponent implements OnInit {
   exportColumns!: any[];
 
   constructor(injector: Injector,
-              private taskService: TaskService
+              private taskService: TaskService,
   ) {
     super(injector);
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<any> {
     this.route.queryParamMap.subscribe((params: ParamMap) => {
       console.log('params:', params);
       this.getTasks(params);
@@ -82,4 +81,5 @@ export class ListViewComponent extends BaseComponent implements OnInit {
 
   protected readonly PRIORIES = PRIORIES;
   protected readonly SEVERITIES = SEVERITIES;
+
 }

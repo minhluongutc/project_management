@@ -1,0 +1,20 @@
+<div class="sidebar-content" style="min-height: calc(100vh - 254.87px)">
+  <ul class="sidebar-list">
+    <li
+      *ngFor="let menuItem of menuItems"
+      [routerLink]="menuItem.urlPath"
+      [class.selected]="menuItem === selectedMenuItem"
+      (click)="handleMenuItemClick(menuItem)"
+      class="sidebar-item"
+      routerLinkActive="active"
+      [pTooltip]="menuItem.name"
+      [tooltipDisabled]="!showToolTips"
+    >
+      {{ menuItem.name }}
+      <i
+        class="pi pi-minus active-icon-none"
+        routerLinkActive="active-icon"
+      ></i>
+    </li>
+  </ul>
+</div>

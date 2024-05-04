@@ -3,4 +3,5 @@ export class StatusIssue {
   name!: string;
   description!: string;
   projectId!: string;
+  progress!: number;
 }

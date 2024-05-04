@@ -32,8 +32,6 @@ public class UserDetailsImpl implements UserDetails {
     String lastName;
     @Getter
     String avatarId;
-    @Getter
-    String companyId;
 
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -44,7 +42,6 @@ public class UserDetailsImpl implements UserDetails {
                            String firstName,
                            String lastName,
                            String avatarId,
-                           String companyId,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
@@ -53,7 +50,6 @@ public class UserDetailsImpl implements UserDetails {
         this.firstName = firstName;
         this.lastName = lastName;
         this.avatarId = avatarId;
-        this.companyId = companyId;
         this.authorities = authorities;
     }
 
@@ -70,7 +66,6 @@ public class UserDetailsImpl implements UserDetails {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getAvatarId(),
-                user.getCompanyId(),
                 authorities);
     }
 

@@ -14,6 +14,8 @@ import {StatisticsComponent} from "./project-detail/statistics/statistics.compon
 import {CategoryComponent} from "./project-detail/setting/category/category.component";
 import {IssueTypeComponent} from "./project-detail/setting/project-type/issue-type.component";
 import {StatusIssueComponent} from "./project-detail/setting/status-issue/status-issue.component";
+import {GeneralInformationComponent} from "./project-detail/setting/general-information/general-information.component";
+import {ViewAttachmentComponent} from "../attachment/view-attachment/view-attachment.component";
 
 const routes: Routes = [
   {
@@ -60,6 +62,10 @@ const routes: Routes = [
       {
         path: 'status-issue',
         component: StatusIssueComponent
+      },
+      {
+        path: 'general-information',
+        component: GeneralInformationComponent
       },
       {
         path: 'tasks',

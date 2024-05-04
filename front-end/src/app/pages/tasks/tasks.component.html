@@ -6,20 +6,141 @@
           Danh sách công việc
         </div>
         <div class="flex gap-2 justify-center items-end flex-col">
-          <div class="flex">
+          <div class="flex gap-1">
             <p class="text-xl">Xem Danh sách</p>
             <p-inputSwitch [(ngModel)]="isViewList" (ngModelChange)="changeStage($event)"></p-inputSwitch>
           </div>
           @if (isViewList) {
-            <div class="flex">
+            <div class="flex gap-1">
               <p class="text-xl">Xem dạng cây</p>
               <p-inputSwitch [(ngModel)]="isViewTree" (ngModelChange)="changeStageViewList($event)"></p-inputSwitch>
             </div>
           }
         </div>
-<!--        <p-selectButton [options]="stateView" [(ngModel)]="value" optionLabel="label" optionValue="value"-->
-<!--                        (onChange)="checkChange($event)" styleClass="text-sm"></p-selectButton>-->
       </div>
+      <p-divider></p-divider>
+      <div>
+        <div class="flex justify-between">
+          @if (showAdvancedFilter) {
+            <div class="text-xl mt-2 mb-1 text-black font-semibold antialiased tracking-normal">
+              Tìm kiếm nâng cao
+            </div>
+            <p-button icon="pi pi-angle-down w-10" severity="secondary" (onClick)="this.showAdvancedFilter = !this.showAdvancedFilter" pTooltip="Ẩn tìm kiếm nâng cao"></p-button>
+          } @else {
+            <div class="text-xl mt-2 mb-1 text-black font-semibold antialiased tracking-normal">
+              Tìm kiếm
+            </div>
+            <p-button icon="pi pi-angle-up w-10" severity="secondary" (onClick)="this.showAdvancedFilter = !this.showAdvancedFilter" pTooltip="Hiển thị tìm kiếm nâng cao"></p-button>
+          }
+        </div>
+        <div class="grid grid-cols-4 gap-4">
+          <div class="flex flex-col gap-0.5">
+            <jira-label [jiraLabel]="'Nhập tên'"/>
+            <p-iconField iconPosition="right">
+              <p-inputIcon styleClass="pi pi-search"/>
+              <input type="text" pInputText placeholder="Tiêu đề" [(ngModel)]="keyword" (keydown.enter)="addQueryParams()"/>
+            </p-iconField>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <jira-label [jiraLabel]="'Dự án'"/>
+            <p-treeSelect class="md:w-20rem w-full"
+                          containerStyleClass="w-full"
+                          placeholder="Chọn"
+                          [options]="listProject"
+                          [disabled]="projectStoreService.id!=''"
+                          [(ngModel)]="projectValue"
+                          (onNodeSelect)="onSelectProject($event)"
+                          (onNodeUnselect)="onUnselectProject($event)"
+            />
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <jira-label [jiraLabel]="'Độ ưu tiên'"></jira-label>
+            <p-dropdown optionLabel="name"
+                        optionValue="id"
+                        placeholder="Chọn"
+                        [showClear]="true"
+                        [options]="priories"
+                        (onChange)="addQueryParams()"
+                        [(ngModel)]="priority"
+            />
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <jira-label [jiraLabel]="'Độ nghiêm trọng'"></jira-label>
+            <p-dropdown optionLabel="name"
+                        optionValue="id"
+                        placeholder="Chọn"
+                        [options]="severities"
+                        [showClear]="true"
+                        (onChange)="addQueryParams()"
+                        [(ngModel)]="severity"
+            />
+          </div>
+          @if (showAdvancedFilter) {
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Loại công việc'"/>
+              <p-dropdown optionLabel="name"
+                          optionValue="id"
+                          placeholder="Chọn"
+                          [options]="issueTypes"
+                          [showClear]="true"
+                          [disabled]="projectId=='' || projectId== null"
+                          (onChange)="addQueryParams()"
+                          [(ngModel)]="typeId"
+              />
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Trạng thái'"></jira-label>
+              <p-dropdown optionLabel="name"
+                          optionValue="id"
+                          placeholder="Chọn"
+                          [showClear]="true"
+                          [options]="statuses"
+                          [disabled]="projectId=='' || projectId== null"
+                          (onChange)="addQueryParams()"
+                          [(ngModel)]="statusIssueId"
+              />
+            </div>
+
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Danh mục'"></jira-label>
+              <p-dropdown optionLabel="name"
+                          optionValue="id"
+                          placeholder="Chọn"
+                          [options]="categories"
+                          [showClear]="true"
+                          [disabled]="projectId=='' || projectId== null"
+                          (onChange)="addQueryParams()"
+                          [(ngModel)]="categoryId"
+              />
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Người nghiệm thu'"></jira-label>
+              <p-dropdown optionLabel="username"
+                          optionValue="userId"
+                          placeholder="Chọn"
+                          [options]="reviewers"
+                          [showClear]="true"
+                          [disabled]="projectId=='' || projectId== null"
+                          (onChange)="addQueryParams()"
+                          [(ngModel)]="reviewUserId"
+              />
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Người được giao'"></jira-label>
+              <p-dropdown optionLabel="username"
+                          optionValue="userId"
+                          placeholder="Chọn"
+                          [options]="assignees"
+                          [showClear]="true"
+                          [disabled]="projectId=='' || projectId== null"
+                          (onChange)="addQueryParams()"
+                          [(ngModel)]="assignUserId"
+              />
+            </div>
+          }
+        </div>
+      </div>
+      <p-divider></p-divider>
     </div>
     <router-outlet></router-outlet>
   </div>

@@ -4,8 +4,13 @@ import {TasksComponent} from "./tasks.component";
 import {DetailViewComponent} from "./detail-view/detail-view.component";
 import {ListViewTreeComponent} from "./list-view-tree/list-view-tree.component";
 import {ListViewComponent} from "./list-view/list-view.component";
+import {ViewAttachmentComponent} from "../attachment/view-attachment/view-attachment.component";
 
 const routes: Routes = [
+  {
+    path: ':id/attachments/:attachmentId',
+    component: ViewAttachmentComponent
+  },
   {
     path: '',
     component: TasksComponent,

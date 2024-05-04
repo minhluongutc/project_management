@@ -1,0 +1,41 @@
+<div class="bg-gray-100 pl-6 pr-6">
+  <app-layout-secondary [menu]="menu" [content]="content">
+    <ng-template #menu>
+      <app-sidebar-secondary [menuItems]="menuItems" (handleSelect)="getItemSelected($event)"></app-sidebar-secondary>
+    </ng-template>
+    <ng-template #content>
+      @switch (getFileType(itemSelected.type)) {
+        @case ('image') {
+          <img class="h-auto w-full" [src]="getFileUrl(itemSelected.id)" alt="file img not found">
+        }
+        @case ('docx') {
+          <ngx-doc-viewer
+            [url]="'https://docs.google.com/document/d/15qfPC_uClXjUKK-NiZ4JAHtwsCyoaTu3'"
+            viewer="office"
+            class="w-full h-full"
+          />
+        }
+        @case ('xlsx') {
+          <ngx-doc-viewer
+            [url]="getFileUrl(itemSelected.id)"
+            viewer="office"
+            class="w-full h-full"
+          />
+        }
+<!--        @case ('xlsx')-->
+<!--        @case ('ppt')-->
+<!--        @case ('pptx')-->
+<!--        @case ('jpg')-->
+<!--        @case ('jpeg')-->
+<!--        @case ('png')-->
+<!--        @case ('gif')-->
+<!--        @case ('bmp')-->
+<!--        @case ('svg')-->
+        @default {
+          <h1 class="text-2xl font-semibold text-gray-800">XIN LỖI</h1>
+          <p class="text-gray-600">Loại tài liệu chưa hỗ trợ xem trực tiếp</p>
+        }
+      }
+    </ng-template>
+  </app-layout-secondary>
+</div>
