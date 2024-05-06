@@ -109,4 +109,6 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
 
     @Query("select t from TaskEntity t where t.parentId = :parentId")
     List<TaskEntity> getChildrenTaskByParentId(String parentId);
+
+    List<TaskEntity> getTaskEntitiesByProjectIdAndEnabled(String projectId, Integer enabled);
 }

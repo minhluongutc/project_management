@@ -1,7 +1,7 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {BaseComponent} from '../../../share/ui/base-component/base.component';
 import {Validators} from "@angular/forms";
-import {FileRemoveEvent, FileSelectEvent} from "primeng/fileupload";
+import {FileRemoveEvent, FileSelectEvent, FileUploadEvent} from "primeng/fileupload";
 import {ProjectService} from "../../../service/project.service";
 import {TreeNodeSelectEvent, TreeNodeUnSelectEvent} from "primeng/tree";
 import {TaskService} from "../../../service/task.service";
@@ -16,6 +16,8 @@ import {DocumentService} from "../../../service/document.service";
 import {FileService} from "../../../share/services/file.service";
 import {ConfirmationService} from "primeng/api";
 import {ProjectStoreService} from "../../projects/project-store.service";
+import {saveAs} from "file-saver";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 @Component({
   selector: 'app-task-create',
@@ -36,6 +38,8 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   assignees: any[] = [];
   reviewers: any[] = [];
   fileList: any[] = [];
+
+  fileImport: any;
 
   data2edit: any;
 
@@ -517,6 +521,60 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   showDialogImportFile() {
-    this.visibleImportFile = true;
+    if (!this.projectIdSelected) {
+      this.createErrorToast('Lỗi', 'Vui lòng chọn dự án');
+    } else {
+      this.visibleImportFile = true;
+    }
+  }
+
+  onDownloadTemplate() {
+    this.taskService.downLoadTemplate(this.projectIdSelected).subscribe({
+      next: (res: any) => {
+        saveAs(
+          res.body,
+          this.fileService.extractFileNameFromContentDisposition(
+            res.headers.get('content-disposition')
+          )
+        );
+      }
+    })
+  }
+
+
+  handleImportFile() {
+    console.log(this.fileImport);if(this.fileImport) {
+      const formData = new FormData();
+      formData.append('file', this.fileImport);
+      this.taskService.importTemplate(this.projectIdSelected, formData).subscribe({
+        next: (res) => {
+          this.visibleImportFile = false;
+          this.fileImport = null;
+          if (res?.messageCode === '000') {
+            this.createSuccessToast('Thành công', res.messageDesc);
+          } else if (res.messageCode === '001') {
+            if (res.totalSuccess === 0)
+              this.createErrorToast('Lỗi', res.messageDesc);
+            else
+              this.createSuccessToast('Thành công', res.messageDesc);
+
+            saveAs(this.fileService.base64toBlob(res.fileData), this.fileImport.name);
+          }
+        },error: (error) => {
+          this.createErrorToast('Lỗi', error.message);
+      }
+      })
+    } else {
+      this.createErrorToast('Lỗi', 'Vui lòng chọn file')
+    }
+  }
+
+  onSelectFileImport($event: FileSelectEvent) {
+    console.log($event)
+    this.fileImport = $event.currentFiles[0];
+  }
+
+  confirmDeleteFileImport() {
+    this.fileImport = null;
   }
 }

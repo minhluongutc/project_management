@@ -138,7 +138,7 @@
 /* Dropdown Title */
 .sidebar .nav-links .dropdown-title {
   width: 260px;
-  overflow: hidden;
+  //overflow: hidden;
   transition: all 0.52s ease;
   /* */
   display: flex;
@@ -250,7 +250,7 @@
   display: block;
   pointer-events: none;
   transition: 0s;
-  overflow: hidden;
+  //overflow: hidden;
 }
 
 .sidebar.sidebar-close .nav-links li .sub-menu li {
@@ -313,4 +313,12 @@
   .sidebar.sidebar-close .nav-links li .sub-menu {
     display: none;
   }
+}
+
+.custom-child {
+  display: none;
+}
+
+.custom-parent:hover .custom-child {
+  display: block;
 }

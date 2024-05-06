@@ -250,8 +250,10 @@
   .p-paginator > button,
   .p-toast-message-content > button,
   .p-treenode-content > button,
-  .p-dialog-footer > button {
+  .p-dialog-footer > button,
+  .p-element > button.p-component{
     width: auto;
+    min-width: 40px;
   }
 
   .p-button.p-button-secondary, .p-button-group.p-button-secondary > .p-button, .p-splitbutton.p-button-secondary > .p-button {
@@ -262,6 +264,15 @@
       background: #e2e8f0;
       border: 1px solid #e2e8f0;
     }
+  }
+
+  .p-metergroup {
+    gap: 0rem;
+  }
+
+  .p-metergroup .p-metergroup-labels.p-metergroup-labels-horizontal {
+    gap: 1rem;
+    font-size: 0.9rem;
   }
 
 }

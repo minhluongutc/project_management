@@ -33,6 +33,7 @@ import {CalendarModule} from "primeng/calendar";
 import { GeneralInformationComponent } from './project-detail/setting/general-information/general-information.component';
 import {InputNumberModule} from "primeng/inputnumber";
 import {StyleClassModule} from "primeng/styleclass";
+import {MeterGroupModule} from "primeng/metergroup";
 
 @NgModule({
   declarations: [
@@ -48,34 +49,35 @@ import {StyleClassModule} from "primeng/styleclass";
     StatusIssueComponent,
     GeneralInformationComponent,
   ],
-  imports: [
-    IconFieldModule,
-    InputIconModule,
-    InputTextModule,
-    TreeTableModule,
-    ButtonModule,
-    DropdownModule,
-    TreeSelectModule,
-    ProjectRoutingModule,
-    NgForOf,
-    NgIf,
-    ReactiveFormsModule,
-    JiraInputTextComponent,
-    ToastModule,
-    FormsModule,
-    TableModule,
-    DatePipe,
-    AutofocusDirective,
-    RippleModule,
-    ConfirmDialogModule,
-    TagModule,
-    DialogModule,
-    RadioButtonModule,
-    UiModule,
-    CalendarModule,
-    InputNumberModule,
-    StyleClassModule
-  ],
+    imports: [
+        IconFieldModule,
+        InputIconModule,
+        InputTextModule,
+        TreeTableModule,
+        ButtonModule,
+        DropdownModule,
+        TreeSelectModule,
+        ProjectRoutingModule,
+        NgForOf,
+        NgIf,
+        ReactiveFormsModule,
+        JiraInputTextComponent,
+        ToastModule,
+        FormsModule,
+        TableModule,
+        DatePipe,
+        AutofocusDirective,
+        RippleModule,
+        ConfirmDialogModule,
+        TagModule,
+        DialogModule,
+        RadioButtonModule,
+        UiModule,
+        CalendarModule,
+        InputNumberModule,
+        StyleClassModule,
+        MeterGroupModule
+    ],
 })
 export class ProjectModule {
 }

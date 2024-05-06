@@ -1,6 +1,7 @@
 package datn.backend.service.impl;
 
 import datn.backend.dto.ProjectDTO;
+import datn.backend.dto.TaskDTO;
 import datn.backend.dto.TreeDTO;
 import datn.backend.entities.ProjectEntity;
 import datn.backend.entities.ProjectUserEntity;
@@ -8,6 +9,7 @@ import datn.backend.entities.StatusIssueEntity;
 import datn.backend.repositories.jpa.ProjectRepositoryJPA;
 import datn.backend.repositories.jpa.ProjectUserRepositoryJPA;
 import datn.backend.repositories.jpa.StatusIssueRepositoryJPA;
+import datn.backend.repositories.jpa.TaskRepositoryJPA;
 import datn.backend.service.ProjectService;
 import datn.backend.service.ProjectUserService;
 import datn.backend.utils.AuditUtils;
@@ -35,13 +37,43 @@ public class ProjectServiceImpl implements ProjectService {
     final ProjectUserService projectUserService;
 
     final ModelMapper modelMapper;
+    private final TaskRepositoryJPA taskRepositoryJPA;
 
     public List<TreeDTO> getProjectsByUserId(String userId) {
         List<ProjectEntity> projectParents = projectRepositoryJPA.getProjectParentByUserId(userId);
         List<TreeDTO> trees = new ArrayList<>();
         for (ProjectEntity projectParent : projectParents) {
             TreeDTO treeDTO = new TreeDTO();
-            treeDTO.setData(projectParent);
+
+            TaskDTO.TaskQueryDTO taskQueryDTOByProjectId = new TaskDTO.TaskQueryDTO();
+            taskQueryDTOByProjectId.setProjectId(projectParent.getId());
+            List<TaskDTO. TaskResponseDTO> listTaskByStatusAll = taskRepositoryJPA.getTasks(taskQueryDTOByProjectId);
+
+            ProjectDTO.ProjectResponseDTO projectResponseDTO = new ProjectDTO.ProjectResponseDTO();
+            List<StatusIssueEntity> statusIssueEntities = statusIssueRepositoryJPA.getStatusIssue(projectParent.getId(), null);
+            List<ProjectDTO.StatusDTO> statusPercents = new ArrayList<>();
+            if (!statusIssueEntities.isEmpty()) {
+                for (StatusIssueEntity statusIssueEntity : statusIssueEntities) {
+                    // get tasks by status issue
+                    TaskDTO.TaskQueryDTO taskQueryDTO = new TaskDTO.TaskQueryDTO();
+                    taskQueryDTO.setStatusIssueId(statusIssueEntity.getId());
+                    List<TaskDTO. TaskResponseDTO> listTaskByStatus = taskRepositoryJPA.getTasks(taskQueryDTO);
+
+                    ProjectDTO.StatusDTO status = new ProjectDTO.StatusDTO();
+                    status.setName(statusIssueEntity.getName());
+                    if (!listTaskByStatus.isEmpty()) {
+                        status.setPercent((((double) listTaskByStatus.size() / listTaskByStatusAll.size()) * 100));
+                        String fraction = listTaskByStatus.size() + "/" + listTaskByStatusAll.size();
+                        status.setFraction(fraction);
+                    }
+
+                    statusPercents.add(status);
+                }
+            }
+
+            modelMapper.map(projectParent, projectResponseDTO);
+            projectResponseDTO.setStatusPercents(statusPercents);
+            treeDTO.setData(projectResponseDTO);
             treeDTO.setChildren(new ArrayList<>());
             setProjectChildren(treeDTO, projectParent);
             trees.add(treeDTO);
@@ -123,21 +155,22 @@ public class ProjectServiceImpl implements ProjectService {
 
     private void cloneBaseDataProject(String projectId) {
         // create status issue
-        createStatusIssue(projectId, Constants.STATUS_ISSUE.NEW.name, Constants.STATUS_ISSUE.NEW.value);
-        createStatusIssue(projectId, Constants.STATUS_ISSUE.CONFIRMED.name, Constants.STATUS_ISSUE.CONFIRMED.value);
-        createStatusIssue(projectId, Constants.STATUS_ISSUE.DEPLOY_WAITING.name, Constants.STATUS_ISSUE.DEPLOY_WAITING.value);
-        createStatusIssue(projectId, Constants.STATUS_ISSUE.RESOLVE.name, Constants.STATUS_ISSUE.RESOLVE.value);
-        createStatusIssue(projectId, Constants.STATUS_ISSUE.REOPEN.name, Constants.STATUS_ISSUE.REOPEN.value);
-        createStatusIssue(projectId, Constants.STATUS_ISSUE.DONE.name, Constants.STATUS_ISSUE.DONE.value);
-        createStatusIssue(projectId, Constants.STATUS_ISSUE.REJECT.name, Constants.STATUS_ISSUE.REJECT.value);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.NEW.name, Constants.STATUS_ISSUE.NEW.value, 0);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.CONFIRMED.name, Constants.STATUS_ISSUE.CONFIRMED.value, 30);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.DEPLOY_WAITING.name, Constants.STATUS_ISSUE.DEPLOY_WAITING.value, 70);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.RESOLVE.name, Constants.STATUS_ISSUE.RESOLVE.value, 80);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.REOPEN.name, Constants.STATUS_ISSUE.REOPEN.value, 30);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.DONE.name, Constants.STATUS_ISSUE.DONE.value, 100);
+        createStatusIssue(projectId, Constants.STATUS_ISSUE.REJECT.name, Constants.STATUS_ISSUE.REJECT.value, 0);
     }
 
-    private void createStatusIssue(String projectId, String name, Integer code) {
+    private void createStatusIssue(String projectId, String name, Integer code, Integer progress) {
         StatusIssueEntity statusIssueEntity = new StatusIssueEntity();
         statusIssueEntity.setId(AuditUtils.generateUUID());
         statusIssueEntity.setProjectId(projectId);
         statusIssueEntity.setName(name);
         statusIssueEntity.setCode(code);
+        statusIssueEntity.setProgress(progress);
         statusIssueEntity.setCreateTime(AuditUtils.createTime());
         statusIssueEntity.setEnabled(Constants.STATUS.ACTIVE.value);
         statusIssueRepositoryJPA.save(statusIssueEntity);

@@ -1,6 +1,7 @@
 package datn.backend.utils.excel;
 
 import datn.backend.utils.Constants;
+import datn.backend.utils.Utils;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -547,7 +548,11 @@ public class ExcelHelpers {
             return StringUtils.trim(cell.getStringCellValue());
         }
       } else if (CellType.NUMERIC == cell.getCellType()) {
-        return String.format("%.0f", cell.getNumericCellValue());
+        if (DateUtil.isCellDateFormatted(cell)) {
+          return Utils.formatter.format(cell.getDateCellValue());
+        } else {
+          return String.format("%.0f", cell.getNumericCellValue());
+        }
       } else if (CellType.STRING == cell.getCellType()) {
         return StringUtils.trim(cell.getStringCellValue());
       }
@@ -558,8 +563,7 @@ public class ExcelHelpers {
   }
 
   public static Date cellValue2Date(Cell cell) throws ParseException {
-    DateFormat df = new SimpleDateFormat(Constants.DATE_STRING_FORMAT);
-    return df.parse(ExcelHelpers.getStringCellValue(cell));
+    return Utils.formatter.parse(ExcelHelpers.getStringCellValue(cell));
   }
 
   public static boolean rowsAreEqual(Row template, Row input) {

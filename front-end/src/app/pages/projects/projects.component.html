@@ -23,23 +23,29 @@
 
     <ng-template pTemplate="header" let-columns>
       <tr>
-        <th>Tên dự án</th>
-        <th>Mô tả</th>
+        <th class="text-left">Tên dự án</th>
+        <th class="text-left">Mô tả</th>
+        <th class="text-center">Tổng quan dự án</th>
       </tr>
     </ng-template>
 
     <ng-template
       pTemplate="body"
       let-rowNode
+      let-columns="columns"
       let-rowData="rowData">
       <tr [ttRow]="rowNode" style="height: 35px">
         <td>
           <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-          <a (click)="onDetailProject(rowData.id)" class="text-blue-700 cursor-pointer">
-            {{ rowData.name }}
-          </a>
+          <a (click)="onDetailProject(rowData.id)"
+             class="text-blue-600 cursor-pointer hover:underline">{{ rowData.name }}</a>
         </td>
         <td>{{ rowData.description }}</td>
+<!--        @for(item of listDataTree; track $index) {-->
+<!--          @if (item.data.id == rowData.id) {-->
+            <td><p-meterGroup [value]="listMeterGroup[getIndexInRowData(rowData)]"></p-meterGroup></td>
+<!--          }-->
+<!--        }-->
       </tr>
     </ng-template>
   </p-treeTable>

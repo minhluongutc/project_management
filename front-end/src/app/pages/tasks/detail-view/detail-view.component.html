@@ -62,7 +62,7 @@
         } @else {
           @for (attachment of attachments; track $index) {
             <div class="pb-2">
-              <span>{{$index + 1}}, </span><a class="text-blue-700 cursor-pointer mb-2" (click)="downloadAttachment(attachment)">{{attachment.fileName}}</a>
+              <span>{{$index + 1}}, </span><a class="text-blue-600 cursor-pointer mb-2" (click)="downloadAttachment(attachment)">{{attachment.fileName}}</a>
             </div>
           }
         }
@@ -161,7 +161,7 @@
                 <p class="text-base">{{taskSelected.typeName}}</p>
                 <p class="text-base">{{taskSelected.reviewUserName}}</p>
                 @if (taskSelected.projectParentSubject!='N/A') {
-                  <a class="text-base text-blue-700 cursor-pointer"
+                  <a class="text-base text-blue-600 cursor-pointer"
                      (click)="filterTaskSelectedById(taskSelected.parentId)">
                     {{taskSelected.projectParentSubject}}
                   </a>
@@ -190,7 +190,7 @@
                     <tr [ttRow]="rowNode">
                       <td>
                         <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-                        <a (click)="filterTaskSelectedById(rowData.id)" class="text-blue-700 cursor-pointer">
+                        <a (click)="filterTaskSelectedById(rowData.id)" class="text-blue-600 cursor-pointer">
                           {{ rowData.taskCode }}
                         </a>
                       </td>
