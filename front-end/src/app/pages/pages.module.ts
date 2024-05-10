@@ -11,6 +11,23 @@ import {LoginComponent} from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
+import {DialogModule} from "primeng/dialog";
+import {CalendarModule} from "primeng/calendar";
+import {DropdownModule} from "primeng/dropdown";
+import {JiraInputTextComponent} from "../share/ui/jira-input-text/jira-input-text.component";
+import {RadioButtonModule} from "primeng/radiobutton";
+import {DividerModule} from "primeng/divider";
+import {ViewAttachmentComponent} from "./attachment/view-attachment/view-attachment.component";
+import {NgxDocViewerModule} from "ngx-doc-viewer";
+import {PdfViewerModule} from "ng2-pdf-viewer";
+import { PostComponent } from './post/post.component';
+import {TooltipModule} from "primeng/tooltip";
+import {FileSizePipe} from "../share/pipes/file-size.pipe";
+import {MeterGroupModule} from "primeng/metergroup";
+import {TreeTableModule} from "primeng/treetable";
+import {EditorModule} from "primeng/editor";
+import {TreeSelectModule} from "primeng/treeselect";
+import {FileUploadModule} from "primeng/fileupload";
 
 
 @NgModule({
@@ -18,6 +35,8 @@ import {RippleModule} from "primeng/ripple";
     DashboardComponent,
     LoginComponent,
     ProfileComponent,
+    ViewAttachmentComponent,
+    PostComponent
   ],
   imports: [
     CommonModule,
@@ -29,7 +48,22 @@ import {RippleModule} from "primeng/ripple";
     AccordionModule,
     FormsModule,
     ButtonModule,
-    RippleModule
+    RippleModule,
+    DialogModule,
+    CalendarModule,
+    DropdownModule,
+    JiraInputTextComponent,
+    RadioButtonModule,
+    DividerModule,
+    NgxDocViewerModule,
+    PdfViewerModule,
+    TooltipModule,
+    FileSizePipe,
+    MeterGroupModule,
+    TreeTableModule,
+    EditorModule,
+    TreeSelectModule,
+    FileUploadModule
   ],
   providers: [DecimalPipe]
 })

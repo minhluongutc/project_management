@@ -15,18 +15,18 @@ export class ProjectDetailComponent extends BaseComponent implements OnInit, OnD
   project: any = {};
 
   menuSidebar = [
-    {
-      link_name: "Kanban Board",
-      link: "./kanban-board",
-      icon: "pi pi-table",
-      sub_menu: []
-    },
-    {
-      link_name: "Backlog",
-      link: "./backlog",
-      icon: "pi pi-undo",
-      sub_menu: []
-    },
+    // {
+    //   link_name: "Kanban Board",
+    //   link: "./kanban-board",
+    //   icon: "pi pi-table",
+    //   sub_menu: []
+    // },
+    // {
+    //   link_name: "Backlog",
+    //   link: "./backlog",
+    //   icon: "pi pi-undo",
+    //   sub_menu: []
+    // },
     {
       link_name: "Công việc",
       link: "./tasks",

@@ -7,6 +7,8 @@
                 size="small" class="header-drop" routerLink="/projects"></p-button>
       <p-button label="Công việc" [text]="true" [plain]="true"
                 size="small" class="header-drop" routerLink="/tasks"></p-button>
+      <p-button label="Tài liệu" [text]="true" [plain]="true"
+                size="small" class="header-drop" routerLink="/posts"></p-button>
 <!--      <p-button label="Tempo" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"-->
 <!--                size="small" class="header-drop"></p-button>-->
 <!--      <p-button label="Boards" [text]="true" [plain]="true" icon="pi pi-chevron-down" iconPos="right"-->
@@ -25,8 +27,8 @@
         <p-avatar class="header-right" icon="pi pi-question-circle" [style]="{width: 36, height: 36}"
                   shape="circle"></p-avatar>
         <p-avatar class="header-right" icon="pi pi-cog" [style]="{width: 36, height: 36}" shape="circle"></p-avatar>
-        <p-avatar class="header-right" [style]="{width: 36, height: 36}" (click)="op.toggle($event)"
-                  image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle"
+        <p-avatar class="header-right rounded-full" [style]="{width: 36, height: 36}" (click)="op.toggle($event)"
+                  [image]="getImage(userData.avatarId)" shape="circle"
                   size="normal"></p-avatar>
       </div>
     </div>

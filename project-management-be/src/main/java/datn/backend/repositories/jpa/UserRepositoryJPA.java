@@ -29,12 +29,12 @@ public interface UserRepositoryJPA extends JpaRepository<UserEntity, String> {
 
     @Query("select new datn.backend.dto.UserInfoDTO(" +
             " u.id, u.username, u.password, u.settingId, u.firstName, " +
-            " u.lastName, u.contact, u.email, u.gender, d.filePath, " +
-            " d2.filePath, u.dateOfBirth, u.address, u.createUserId, " +
+            " u.lastName, u.contact, u.email, u.gender, d.id, " +
+            " d2.id, u.dateOfBirth, u.address, u.createUserId, " +
             " u.createTime, u.updateUserId, u.updateTime ) " +
             " from UserEntity u" +
-            " left join DocumentEntity d on d.objectId = u.avatarId " +
-            " left join DocumentEntity d2 on d2.objectId = u.backgroundId " +
+            " left join DocumentEntity d on d.objectId = u.id and d.type = 2 and d.enabled = 1" +
+            " left join DocumentEntity d2 on d2.objectId = u.id and d2.type = 3 and d2.enabled = 1" +
             " where u.id = ?1 and u.enabled = 1")
     UserInfoDTO getUserById(String id);
 

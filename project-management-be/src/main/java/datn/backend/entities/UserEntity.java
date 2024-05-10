@@ -46,12 +46,6 @@ public class UserEntity implements Serializable {
     @Column(name = "GENDER")
     Integer gender;
 
-    @Column(name = "AVATAR_ID")
-    String avatarId;
-
-    @Column(name = "BACKGROUND_ID")
-    String backgroundId;
-
     @Column(name = "DATE_OF_BIRTH")
     Date dateOfBirth;
 

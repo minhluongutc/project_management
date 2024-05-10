@@ -26,10 +26,8 @@ public class UserInfoDTO {
     String contact;
     String email;
     Integer gender;
-//    String avatarId;
-    String avatarPath;
-//    String backgroundId;
-    String backgroundPath;
+    String avatarId;
+    String coverId;
     Date dateOfBirth;
     String address;
     String createUserId;

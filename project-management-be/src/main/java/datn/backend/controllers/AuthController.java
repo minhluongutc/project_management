@@ -8,10 +8,13 @@ import datn.backend.config.auth.payload.response.MessageResponse;
 import datn.backend.config.auth.payload.response.UserDTO;
 import datn.backend.config.auth.security.jwt.JwtUtils;
 import datn.backend.config.auth.security.service.UserDetailsImpl;
+import datn.backend.dto.AttachmentDTO;
 import datn.backend.entities.RoleEntity;
 import datn.backend.entities.UserEntity;
+import datn.backend.repositories.jpa.DocumentRepositoryJPA;
 import datn.backend.repositories.jpa.RoleRepositoryJPA;
 import datn.backend.repositories.jpa.UserRepositoryJPA;
+import datn.backend.service.AuthService;
 import datn.backend.utils.Constants;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -40,8 +43,11 @@ public class AuthController {
     final AuthenticationManager authenticationManager;
     final UserRepositoryJPA userRepository;
     final RoleRepositoryJPA roleRepository;
+    final DocumentRepositoryJPA documentRepositoryJPA;
     final PasswordEncoder encoder;
     final JwtUtils jwtUtils;
+
+    final AuthService authService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -56,13 +62,20 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
+
+        String avatarId = null;
+
+        List<AttachmentDTO.AttachmentResponseDTO> avatarAttachment = documentRepositoryJPA.getAttachmentsByObjectIdAndType(userDetails.getId(), Constants.DOCUMENT_TYPE.AVATAR.value);
+        if (!avatarAttachment.isEmpty()) {
+            avatarId = avatarAttachment.get(0).getId();
+        }
         UserDTO user = new UserDTO(userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getPassword(),
                 userDetails.getFirstName(),
                 userDetails.getLastName(),
                 userDetails.getEmail(),
-                userDetails.getAvatarId(),
+                avatarId,
                 roles);
         return ResponseEntity.ok(new JwtResponse(jwt, user));
     }
@@ -131,5 +144,14 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+
+    @GetMapping("/otp")
+    public ResponseEntity<?> getOTP(@RequestParam String email) {
+        // generate OTP
+        String otp = authService.generateOtp();
+        // send OTP to email
+
+        return ResponseEntity.ok(new MessageResponse("OTP sent successfully!"));
     }
 }

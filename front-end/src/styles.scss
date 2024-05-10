@@ -251,7 +251,9 @@
   .p-toast-message-content > button,
   .p-treenode-content > button,
   .p-dialog-footer > button,
-  .p-element > button.p-component{
+  .p-element > button.p-component,
+  p-paginator > .p-paginator > span.p-paginator-pages >button.p-paginator-page,
+  .p-datatable-header > div > button {
     width: auto;
     min-width: 40px;
   }
@@ -273,6 +275,11 @@
   .p-metergroup .p-metergroup-labels.p-metergroup-labels-horizontal {
     gap: 1rem;
     font-size: 0.9rem;
+  }
+
+  p-tabview > .tabview-custom.p-tabview > .p-tabview-panels {
+    max-height: 500px;
+    overflow-y: scroll;
   }
 
 }

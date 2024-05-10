@@ -15,10 +15,14 @@ export class DocumentService extends BaseService {
     return `${Environment.baseUrl}/api/attachments`;
   }
 
-  getAttachmentsByObjectId(objectId: string) {
-    return this.getRequest(this.SERVICE_URL, {
-      params: {"objectId": objectId}
+  getAttachmentsByObjectId(objectId: string, type: any) {
+    return this.getRequest(`${this.SERVICE_URL}/task`, {
+      params: {"objectId": objectId, "type": type}
     });
+  }
+
+  addAttachment(data: any) {
+    return this.postRequest(`${this.SERVICE_URL}`, data);
   }
 
   deleteAttachment(id: string) {

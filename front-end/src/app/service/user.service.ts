@@ -38,4 +38,8 @@ export class UserService extends BaseService {
   getUserById(id: string) {
     return this.get(id);
   }
+
+  updateProfile(id: any, data: any) {
+    return this.putRequest(`${this.SERVICE_URL}/${id}`, data);
+  }
 }

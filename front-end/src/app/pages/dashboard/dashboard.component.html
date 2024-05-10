@@ -8,7 +8,40 @@
           Welcome to my app
         </p-accordionTab>
         <p-accordionTab header="Các dự án" [headerStyleClass]="'bg-white p-3 text-sm border-solid border-t-2-primary'">
-          Content 2
+          <p-treeTable
+            #myTab
+            [columns]="cols"
+            [value]="listDataTree"
+            [paginator]="true"
+            [rows]="10">
+            <ng-template pTemplate="colgroup" let-columns>
+              <colgroup>
+                <col *ngFor="let col of columns"/>
+              </colgroup>
+            </ng-template>
+
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th class="text-left">Tên dự án</th>
+                <th class="text-left">Số thành viên</th>
+              </tr>
+            </ng-template>
+
+            <ng-template
+              pTemplate="body"
+              let-rowNode
+              let-columns="columns"
+              let-rowData="rowData">
+              <tr [ttRow]="rowNode" style="height: 35px">
+                <td>
+                  <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                  <a (click)="onDetailProject(rowData.id)"
+                     class="text-blue-600 cursor-pointer hover:underline">{{ rowData.name }}</a>
+                </td>
+                <td>123</td>
+              </tr>
+            </ng-template>
+          </p-treeTable>
         </p-accordionTab>
         <p-accordionTab header="Biểu đồ tiến độ" [headerStyleClass]="'bg-white p-3 text-sm border-solid border-t-2-primary'">
           Content 3

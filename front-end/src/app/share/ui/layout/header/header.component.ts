@@ -5,6 +5,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {DialogService, DynamicDialogRef} from "primeng/dynamicdialog";
 import {TaskCreateComponent} from "../../../../pages/tasks/task-create/task-create.component";
+import {FileService} from "../../../services/file.service";
 
 @Component({
   selector: 'app-header',
@@ -18,7 +19,8 @@ export class HeaderComponent implements OnInit {
 
   ref: DynamicDialogRef | undefined;
   constructor(
-    private authService: AuthService,
+    protected authService: AuthService,
+    private fileService: FileService,
     private router: Router,
     private route: ActivatedRoute,
     public dialogService: DialogService
@@ -51,6 +53,10 @@ export class HeaderComponent implements OnInit {
         '640px': '90vw'
       },
     })
+  }
+
+  getImage(id: any) {
+    return this.fileService.getFileUrl(id) || '/assets/images/image-default-user.jpg';
   }
 
   onLogout() {

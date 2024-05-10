@@ -9,6 +9,7 @@ import {MessageService} from "primeng/api";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ServiceModule} from "./service/service.module";
 import {ToastModule} from "primeng/toast";
+import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 
 
 @NgModule({
@@ -28,3 +29,5 @@ import {ToastModule} from "primeng/toast";
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+platformBrowserDynamic().bootstrapModule(AppModule);

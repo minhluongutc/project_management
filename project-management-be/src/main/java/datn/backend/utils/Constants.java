@@ -14,7 +14,10 @@ public class Constants {
     public static final String FILE_MINIO_CHANNEL = "jiraclone";
 
     public enum DOCUMENT_TYPE {
-        TASK(1);
+        TASK(1),
+        AVATAR(2),
+        COVER(3),
+        POST(4);
 
         public final Integer value;
 

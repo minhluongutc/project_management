@@ -10,6 +10,7 @@ import {AuthService} from "../../auth/auth.service";
 import {User} from "../../auth/user.model";
 import {DialogService} from "primeng/dynamicdialog";
 import {DropdownChangeEvent} from "primeng/dropdown";
+import {FileService} from "../../services/file.service";
 
 // import { PvnTableConfig } from '../pvn-table/pvn-table.component';
 
@@ -30,6 +31,7 @@ export class BaseComponent implements OnDestroy {
   rows = 10;
   totalRecords = 0;
   isSubmitted: boolean = false;
+  avatarDefault = '/assets/images/image-default-user.jpg';
 
   protected fb: FormBuilder;
   protected router: Router;
@@ -38,6 +40,7 @@ export class BaseComponent implements OnDestroy {
   protected state: any;
   protected toast: MessageService;
   protected authService: AuthService;
+  protected fileService: FileService;
   public dialogService: DialogService
   // protected translate: TranslateService;
 
@@ -52,6 +55,7 @@ export class BaseComponent implements OnDestroy {
     this.toast = this.injector.get(MessageService);
     this.state = this.router.getCurrentNavigation()?.extras?.state;
     this.authService = this.injector.get(AuthService);
+    this.fileService = this.injector.get(FileService);
     this.dialogService = this.injector.get(DialogService);
 
     this.user = this.authService.user.value
@@ -88,7 +92,7 @@ export class BaseComponent implements OnDestroy {
     } else if (fileType.startsWith("image/") || fileType == "jpg" || fileType == "png") {
       return "image";
     } else if (fileType == "xlsx" || fileType == "application/vnd.ms-excel" || fileType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || fileType == "xsl") {
-      return "xlsx";
+      return "excel";
     } else if (fileType == "mp4" || fileType.startsWith("video/") || fileType == "video/mp4") {
       return "video";
     } else {
@@ -187,6 +191,11 @@ export class BaseComponent implements OnDestroy {
       default:
         return 'transparent';
     }
+  }
+
+  getImage(id: any): string {
+    if (!id) return '';
+    return this.fileService.getFileUrl(id);
   }
 
   ngOnDestroy() {

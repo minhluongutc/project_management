@@ -23,7 +23,7 @@
            [rows]="rows"
            editMode="row"
            dataKey="id"
-           styleClass="p-datatable-striped">
+           styleClass="p-datatable-striped p-datatable-gridlines">
     <ng-template pTemplate="header" let-columns>
       <tr class="text-sm">
         <th pSortableColumn="lastName">Tên thành viên
@@ -92,8 +92,8 @@
         </td>
         <td>
           <div class="flex justify-center items-center gap-2">
-            <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-filter"
-                    class="p-button-secondary p-button-text"></button>
+<!--            <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-filter"-->
+<!--                    class="p-button-secondary p-button-text"></button>-->
             <button #addButton *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
                     (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
             <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
@@ -112,8 +112,12 @@
     </ng-template>
   </p-table>
 </div>
-<p-dialog header="Thông tin thành viên" [(visible)]="visibleDialogCreateUser" [style]="{ width: '50vw' }"
-          [draggable]="false" [resizable]="false">
+<p-dialog header="Thông tin thành viên"
+          [(visible)]="visibleDialogCreateUser"
+          [modal]="true"
+          [style]="{ width: '50vw' }"
+          [draggable]="false"
+          [resizable]="false">
   <div [formGroup]="form" class="grid grid-cols-2 gap-4">
     <jira-input-text formControlName="email"
                      jiraLabelText="email"
@@ -193,8 +197,12 @@
   </div>
 </p-dialog>
 
-<p-dialog header="Thông tin thành viên" [(visible)]="visibleDialogAddUser" [style]="{ width: '50vw' }"
-          [draggable]="false" [resizable]="false">
+<p-dialog header="Thông tin thành viên"
+          [(visible)]="visibleDialogAddUser"
+          [modal]="true"
+          [style]="{ width: '50vw' }"
+          [draggable]="false"
+          [resizable]="false">
   <div [formGroup]="addUserForm" class="grid grid-cols-1 gap-4">
     <jira-input-text formControlName="email"
                      jiraLabelText="email"

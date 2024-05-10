@@ -12,7 +12,8 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item>
-          <tr class="h-[48px] hover:bg-gray-300 cursor-pointer" (click)="viewDetail(item)">
+          <tr class="h-[48px] hover:bg-gray-300 cursor-pointer"
+              [class.bg-gray-200]="item.taskCode == taskSelected?.taskCode" (click)="viewDetail(item)">
             <td class="text-sm">{{ item.subject }}<br/>{{item.taskCode}}</td>
             <td class="text-sm">{{ item.assignUserName || 'N/A' }}</td>
           </tr>
@@ -52,17 +53,25 @@
         <div [innerHTML]="taskSelected?.description"></div>
         <div class="flex gap-4 items-center pt-4">
           <p class="text-base font-bold">Tệp đính kèm</p>
-          <i class="pi pi-eye text-2xl text-gray-500 hover:text-gray-700 cursor-pointer"
-             pTooltip="Xem tệp đính kèm"
-             (click)="openNewTab(taskSelected?.id)">
-          </i>
+          @if (attachments.length > 0) {
+            <i class="pi pi-eye text-2xl text-gray-500 hover:text-gray-700 cursor-pointer"
+               pTooltip="Xem tệp đính kèm"
+               (click)="openNewTab(taskSelected?.id)">
+            </i>
+          } @else {
+            <i class="pi pi-eye text-2xl text-gray-500 cursor-no-drop"
+               pTooltip="Không có tệp đính kèm nào">
+            </i>
+          }
         </div>
         @if (attachments.length == 0) {
           <p class="text-base">N/A</p>
         } @else {
           @for (attachment of attachments; track $index) {
             <div class="pb-2">
-              <span>{{$index + 1}}, </span><a class="text-blue-600 cursor-pointer mb-2" (click)="downloadAttachment(attachment)">{{attachment.fileName}}</a>
+              <span>{{ $index + 1 }}, </span><a class="text-blue-600 cursor-pointer mb-2 hover:underline"
+                                                (click)="downloadAttachment(attachment)">{{ attachment.fileName }}
+              ({{ attachment.fileSize | fileSize }})</a>
             </div>
           }
         }
@@ -75,10 +84,37 @@
                   <span>Bình luận</span>
                 </div>
               </ng-template>
-              <div class="flex gap-3">
-                <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" styleClass="mr-2" size="xlarge" shape="circle" [style]="{'padding': '0'}"></p-avatar>
-                <p-chips ></p-chips>
-
+              <div class="flex flex-col gap-1">
+                @for (comment of comments; track $index) {
+                  @if (comment.createUserId == user.id) {
+                    <div class="flex gap-3 justify-end items-center">
+                      <p class="bg-neutral-600 text-white rounded-2xl pt-2 pb-2 pl-3 pr-3"
+                         pTooltip="{{comment.createTime | date: 'dd/MM/yyyy, h:mm a' }}">
+                        {{ comment.content }}
+                      </p>
+                    </div>
+                  } @else {
+                    <div class="flex gap-3 items-center">
+                      <img class="h-[32px] w-[32px] rounded-full" [src]="getImage(comment?.avatarId) || avatarDefault"
+                           alt="file img not found">
+                      <div class="flex flex-col gap-0.5"
+                           pTooltip="{{comment.createTime | date: 'dd/MM/yyyy, h:mm a' }}">
+                        <p class="text-xs font-bold">{{ comment.createUserName }}</p>
+                        <p class="bg-neutral-600 text-white rounded-2xl pt-2 pb-2 pl-3 pr-3">{{ comment.content }}</p>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+              <p-divider></p-divider>
+              <div class="flex gap-3 items-center">
+                <img class="h-[32px] w-[32px] rounded-full" [src]="getImage(user?.avatarId) || avatarDefault"
+                     alt="file img not found">
+                <p-iconField iconPosition="right" class="w-full">
+                  <p-inputIcon styleClass="pi pi-send cursor-pointer" (click)="onComment()"/>
+                  <input type="text" pInputText placeholder="Nhập nội dung" [(ngModel)]="contentComment"
+                         (keydown.enter)="onComment()"/>
+                </p-iconField>
               </div>
             </p-tabPanel>
             <p-tabPanel header="Header II">
@@ -88,25 +124,182 @@
                   <span>Lịch sử sửa đổi</span>
                 </div>
               </ng-template>
-              <p>
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-              </p>
+              <div class="flex flex-col gap-1">
+                @for (history of updateHistory; track $index) {
+                  @if (history.modifyUserName == user.username) {
+                    <div class="flex gap-3 justify-end items-center">
+                      <div class="flex flex-col gap-0.5 items-end">
+                        <p class="text-xs font-bold">Bạn, sửa đổi
+                          ngày:{{ history.modifyTime | date: 'dd/MM/yyyy, h:mm a' }}</p>
+                        <p class="bg-neutral-600 text-white rounded-2xl pt-2 pb-2 pl-3 pr-3">
+                          @if ((history?.newSubject || history?.oldSubject) && (history?.newSubject != history?.oldSubject)) {
+                            <strong class="text-md">Tiêu đề: </strong>
+                            {{ history?.oldSubject || 'null' }} -> {{ history?.newSubject || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newDescription || history?.oldDescription) && (history?.newDescription != history?.oldDescription)) {
+                            <strong class="text-md">Mô tả: </strong>
+                            {{ history?.oldDescription || 'null' }} -> {{ history?.newDescription || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newStatusIssue || history?.oldStatusIssue) && (history?.newStatusIssue != history?.oldStatusIssue)) {
+                            <strong class="text-md">Trạng thái: </strong>
+                            {{ history?.oldStatusIssue || 'null' }} -> {{ history?.newStatusIssue || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newCategory || history?.oldCategory) && (history?.newCategory != history?.oldCategory)) {
+                            <strong class="text-md">Danh mục: </strong>
+                            {{ history?.oldCategory || 'null' }} -> {{ history?.newCategory || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newPriority || history?.oldPriority) && (history?.newPriority != history?.oldPriority)) {
+                            <strong class="text-md">Độ ưu tiên: </strong>
+                            {{ convertValueById(history?.oldPriority, 'name', SEVERITIES) || 'null' }}
+                            -> {{ convertValueById(history?.newPriority, 'name', SEVERITIES) || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newSeverity || history?.oldSeverity) && (history?.newSeverity != history?.oldSeverity)) {
+                            <strong class="text-md">Độ nghiêm trọng: </strong>
+                            {{ convertValueById(history?.oldSeverity, 'name', SEVERITIES) || 'null' }}
+                            -> {{ convertValueById(history?.newSeverity, 'name', SEVERITIES) || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newStartDate || history?.oldStartDate) && (history?.newStartDate != history?.oldStartDate)) {
+                            <strong class="text-md">Thời gian bắt đầu: </strong>
+                            {{ (history?.oldStartDate | date: 'dd/MM/yyyy') || 'null' }}
+                            -> {{ (history?.newStartDate | date: 'dd/MM/yyyy') || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newDueDate || history?.oldDueDate) && (history?.newDueDate != history?.oldDueDate)) {
+                            <strong class="text-md">Thời gian kết thúc: </strong>
+                            {{ (history?.oldDueDate | date: 'dd/MM/yyyy') || 'null' }}
+                            -> {{ (history?.newDueDate | date: 'dd/MM/yyyy') || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newDueDate || history?.oldDueDate) && (history?.newDueDate != history?.oldDueDate)) {
+                            <strong class="text-md">Thời gian kết thúc: </strong>
+                            {{ (history?.oldDueDate | date: 'dd/MM/yyyy') || 'null' }}
+                            -> {{ (history?.newDueDate | date: 'dd/MM/yyyy') || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newAssignUser || history?.oldAssignUser) && (history?.newAssignUser != history?.oldAssignUser)) {
+                            <strong class="text-md">Người thực hiện: </strong>
+                            {{ history?.oldAssignUser || 'null' }} -> {{ history?.newAssignUser || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newReviewUser || history?.oldReviewUser) && (history?.newReviewUser != history?.oldReviewUser)) {
+                            <strong class="text-md">Người nghiệm thu: </strong>
+                            {{ history?.oldReviewUser || 'null' }} -> {{ history?.newReviewUser || 'null' }}
+                            <br/>
+                          }
+                          @if ((history?.newEstimateTime || history?.oldEstimateTime) && (history.newEstimateTime != history?.oldEstimateTime)) {
+                            <strong class="text-md">Thời gian ước lượng: </strong>
+                            {{ history?.oldEstimateTime || 0 }} -> {{ history?.newEstimateTime || 0 }}
+                            <br/>
+                          }
+                          @if ((history?.oldParent || history?.newParent) && (history.oldParent != history?.newParent)) {
+                            <strong class="text-md">Công việc cha: </strong>
+                            {{ history?.oldParent || 'null' }} -> {{ history?.newParent || 'null' }}
+                            <br/>
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="flex gap-3 items-center">
+                      <img class="h-[32px] w-[32px] rounded-full" [src]="getImage(history?.avatarId) || avatarDefault"
+                           alt="file img not found">
+                      <div class="flex flex-col gap-0.5">
+                        <p class="text-xs font-bold">{{ history.modifyUserName }}, sửa đổi
+                          ngày:{{ history.modifyTime | date: 'dd/MM/yyyy, h:mm a' }}</p>
+                        <p class="bg-neutral-600 text-white text-sm rounded-2xl pt-2 pb-2 pl-3 pr-3">
+                          @if ((history?.newSubject || history?.oldSubject) && (history?.newSubject != history?.oldSubject)) {
+                            <strong class="text-md">Tiêu đề: </strong>
+                            {{ history?.oldSubject || 'null' }} -> {{ history?.newSubject }}
+                            <br/>
+                          }
+                          @if ((history?.newDescription || history?.oldDescription) && (history?.newDescription != history?.oldDescription)) {
+                            <strong class="text-md">Mô tả: </strong>
+                            {{ history?.oldDescription || 'null' }} -> {{ history?.newDescription }}
+                            <br/>
+                          }
+                          @if ((history?.newStatusIssue || history?.oldStatusIssue) && (history?.newStatusIssue != history?.oldStatusIssue)) {
+                            <strong class="text-md">Trạng thái: </strong>
+                            {{ history?.oldStatusIssue || 'null' }} -> {{ history?.newStatusIssue }}
+                            <br/>
+                          }
+                          @if ((history?.newCategory || history?.oldCategory) && (history?.newCategory != history?.oldCategory)) {
+                            <strong class="text-md">Danh mục: </strong>
+                            {{ history?.oldCategory || 'null' }} -> {{ history?.newCategory }}
+                            <br/>
+                          }
+                          @if ((history?.newPriority || history?.oldPriority) && (history?.newPriority != history?.oldPriority)) {
+                            <strong class="text-md">Độ ưu tiên: </strong>
+                            {{ convertValueById(history?.oldPriority, 'name', SEVERITIES) || 'null' }}
+                            -> {{ convertValueById(history?.newPriority, 'name', SEVERITIES) }}
+                            <br/>
+                          }
+                          @if ((history?.newSeverity || history?.oldSeverity) && (history?.newSeverity != history?.oldSeverity)) {
+                            <strong class="text-md">Độ nghiêm trọng: </strong>
+                            {{ convertValueById(history?.oldSeverity, 'name', SEVERITIES) || 'null' }}
+                            -> {{ convertValueById(history?.newSeverity, 'name', SEVERITIES) }}
+                            <br/>
+                          }
+                          @if ((history?.newStartDate || history?.oldStartDate) && (history?.newStartDate != history?.oldStartDate)) {
+                            <strong class="text-md">Thời gian bắt đầu: </strong>
+                            {{ (history?.oldStartDate | date: 'dd/MM/yyyy') || 'null' }}
+                            -> {{ history?.newStartDate | date: 'dd/MM/yyyy' }}
+                            <br/>
+                          }
+                          @if ((history?.newDueDate || history?.oldDueDate) && (history?.newDueDate != history?.oldDueDate)) {
+                            <strong class="text-md">Thời gian kết thúc: </strong>
+                            {{ (history?.oldDueDate | date: 'dd/MM/yyyy') || 'null' }}
+                            -> {{ history?.newDueDate | date: 'dd/MM/yyyy' }}
+                            <br/>
+                          }
+                          @if ((history?.newDueDate || history?.oldDueDate) && (history?.newDueDate != history?.oldDueDate)) {
+                            <strong class="text-md">Thời gian kết thúc: </strong>
+                            {{ (history?.oldDueDate | date: 'dd/MM/yyyy') || 'null' }}
+                            -> {{ history?.newDueDate | date: 'dd/MM/yyyy' }}
+                            <br/>
+                          }
+                          @if ((history?.newAssignUser || history?.oldAssignUser) && (history?.newAssignUser != history?.oldAssignUser)) {
+                            <strong class="text-md">Người thực hiện: </strong>
+                            {{ history?.oldAssignUser || 'null' }} -> {{ history?.newAssignUser }}
+                            <br/>
+                          }
+                          @if ((history?.newReviewUser || history?.oldReviewUser) && (history?.newReviewUser != history?.oldReviewUser)) {
+                            <strong class="text-md">Người nghiệm thu: </strong>
+                            {{ history?.oldReviewUser || 'null' }} -> {{ history?.newReviewUser }}
+                            <br/>
+                          }
+                          @if ((history?.newEstimateTime || history?.oldEstimateTime) && (history.newEstimateTime != history?.oldEstimateTime)) {
+                            <strong class="text-md">Thời gian ước lượng: </strong>
+                            {{ history?.oldEstimateTime || 0 }} -> {{ history?.newEstimateTime }}
+                            <br/>
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
             </p-tabPanel>
           </p-tabView>
         </div>
       </div>
       <div class="col-span-4 flex flex-col gap-4">
         <div class="flex items-center gap-4">
-          <p-button [text]="true"
-                    [plain]="true"
-                    size="small"
-                    class="import-button font-light"
-                    [styleClass]="'h-[32px]'"
-                    icon="pi pi-angle-down"
-                    iconPos="right"
-                    [label]="taskSelected.statusIssueName"
-          />
+          <!--          <p-button [text]="true"-->
+          <!--                    [plain]="true"-->
+          <!--                    size="small"-->
+          <!--                    class="import-button font-light"-->
+          <!--                    [styleClass]="'h-[32px]'"-->
+          <!--                    icon="pi pi-angle-down"-->
+          <!--                    iconPos="right"-->
+          <!--                    [label]="taskSelected.statusIssueName"-->
+          <!--          />-->
+          <h2 class="text-sm font-bold">{{ taskSelected.statusIssueName }}</h2>
           <div class="w-full relative">
             <p-progressBar [value]="taskSelected.progress" [showValue]="false"></p-progressBar>
             <p class="absolute top-[50%] left-[50%]"

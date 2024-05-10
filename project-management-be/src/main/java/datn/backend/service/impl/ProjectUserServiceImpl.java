@@ -46,7 +46,6 @@ public class ProjectUserServiceImpl implements ProjectUserService {
             userResponseDTO.setEmail(userEntity.getEmail());
             userResponseDTO.setFirstName(userEntity.getFirstName());
             userResponseDTO.setLastName(userEntity.getLastName());
-            userResponseDTO.setAvatarId(userEntity.getAvatarId());
             userResponseDTO.setUserId(userEntity.getId());
             userResponseDTO.setProfessionalLevel(projectUserEntity.getProfessionalLevel());
             userResponseDTO.setPermission(projectUserEntity.getPermission());

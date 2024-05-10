@@ -65,8 +65,8 @@
         <td class="text-sm">{{ item.updateTime | date: 'dd/MM/yyyy' }}</td>
         <td>
           <div class="flex align-items-center justify-center gap-0">
-            <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-filter"
-                    class="p-button-secondary p-button-text"></button>
+<!--            <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-filter"-->
+<!--                    class="p-button-secondary p-button-text"></button>-->
             @if (ri == 0) {
               <button #addButton *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
                       (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>

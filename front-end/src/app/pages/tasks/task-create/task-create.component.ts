@@ -1,7 +1,7 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {BaseComponent} from '../../../share/ui/base-component/base.component';
 import {Validators} from "@angular/forms";
-import {FileRemoveEvent, FileSelectEvent, FileUploadEvent} from "primeng/fileupload";
+import {FileRemoveEvent, FileSelectEvent} from "primeng/fileupload";
 import {ProjectService} from "../../../service/project.service";
 import {TreeNodeSelectEvent, TreeNodeUnSelectEvent} from "primeng/tree";
 import {TaskService} from "../../../service/task.service";
@@ -13,11 +13,9 @@ import {StatusIssueService} from "../../../service/status-issue.service";
 import {CategoryService} from "../../../service/category.service";
 import {DynamicDialogConfig} from "primeng/dynamicdialog";
 import {DocumentService} from "../../../service/document.service";
-import {FileService} from "../../../share/services/file.service";
 import {ConfirmationService} from "primeng/api";
 import {ProjectStoreService} from "../../projects/project-store.service";
 import {saveAs} from "file-saver";
-import {error} from "@angular/compiler-cli/src/transformers/util";
 
 @Component({
   selector: 'app-task-create',
@@ -56,8 +54,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
               private documentService: DocumentService,
               private dynamicDialogConfig: DynamicDialogConfig,
               private confirmationService: ConfirmationService,
-              private projectStoreService: ProjectStoreService,
-              private fileService: FileService) {
+              private projectStoreService: ProjectStoreService) {
     super(injector);
     if (projectStoreService.id) {
       this.projectIdSelected = projectStoreService.id;
@@ -65,18 +62,15 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     this.buildForm();
     this.severities = SEVERITIES;
     this.priories = PRIORIES;
-    console.log(this.dynamicDialogConfig)
   }
 
   async ngOnInit() {
     try {
       await this.getProjects();
-      console.log(this.projectIdSelected);
 
       if (this.dynamicDialogConfig.data != undefined) {
         this.projectIdSelected = this.dynamicDialogConfig.data.task.projectId;
         const res: any = await this.taskService.getTaskById(this.dynamicDialogConfig.data.task.id).toPromise();
-        console.log(res)
         this.data2edit = res.data;
         this.projectIdSelected = this.data2edit.projectId;
         const projectValue = {
@@ -87,9 +81,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
           label: this.data2edit.parentSubject,
           key: this.data2edit.parentId,
         }
-        console.log("parentTask", parentTask)
         this.getValuesOfProject();
-        console.log(projectValue)
         this.form.patchValue({
           projectId: projectValue,
           subject: this.data2edit.subject,
@@ -117,14 +109,11 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
           })
         }
         this.getAttachments2Edit(this.data2edit.id);
-        console.log("this form", this.form.value)
       }
 
       if (this.projectStoreService.id != '' && this.data2edit == undefined) {
         let projectValue!: any;
         const projectSelected = this.findProject(this.listProject, this.projectIdSelected);
-        console.log(this.listProject)
-        console.log("projectSelected", projectSelected)
         projectValue = {...projectSelected}
         this.setEnableFields(true);
         this.getValuesOfProject();
@@ -175,7 +164,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       isPublic: [false],
       continue: [false]
     });
-    console.log(this.form.value)
   }
 
   getTypes(projectId: string | undefined) {
@@ -185,7 +173,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         .getTypes({projectId: projectId})
         .subscribe({
           next: (res: any) => {
-            // console.log("issueTypes", res.data)
             this.issueTypes = res.data;
           }
         })
@@ -201,7 +188,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       .getUserByProject({projectId: projectId})
       .subscribe({
         next: (res: any) => {
-          console.log('users', res.data)
           this.assignees = res.data;
           this.reviewers = res.data;
         }
@@ -215,7 +201,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         .getStatusIssue({projectId: projectId})
         .subscribe({
           next: (res: any) => {
-            // console.log("statuses", res.data)
             this.statuses = res.data;
           }
         })
@@ -229,7 +214,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         .getCategories({projectId: projectId})
         .subscribe({
           next: (res: any) => {
-            console.log("categories", res.data)
             this.categories = res.data;
           }
         })
@@ -257,13 +241,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       }
       const res: any = await this.taskService.getTaskAccordingLevel(data).toPromise();
       const listTask = res.data;
-      console.log(listTask.map((item: any) => {
-        return {
-          label: item.data.subject,
-          key: item.data.id,
-          children: this.setChildTask(item)
-        }
-      }))
       this.listTask = listTask.map((item: any) => {
         return {
           label: item.data.subject,
@@ -298,7 +275,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         children: this.setChildProject(item)
       }
     })
-    console.log(this.listProject)
   }
 
   setChildProject(item: any): any {
@@ -316,8 +292,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   onSelectProject($event: TreeNodeSelectEvent) {
-    console.log($event)
-
     this.setEnableFields(true);
 
     this.form.get('typeId')?.enable();
@@ -329,7 +303,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
 
     this.form.get('projectId')?.setValue($event.node.key)
     this.projectIdSelected = $event.node.key;
-    console.log("projectIdSelected", this.projectIdSelected)
     this.getTypes(this.projectIdSelected);
     this.getUserByProject(this.projectIdSelected);
     this.getStatusIssueByProject(this.projectIdSelected);
@@ -346,19 +319,34 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   onUnselectProject($event: TreeNodeUnSelectEvent) {
-    console.log($event)
     this.projectIdSelected = undefined;
     this.setEnableFields(false);
   }
 
   onSelectFile($event: FileSelectEvent) {
-    console.log($event)
-    this.fileList = $event.currentFiles;
-    console.log(this.fileList)
+    if (this.data2edit) {
+      const formData = new FormData();
+      formData.append('file', $event.currentFiles[$event.currentFiles.length - 1]);
+      const dto = {
+        objectId: this.data2edit.id,
+        type: 1
+      }
+      formData.append('dto', new Blob([JSON.stringify(dto)], {type: 'application/json'}))
+      this.documentService.addAttachment(formData).subscribe({
+        next: (res: any) => {
+          this.createSuccessToast('Thành công', 'Thêm tài liệu thành công');
+          this.getAttachments2Edit(this.data2edit.id);
+        }, error: (err: any) => {
+          this.createErrorToast('Lỗi', err.message);
+        }
+      })
+
+    } else {
+      this.fileList = $event.currentFiles;
+    }
   }
 
   onRemoveFile($event: FileRemoveEvent) {
-    console.log($event)
     const fileRemoveIndex = this.fileList.findIndex((file: any) => file === $event);
     if (this.data2edit) {
       this.documentService.deleteAttachment(this.fileList[fileRemoveIndex].id).subscribe({
@@ -372,7 +360,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     } else {
       this.fileList.splice(fileRemoveIndex, 1);
     }
-    console.log(this.fileList);
   }
 
   onClearFiles($event: Event) {
@@ -398,8 +385,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       reporter: this.user.id,//Not use this field
       isPublic: this.form.value.isPublic
     }
-    console.log("form value insert", this.form.value)
-    console.log(data)
     const formData = new FormData();
     this.fileList.forEach((file: any) => {
       formData.append('files', file);
@@ -408,7 +393,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       'dto',
       new Blob([JSON.stringify(data)], {type: 'application/json'})
     )
-    console.log(this.form.value)
     this.taskService.insertTask(formData).subscribe({
       next: (res: any) => {
         this.createSuccessToast('Thành công', 'Tạo mới công việc thành công');
@@ -416,7 +400,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         this.fileList = [];
         const currentRoute = this.router.url.split('?')[0];
         const param = this.router.url.split('?')[1];
-        console.log(currentRoute)
         this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
           this.router.navigate([`${currentRoute}`], {queryParams: {param}});
         });
@@ -446,8 +429,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       reporter: this.user.id,//Not use this field
       isPublic: this.form.value.isPublic
     }
-    console.log(data)
-    console.log(this.form.value)
     this.taskService.updateTask(this.data2edit.id, data).subscribe({
       next: (res: any) => {
         this.createSuccessToast('Thành công', 'Chỉnh sửa công việc thành công');
@@ -456,7 +437,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         this.closeDialog();
         const currentRoute = this.router.url.split('?')[0];
         const param = this.router.url.split('?')[1];
-        console.log(currentRoute)
         this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
           this.router.navigate([`${currentRoute}`], {queryParams: {taskCode: this.data2edit.taskCode}});
         });
@@ -467,22 +447,16 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   getAttachments2Edit(objectId: string) {
-    this.documentService.getAttachmentsByObjectId(objectId).subscribe({
+    this.documentService.getAttachmentsByObjectId(objectId, 1).subscribe({
       next: (res: any) => {
         this.fileList = res.data;
-        console.log("fileList:", this.fileList)
       }, error: (err: any) => {
         this.createErrorToast('Lỗi', err.message);
       }
     })
   }
 
-  getImage(id: string) {
-    return this.fileService.getFileUrl(id);
-  }
-
   confirmDeleteFile(file: any, event: Event) {
-    console.log(event)
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'bạn có muốn xóa tệp đính kèm này?',
@@ -522,7 +496,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
 
   showDialogImportFile() {
     if (!this.projectIdSelected) {
-      this.createErrorToast('Lỗi', 'Vui lòng chọn dự án');
+      this.createWarningToast('', 'Vui lòng chọn dự án');
     } else {
       this.visibleImportFile = true;
     }
@@ -543,22 +517,23 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
 
 
   handleImportFile() {
-    console.log(this.fileImport);if(this.fileImport) {
+    if(this.fileImport) {
       const formData = new FormData();
       formData.append('file', this.fileImport);
       this.taskService.importTemplate(this.projectIdSelected, formData).subscribe({
         next: (res) => {
           this.visibleImportFile = false;
-          this.fileImport = null;
           if (res?.messageCode === '000') {
             this.createSuccessToast('Thành công', res.messageDesc);
           } else if (res.messageCode === '001') {
-            if (res.totalSuccess === 0)
+            if (res.totalSuccess === 0){
               this.createErrorToast('Lỗi', res.messageDesc);
-            else
+            } else {
               this.createSuccessToast('Thành công', res.messageDesc);
-
+            }
+            this.closeDialog();
             saveAs(this.fileService.base64toBlob(res.fileData), this.fileImport.name);
+            this.fileImport = null;
           }
         },error: (error) => {
           this.createErrorToast('Lỗi', error.message);
@@ -570,7 +545,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   onSelectFileImport($event: FileSelectEvent) {
-    console.log($event)
     this.fileImport = $event.currentFiles[0];
   }
 

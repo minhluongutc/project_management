@@ -16,8 +16,9 @@ public interface DocumentRepositoryJPA extends JpaRepository<DocumentEntity, Str
     @Query("select new datn.backend.dto.AttachmentDTO$AttachmentResponseDTO(d.id, d.fileName, d.filePath, d.fileSize) " +
             " from DocumentEntity d" +
             " where d.objectId = :objectId" +
+            " and d.type = :type" +
             " and d.enabled = 1")
-    List<AttachmentResponseDTO> getAttachmentsByObjectId(String objectId);
+    List<AttachmentResponseDTO> getAttachmentsByObjectIdAndType(String objectId, Integer type);
 
     @Query("select new datn.backend.dto.AttachmentDTO$AttachmentResponsePrimengDTO(d.id, d.fileName, d.filePath, d.fileSize) " +
             " from DocumentEntity d" +

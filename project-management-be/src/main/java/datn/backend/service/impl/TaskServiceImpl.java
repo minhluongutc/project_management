@@ -1,10 +1,7 @@
 package datn.backend.service.impl;
 
 import datn.backend.dto.*;
-import datn.backend.entities.CategoryEntity;
-import datn.backend.entities.StatusIssueEntity;
-import datn.backend.entities.TaskEntity;
-import datn.backend.entities.TypeEntity;
+import datn.backend.entities.*;
 import datn.backend.repositories.jpa.*;
 import datn.backend.service.DocumentService;
 import datn.backend.service.ProjectUserService;
@@ -27,12 +24,17 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static datn.backend.utils.excel.ExcelHelpers.cellValue2Date;
@@ -47,6 +49,7 @@ public class TaskServiceImpl implements TaskService {
     final TypeRepositoryJPA typeRepositoryJPA;
     final StatusIssueRepositoryJPA statusIssueRepositoryJPA;
     final CategoryRepositoryJPA categoryRepositoryJPA;
+    final UpdateHistoryTaskRepositoryJPA updateHistoryTaskRepositoryJPA;
 
     final DocumentService documentService;
     final ProjectUserService projectUserService;
@@ -60,7 +63,7 @@ public class TaskServiceImpl implements TaskService {
         List<TaskDTO.TaskResponseDTO> taskListResponse = new ArrayList<>();
         List<TaskDTO.TaskResponseDTO> taskList = taskRepositoryJPA.getTasks(dto);
         for (TaskDTO.TaskResponseDTO task : taskList) {
-            List<AttachmentDTO.AttachmentResponseDTO> attachments = documentRepositoryJPA.getAttachmentsByObjectId(task.getId());
+            List<AttachmentDTO.AttachmentResponseDTO> attachments = documentRepositoryJPA.getAttachmentsByObjectIdAndType(task.getId(), Constants.DOCUMENT_TYPE.TASK.value);
             task.setAttachments(attachments);
             taskListResponse.add(task);
         }
@@ -130,7 +133,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Object insertTask(Authentication authentication, TaskDTO.TaskInsertDTO dto, MultipartFile[] files) {
-        System.out.println(dto);
         // save entity
         TaskEntity taskEntity = new TaskEntity();
         taskEntity = modelMapper.map(dto, TaskEntity.class);
@@ -149,8 +151,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public Object updateTask(Authentication authentication, TaskDTO.TaskUpdateDTO dto, String id) {
         TaskEntity taskEntity = taskRepositoryJPA.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
+        addUpdateHistoryTask(authentication, taskEntity, dto);
         taskEntity.setSubject(dto.getSubject());
         taskEntity.setDescription(dto.getDescription());
         taskEntity.setIsPublic(dto.getIsPublic());
@@ -169,6 +173,93 @@ public class TaskServiceImpl implements TaskService {
         taskEntity.setUpdateTime(AuditUtils.updateTime());
         taskRepositoryJPA.save(taskEntity);
         return "successfully updated";
+    }
+
+    private void addUpdateHistoryTask(Authentication authentication, TaskEntity oldValue, TaskDTO.TaskUpdateDTO newValue) {
+        UpdateHistoryTaskEntity updateHistoryTaskEntity = new UpdateHistoryTaskEntity();
+        updateHistoryTaskEntity.setId(AuditUtils.generateUUID());
+        updateHistoryTaskEntity.setTaskId(oldValue.getId());
+        if (!Objects.equals(newValue.getSubject(), oldValue.getSubject())) {
+            updateHistoryTaskEntity.setOldSubject(oldValue.getSubject());
+            updateHistoryTaskEntity.setNewSubject(newValue.getSubject());
+        }
+        if (!Objects.equals(newValue.getDescription(), oldValue.getDescription())) {
+            updateHistoryTaskEntity.setOldDescription(oldValue.getDescription());
+            updateHistoryTaskEntity.setNewDescription(newValue.getDescription());
+        }
+        if (!Objects.equals(newValue.getTypeId(), oldValue.getTypeId())) {
+            updateHistoryTaskEntity.setOldTypeId(oldValue.getTypeId());
+            updateHistoryTaskEntity.setNewTypeId(newValue.getTypeId());
+        }
+        if (!Objects.equals(newValue.getStatusIssueId(), oldValue.getStatusIssueId())) {
+            updateHistoryTaskEntity.setOldStatusIssueId(oldValue.getStatusIssueId());
+            updateHistoryTaskEntity.setNewStatusIssueId(newValue.getStatusIssueId());
+        }
+        if (!Objects.equals(newValue.getPriority(), oldValue.getPriority())) {
+            updateHistoryTaskEntity.setOldPriority(oldValue.getPriority());
+            updateHistoryTaskEntity.setNewPriority(newValue.getPriority());
+        }
+        if (!Objects.equals(newValue.getSeverity(), oldValue.getSeverity())) {
+            updateHistoryTaskEntity.setOldSeverity(oldValue.getSeverity());
+            updateHistoryTaskEntity.setNewSeverity(newValue.getSeverity());
+        }
+        if (!Objects.equals(newValue.getParentId(), oldValue.getParentId())) {
+            updateHistoryTaskEntity.setOldParentId(oldValue.getParentId());
+            updateHistoryTaskEntity.setNewParentId(newValue.getParentId());
+        }
+        // todo fix null pointer exception
+        if (oldValue.getStartDate() != null && newValue.getStartDate() != null) {
+            LocalDateTime oldStartDate = oldValue.getStartDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime()
+                    .truncatedTo(ChronoUnit.SECONDS);
+
+            LocalDateTime newStartDate = newValue.getStartDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime()
+                    .truncatedTo(ChronoUnit.SECONDS);
+
+            if (!oldStartDate.equals(newStartDate)) {
+                updateHistoryTaskEntity.setOldStartDate(oldValue.getStartDate());
+                updateHistoryTaskEntity.setNewStartDate(newValue.getStartDate());
+            }
+        }
+        // todo fix null pointer exception
+        if (oldValue.getDueDate() != null && newValue.getDueDate() != null) {
+            LocalDateTime oldDueDate = oldValue.getDueDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime()
+                    .truncatedTo(ChronoUnit.SECONDS);
+
+            LocalDateTime newDueDate = newValue.getDueDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime()
+                    .truncatedTo(ChronoUnit.SECONDS);
+
+            if (!oldDueDate.equals(newDueDate)) {
+                updateHistoryTaskEntity.setOldDueDate(oldValue.getDueDate());
+                updateHistoryTaskEntity.setNewDueDate(newValue.getDueDate());
+            }
+        }
+        if (!Objects.equals(newValue.getAssignUserId(), oldValue.getAssignUserId())) {
+            updateHistoryTaskEntity.setOldAssignUserId(oldValue.getAssignUserId());
+            updateHistoryTaskEntity.setNewAssignUserId(newValue.getAssignUserId());
+        }
+        if (!Objects.equals(newValue.getReviewUserId(), oldValue.getReviewUserId())) {
+            updateHistoryTaskEntity.setOldReviewUserId(oldValue.getReviewUserId());
+            updateHistoryTaskEntity.setNewReviewUserId(newValue.getReviewUserId());
+        }
+        if (!Objects.equals(newValue.getCategoryId(), oldValue.getCategoryId())) {
+            updateHistoryTaskEntity.setOldCategoryId(oldValue.getCategoryId());
+            updateHistoryTaskEntity.setNewCategoryId(newValue.getCategoryId());
+        }
+        if (!Objects.equals(newValue.getEstimateTime(), oldValue.getEstimateTime())) {
+            updateHistoryTaskEntity.setOldEstimateTime(oldValue.getEstimateTime());
+            updateHistoryTaskEntity.setNewEstimateTime(newValue.getEstimateTime());
+        }
+        updateHistoryTaskEntity.setModifyUserId(AuditUtils.updateUserId(authentication));
+        updateHistoryTaskEntity.setModifyTime(AuditUtils.updateTime());
+        updateHistoryTaskRepositoryJPA.save(updateHistoryTaskEntity);
     }
 
     @Override
@@ -348,36 +439,36 @@ public class TaskServiceImpl implements TaskService {
         String msg = "";
 
         if (Objects.equals(ExcelHelpers.getStringCellValue(row.getCell(0)), "")) {
-            msg += "Loại công việc không được để trống";
+            msg += " | Loại công việc không được để trống";
         } else {
             if (listType.stream().noneMatch(typeEntity -> Objects.equals(typeEntity.getName(), ExcelHelpers.getStringCellValue(row.getCell(0))))) {
-                msg += "Loại công việc không tồn tại";
+                msg += " | Loại công việc không tồn tại";
             }
         }
 
         if (Objects.equals(ExcelHelpers.getStringCellValue(row.getCell(1)), ""))
-            msg += "Tiêu đề không được để trống";
+            msg += " | Tiêu đề không được để trống";
 
         try {
             cellValue2Date(row.getCell(3));
         } catch (ParseException e) {
-            msg += "Ngày bắt đầu không đúng định dạng";
+            msg += " | Ngày bắt đầu không đúng định dạng";
         }
 
         try {
             cellValue2Date(row.getCell(4));
         } catch (ParseException e) {
-            msg += "Ngày kết thúc không đúng định dạng";
+            msg += " | Ngày kết thúc không đúng định dạng";
         }
 
         try {
             if (!Objects.equals(ExcelHelpers.getStringCellValue(row.getCell(5)), "")) {
                 if (Integer.parseInt(Objects.requireNonNull(ExcelHelpers.getStringCellValue(row.getCell(5)))) < 0) {
-                    msg += "Thời gian ước lượng không được nhỏ hơn 0";
+                    msg += " | Thời gian ước lượng không được nhỏ hơn 0";
                 }
             }
         } catch (NumberFormatException e) {
-            msg += "Thời gian ước lượng không đúng định dạng số nguyên";
+            msg += " | Thời gian ước lượng không đúng định dạng số nguyên";
         }
 
 //        if (Objects.equals(ExcelHelpers.getStringCellValue(row.getCell(6)), ""))
@@ -387,34 +478,34 @@ public class TaskServiceImpl implements TaskService {
 //            msg += "Mức độ nghiêm trọng không được để trống";
 
         if (Objects.equals(ExcelHelpers.getStringCellValue(row.getCell(8)), "")) {
-            msg += "Người được giao không được để trông";
+            msg += " | Người được giao không được để trông";
         } else {
             if (ListUser.stream().noneMatch(user -> Objects.equals(user.getId(), ExcelHelpers.getStringCellValue(row.getCell(16))))) {
-                msg += "Người được giao không tồn tại";
+                msg += " | Người được giao không tồn tại";
             }
         }
 
         if (Objects.equals(ExcelHelpers.getStringCellValue(row.getCell(9)), "")) {
-            msg += "Người nghiệm thu không được để trống";
+            msg += " | Người nghiệm thu không được để trống";
         } else {
             if (ListUser.stream().noneMatch(user -> Objects.equals(user.getId(), ExcelHelpers.getStringCellValue(row.getCell(16))))) {
-                msg += "Người nghiệm thu không tồn tại";
+                msg += " | Người nghiệm thu không tồn tại";
             }
         }
 
         if (Objects.equals(ExcelHelpers.getStringCellValue(row.getCell(10)), "")) {
-            msg += "Trạng thái công việc không được để trống";
+            msg += " | Trạng thái công việc không được để trống";
         } else {
             if (statusIssueEntities.stream().noneMatch(statusIssueEntity -> Objects.equals(statusIssueEntity.getId(), ExcelHelpers.getStringCellValue(row.getCell(17))))) {
-                msg += "Trạng thái công việc không tồn tại";
+                msg += " | Trạng thái công việc không tồn tại";
             }
         }
 
         if (Objects.equals(ExcelHelpers.getStringCellValue(row.getCell(11)), "")) {
-            msg += "Danh mục không được để trống";
+            msg += " | Danh mục không được để trống";
         } else {
             if (categoryEntities.stream().noneMatch(categoryEntity -> Objects.equals(categoryEntity.getId(), ExcelHelpers.getStringCellValue(row.getCell(18))))) {
-                msg += "Danh mục không tồn tại";
+                msg += " | Danh mục không tồn tại";
             }
         }
 

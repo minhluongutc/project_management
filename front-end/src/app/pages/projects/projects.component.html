@@ -41,11 +41,7 @@
              class="text-blue-600 cursor-pointer hover:underline">{{ rowData.name }}</a>
         </td>
         <td>{{ rowData.description }}</td>
-<!--        @for(item of listDataTree; track $index) {-->
-<!--          @if (item.data.id == rowData.id) {-->
-            <td><p-meterGroup [value]="listMeterGroup[getIndexInRowData(rowData)]"></p-meterGroup></td>
-<!--          }-->
-<!--        }-->
+        <td><p-meterGroup [value]="getMeterGroup(rowData)"></p-meterGroup></td>
       </tr>
     </ng-template>
   </p-treeTable>

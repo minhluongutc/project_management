@@ -15,21 +15,6 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
   files!: TreeNode[];
   cols!: Column[];
   listMeterGroup: any[] = [];
-  value = [
-    {label: 'Apps', color: '#34d399', value: 0},
-    {label: 'Messages', color: '#fbbf24', value: 0},
-    {label: 'Media', color: '#60a5fa', value: 0},
-    {label: 'System', color: '#c084fc', value: 0}
-  ];
-  value2 = [
-    {label: "Reject", color: "#ff0000", value: 0},
-    {label: "Done", color: "#f60008", value: 0},
-    {label: "Reopen", color: "#ee0011", value: 0},
-    {label: "Resolve", color: "#e50019", value: 0},
-    {label: "Deploy waiting", color: "#dd0022", value: 0},
-    {label: "Confirmed", color: "#d4002a", value: 0},
-    {label: "New", color: "#cc0033", value: 0}
-  ]
 
   constructor(injector: Injector,
               private projectService: ProjectService,
@@ -68,17 +53,6 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
           this.listMeterGroup.push(meterGroup);
         }
       }
-      // if (res?.data?.statusPercents) {
-      //   for (let i = 0; i < res.data.statusPercents.length; i++) {
-      //     const meterGroup: MeterGroup = {
-      //       label: res?.data?.statusPercents[i]?.name,
-      //       color: this.generateColor(i),
-      //       value: res?.data?.statusPercents[i]?.percent || 0,
-      //     }
-      //     this.meterGroup.push(meterGroup);
-      //   }
-      //   console.log(this.meterGroup)
-      // }
     } catch (err: any) {
       this.createErrorToast('Lỗi', err.message);
     }
@@ -89,22 +63,74 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
     this.router.navigateByUrl(`/projects/${id}`)
   }
 
+  // getIndexInRowData(rowData: any): number {
+  //   // console.log(rowData)
+  //   console.log('index', this.listDataTree.findIndex((item: any) => item.data.id === rowData.id) == undefined ? 0 : this.listDataTree.findIndex((item: any) => item.data.id === rowData.id));
+  //   return this.listDataTree.findIndex((item: any) => item.data.id === rowData.id) == undefined ? 0 : this.listDataTree.findIndex((item: any) => item.data.id === rowData.id);
+  // }
+
+  getMeterGroup(rowData: any) {
+    const meterList: any[] = [];
+    for (let i = 0; i < rowData.statusPercents.length; i++) {
+      const meterGroup: MeterGroup = {
+        label: rowData.statusPercents[i].name,
+        color: this.generateColor(i),
+        value: rowData.statusPercents[i].percent || 0,
+      }
+      meterList.push(meterGroup);
+    }
+    console.log(rowData)
+    return meterList;
+  }
+
   generateColor(i: number): string {
-    const red = Math.floor(255 - (i * 8.5));
-    const blue = Math.floor(i * 8.5);
-
-    // Convert the RGB values to hexadecimal format
-    const redHex = red.toString(16).padStart(2, '0');
-    const blueHex = blue.toString(16).padStart(2, '0');
-
-    // Return the color in hexadecimal format
-    return '#' + redHex + '00' + blueHex;
+    switch (i) {
+      case 0:
+        return '#34d399';
+      case 1:
+        return '#fbbf24';
+      case 2:
+        return '#60a5fa';
+      case 3:
+        return '#c084fc';
+      case 4:
+        return '#ff0000';
+      case 5:
+        return 'rgba(234,232,232,0.57)';
+      case 6:
+        return '#68c3ab';
+      case 7:
+        return '#399bab';
+      case 8:
+        return '#43860c';
+      case 9:
+        return '#68b7ab';
+      case 10:
+        return '#6653ab';
+      case 11:
+        return '#17815c';
+      case 12:
+        return '#5862d0';
+      case 13:
+        return '#26b928';
+      case 14:
+        return '#43641f';
+      case 15:
+        return '#1e2cc4';
+      case 16:
+        return '#074232';
+      case 17:
+        return '#4122b2';
+      case 18:
+        return '#6aec8f';
+      case 19:
+        return '#0e3405';
+      case 20:
+        return '#b2eec5';
+      case 21:
+        return '#2a5730';
+      default:
+        return '#000000';
+    }
   }
-
-  getIndexInRowData(rowData: any): number {
-    // console.log(rowData)
-    console.log(this.listMeterGroup[this.listDataTree.findIndex((item: any) => item.data.id === rowData.id)])
-    return this.listDataTree.findIndex((item: any) => item.data.id === rowData.id) == undefined ? 0 : this.listDataTree.findIndex((item: any) => item.data.id === rowData.id);
-  }
-
 }

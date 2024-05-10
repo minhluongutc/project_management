@@ -66,7 +66,6 @@ public class ProjectServiceImpl implements ProjectService {
                         String fraction = listTaskByStatus.size() + "/" + listTaskByStatusAll.size();
                         status.setFraction(fraction);
                     }
-
                     statusPercents.add(status);
                 }
             }
@@ -75,20 +74,49 @@ public class ProjectServiceImpl implements ProjectService {
             projectResponseDTO.setStatusPercents(statusPercents);
             treeDTO.setData(projectResponseDTO);
             treeDTO.setChildren(new ArrayList<>());
-            setProjectChildren(treeDTO, projectParent);
+            setProjectChildren(treeDTO, projectResponseDTO);
             trees.add(treeDTO);
         }
         return trees;
     }
 
-    private void setProjectChildren(TreeDTO parentTree, ProjectEntity projectEntity) {
-        List<ProjectEntity> projectChildren = projectRepositoryJPA.getProjectEntitiesByParentIdAndEnabled(projectEntity.getId(), Constants.STATUS.ACTIVE.value);
+    private void setProjectChildren(TreeDTO parentTree, ProjectDTO.ProjectResponseDTO dto) {
+        List<ProjectEntity> projectChildren = projectRepositoryJPA.getProjectEntitiesByParentIdAndEnabled(dto.getId(), Constants.STATUS.ACTIVE.value);
         parentTree.setChildren(new ArrayList<>());
         if (projectChildren.isEmpty()) return;
         for (ProjectEntity projectChild : projectChildren) {
             TreeDTO treeDTO = new TreeDTO();
-            treeDTO.setData(projectChild);
-            setProjectChildren(treeDTO, projectChild);
+
+            TaskDTO.TaskQueryDTO taskQueryDTOByProjectId = new TaskDTO.TaskQueryDTO();
+            taskQueryDTOByProjectId.setProjectId(projectChild.getId());
+            List<TaskDTO. TaskResponseDTO> listTaskByStatusAll = taskRepositoryJPA.getTasks(taskQueryDTOByProjectId);
+
+            ProjectDTO.ProjectResponseDTO projectResponseDTO = new ProjectDTO.ProjectResponseDTO();
+            List<StatusIssueEntity> statusIssueEntities = statusIssueRepositoryJPA.getStatusIssue(projectChild.getId(), null);
+            List<ProjectDTO.StatusDTO> statusPercents = new ArrayList<>();
+            if (!statusIssueEntities.isEmpty()) {
+                for (StatusIssueEntity statusIssueEntity : statusIssueEntities) {
+                    // get tasks by status issue
+                    TaskDTO.TaskQueryDTO taskQueryDTO = new TaskDTO.TaskQueryDTO();
+                    taskQueryDTO.setStatusIssueId(statusIssueEntity.getId());
+                    List<TaskDTO. TaskResponseDTO> listTaskByStatus = taskRepositoryJPA.getTasks(taskQueryDTO);
+
+                    ProjectDTO.StatusDTO status = new ProjectDTO.StatusDTO();
+                    status.setName(statusIssueEntity.getName());
+                    if (!listTaskByStatus.isEmpty()) {
+                        status.setPercent((((double) listTaskByStatus.size() / listTaskByStatusAll.size()) * 100));
+                        String fraction = listTaskByStatus.size() + "/" + listTaskByStatusAll.size();
+                        status.setFraction(fraction);
+                    }
+                    statusPercents.add(status);
+                }
+            }
+
+            modelMapper.map(projectChild, projectResponseDTO);
+            projectResponseDTO.setStatusPercents(statusPercents);
+
+            treeDTO.setData(projectResponseDTO);
+            setProjectChildren(treeDTO, projectResponseDTO);
             parentTree.getChildren().add(treeDTO);
         }
     }

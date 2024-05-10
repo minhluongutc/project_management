@@ -8,6 +8,7 @@ import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '
 export class SidebarSecondaryComponent implements OnChanges{
   @Input() menuItems: MenuFileItem[] = [];
   @Input() showToolTips = true;
+  @Input() params: any;
   @Output() handleSelect: EventEmitter<MenuFileItem> = new EventEmitter();
   selectedMenuItem: MenuFileItem | null = null;
 
@@ -32,4 +33,5 @@ export interface MenuFileItem {
   filePath: any;
   id: string;
   type: string;
+  size: number;
 }
