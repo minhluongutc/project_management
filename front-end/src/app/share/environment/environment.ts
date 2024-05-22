@@ -1,3 +1,3 @@
 export const Environment = {
-  baseUrl: 'https://harispham',
+  baseUrl: 'https://api.harispham',
 };
