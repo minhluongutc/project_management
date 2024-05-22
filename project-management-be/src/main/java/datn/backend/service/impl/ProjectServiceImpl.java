@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -56,7 +57,7 @@ public class ProjectServiceImpl implements ProjectService {
                 for (StatusIssueEntity statusIssueEntity : statusIssueEntities) {
                     // get tasks by status issue
                     TaskDTO.TaskQueryDTO taskQueryDTO = new TaskDTO.TaskQueryDTO();
-                    taskQueryDTO.setStatusIssueId(statusIssueEntity.getId());
+                    taskQueryDTO.setStatusIssueId(List.of(statusIssueEntity.getId()));
                     List<TaskDTO. TaskResponseDTO> listTaskByStatus = taskRepositoryJPA.getTasks(taskQueryDTO);
 
                     ProjectDTO.StatusDTO status = new ProjectDTO.StatusDTO();
@@ -98,7 +99,7 @@ public class ProjectServiceImpl implements ProjectService {
                 for (StatusIssueEntity statusIssueEntity : statusIssueEntities) {
                     // get tasks by status issue
                     TaskDTO.TaskQueryDTO taskQueryDTO = new TaskDTO.TaskQueryDTO();
-                    taskQueryDTO.setStatusIssueId(statusIssueEntity.getId());
+                    taskQueryDTO.setStatusIssueId(List.of(statusIssueEntity.getId()));
                     List<TaskDTO. TaskResponseDTO> listTaskByStatus = taskRepositoryJPA.getTasks(taskQueryDTO);
 
                     ProjectDTO.StatusDTO status = new ProjectDTO.StatusDTO();

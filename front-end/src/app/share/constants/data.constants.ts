@@ -37,6 +37,20 @@ export const GENDER: KeyValueModel[] = [
   {id: 3, name: 'Khác'},
 ]
 
+export const QUERY_OPERATOR: KeyValueModel[] = [
+  {id: true, name: '='},
+  {id: false, name: '!='},
+]
+
+export const QUERY_OPERATOR_DATE: KeyValueModel[] = [
+  {id: 'bang', name: '='},
+  {id: 'khac', name: '!='},
+  {id: 'lon', name: '>'},
+  {id: 'lonBang', name: '>='},
+  {id: 'nho', name: '<'},
+  {id: 'nhoBang', name: '<='},
+]
+
 export class KeyValueModel {
   id!: any
   name!: any

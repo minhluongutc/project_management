@@ -1,6 +1,7 @@
 package datn.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,36 +15,80 @@ public class TaskDTO {
 
     @Data
     @NoArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(Include.NON_NULL)
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class TaskQueryDTO {
         String projectId;
         String subject;
         String description;
         Boolean isPublic;
-        String typeId;
-        String statusIssueId;
-        Integer priority;
-        Integer severity;
+
+        Boolean typeIdIsEqual = true;
+        List<String> typeId;
+
+        Boolean statusIssueIsEqual = true;
+        List<String> statusIssueId;
+
+        Boolean priorityIsEqual = true;
+        List<Integer> priority;
+
+        Boolean severityIsEqual = true;
+        List<Integer> severity;
+
         String parentId;
-        String assignUserId;
-        String reviewUserId;
+
+        Boolean assignUserIdIsEqual = true;
+        List<String> assignUserId;
+
+        Boolean reviewUserIdIsEqual = true;
+        List<String> reviewUserId;
+
         Date date;
         Date createTime;
         String createUserId;
         Date updateTime;
-        String categoryId;
 
-        Integer statusIssueCode;
-        Boolean statusIssueCodeIsEqual;
+        Boolean categoryIdIsEqual;
+        List<String> categoryId;
+
+//        Integer statusIssueCode;
+//        Boolean statusIssueCodeIsEqual;
 
         String otherTaskId;
         String keyword;
+
+        String startDateOperator = "bang";
+        Date startDate;
+
+        String endDateOperator = "bang";
+        Date endDate;
 
         String sortBy;
         String sortDir;
         Integer pageIndex;
         Integer pageSize;
+
+        public boolean isPriorityEmpty() {
+            return this.priority == null || this.priority.isEmpty();
+        }
+        public boolean isSeverityEmpty() {
+            return this.severity == null || this.severity.isEmpty();
+        }
+        public boolean isStatusIssueEmpty() {
+            return this.statusIssueId == null || this.statusIssueId.isEmpty();
+        }
+        public boolean isTypeIdEmpty() {
+            return this.typeId == null || this.typeId.isEmpty();
+        }
+        public boolean isCategoryEmpty() {
+            return this.categoryId == null || this.categoryId.isEmpty();
+        }
+        public boolean isAssignUserIdEmpty() {
+            return this.assignUserId == null || this.assignUserId.isEmpty();
+        }
+        public boolean isReviewUserIdEmpty() {
+            return this.reviewUserId == null || this.reviewUserId.isEmpty();
+        }
     }
 
     @Data

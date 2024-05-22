@@ -10,6 +10,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ServiceModule} from "./service/service.module";
 import {ToastModule} from "primeng/toast";
 import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
+import {FullCalendarModule} from "@fullcalendar/angular";
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
     AuthModule,
     ServiceModule,
     ToastModule,
+    FullCalendarModule
   ],
   providers: [MessageService],
   bootstrap: [AppComponent]

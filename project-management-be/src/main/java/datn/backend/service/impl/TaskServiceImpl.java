@@ -72,7 +72,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Object getTasksAccordingLevel(Authentication authentication, TaskDTO.TaskQueryDTO dto) {
-        List<TaskDTO.TaskResponseDTO> taskEntities = taskRepositoryJPA.getTasksLevel(dto, null, AuditUtils.getUserId(authentication), Constants.STATUS.ACTIVE.value);
+        List<TaskDTO.TaskResponseDTO> taskEntities = taskRepositoryJPA.getTasksLevel(dto, null, AuditUtils.getUserId(authentication));
         if (dto.getOtherTaskId() != null) {
             if (taskEntities.stream().anyMatch(task -> Objects.equals(task.getId(), dto.getOtherTaskId()))) {
                 taskEntities.removeIf(task -> Objects.equals(task.getId(), dto.getOtherTaskId()));
@@ -91,7 +91,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void setTaskChildren(Authentication authentication, TreeDTO parentTree, TaskDTO.TaskResponseDTO taskDTO, TaskDTO.TaskQueryDTO dto) {
-        List<TaskDTO.TaskResponseDTO> taskChildren = taskRepositoryJPA.getTasksLevel(dto, taskDTO.getId(), AuditUtils.getUserId(authentication), Constants.STATUS.ACTIVE.value);
+        List<TaskDTO.TaskResponseDTO> taskChildren = taskRepositoryJPA.getTasksLevel(dto, taskDTO.getId(), AuditUtils.getUserId(authentication));
         if (taskChildren.stream().anyMatch(task -> Objects.equals(task.getId(), dto.getOtherTaskId()))) {
             taskChildren.removeIf(task -> Objects.equals(task.getId(), dto.getOtherTaskId()));
         }
@@ -548,5 +548,33 @@ public class TaskServiceImpl implements TaskService {
             case "Rất cao" -> 5;
             default -> 0;
         };
+    }
+
+    public Object getTaskCompletionRate(Authentication authentication, String userId, String projectId) {
+        List<TaskEntity> taskEntities = taskRepositoryJPA.getTaskEntitiesByProjectIdAndAssignUserIdAndEnabled(projectId, userId, Constants.STATUS.ACTIVE.value);
+
+        int expiredTask = 0;
+        int lateCompleteTask = 0;
+
+        int onTimeCompleteTask = 0;
+        for (TaskEntity taskEntity : taskEntities) {
+            if (taskEntity.getStatusIssueId() != null) {
+                StatusIssueEntity statusDone = statusIssueRepositoryJPA.getStatusIssueEntitiesByIdAndCodeAndEnabled(taskEntity.getStatusIssueId(), Constants.STATUS_ISSUE.DONE.value, Constants.STATUS.ACTIVE.value);
+                if (statusDone != null) { // nếu công việc đang ở trạng thái Done
+
+                } else {
+
+                }
+            }
+        }
+        return null;
+    }
+
+    private Boolean checkExpiredTask(Date dueDate, String statusName, String doneTime) {
+        if (dueDate == null) {
+            return false;
+        }
+        Date currentDate = new Date();
+        return currentDate.before(dueDate);
     }
 }

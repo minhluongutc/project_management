@@ -32,10 +32,14 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             " and (:#{#dto.date} is null or date(:#{#dto.date}) >= date(t.startDate) and date(:#{#dto.date}) <= date(t.dueDate))")
     Page<TaskEntity> getTaskEntityByProjectId(@Param("dto") TaskDTO.TaskQueryDTO dto, Pageable pageable);
 
-    @Query("select new datn.backend.dto.TaskDTO$TaskResponseDTO(t.id, t.taskCode, p.name, t.subject, t.description, t2.name, s.name, t.priority, t.severity, t3.subject, u.username, u2.username, c.name, t.startDate, t.dueDate, t.createTime, t.updateTime, u3.username, u4.username, t.isPublic, t.projectId) " +
+    @Query("select new datn.backend.dto.TaskDTO$TaskResponseDTO(" +
+            "t.id, t.taskCode, p.name, t.subject, t.description, t2.name," +
+            " s.name, t.priority, t.severity, t3.subject, u.username," +
+            " u2.username, c.name, t.startDate, t.dueDate, t.createTime," +
+            " t.updateTime, u3.username, u4.username, t.isPublic, t.projectId) " +
             " from TaskEntity t" +
             " left join ProjectEntity p on t.projectId = p.id" +
-            " join ProjectUserEntity p2 on p.id = p2.projectId" +
+            " join ProjectUserEntity p2 on (p.id = p2.projectId and :userId = p2.userId)" +
             " left join TypeEntity t2 on t.typeId = t2.id" +
             " left join StatusIssueEntity s on t.statusIssueId = s.id" +
             " left join TaskEntity t3 on t.parentId = t3.id" +
@@ -44,18 +48,12 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             " left join UserEntity u3 on t.createUserId = u3.id" +
             " left join UserEntity u4 on t.updateUserId = u4.id" +
             " left join CategoryEntity c on t.categoryId = c.id" +
-            " where ((:parentId is null and t.parentId is null) or t.parentId = :parentId)" +
-            " and (p2.userId = :userId)" +
+            " where (:parentId is null or t.parentId = :parentId)" +
             " and (:#{#dto.projectId} is null or t.projectId = :#{#dto.projectId})" +
-            " and (" +
-            "       :#{#dto.statusIssueCode} is null " +
-            "       or (:#{#dto.statusIssueCodeIsEqual} = true and s.code = :#{#dto.statusIssueCode}) " +
-            "       or (:#{#dto.statusIssueCodeIsEqual} = false and s.code != :#{#dto.statusIssueCode})" +
-            "   )" +
             " and (:#{#dto.assignUserId} is null or (t.assignUserId = :#{#dto.assignUserId}))" +
             " and (:#{#dto.createUserId} is null or (t.createUserId = :#{#dto.createUserId}))" +
-            " and (t.enabled = :enabled)")
-    List<TaskDTO.TaskResponseDTO> getTasksLevel(TaskDTO.TaskQueryDTO dto, String parentId, String userId, Integer enabled);
+            " and (t.enabled = 1)")
+    List<TaskDTO.TaskResponseDTO> getTasksLevel(TaskDTO.TaskQueryDTO dto, String parentId, String userId);
 
     @Query("select new datn.backend.dto.TaskDTO$TaskResponseGetChildren(t.id, t.taskCode, t.projectId, t.subject, t.description, t.isPublic, t.typeId, t.statusIssueId, t.priority, t.severity, t.parentId, t.assignUserId, t.reviewUserId, t.categoryId, t.startDate, t.dueDate, s.progress)" +
             " from TaskEntity t " +
@@ -80,22 +78,72 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             " left join UserEntity u4 on t.updateUserId = u4.id" +
             " left join CategoryEntity c on t.categoryId = c.id" +
             " where (:#{#dto.parentId} is null or (t.parentId = :#{#dto.parentId}))" +
-            " and (:#{#dto.projectId} is null or (t.projectId = :#{#dto.projectId}))" +
-            " and (:#{#dto.typeId} is null or (t2.id = :#{#dto.typeId}))" +
-            " and (:#{#dto.priority} is null or (t.priority = :#{#dto.priority}))" +
-            " and (:#{#dto.severity} is null or (t.severity = :#{#dto.severity}))" +
+            " and (:#{#dto.projectId} is null or :#{#dto.projectId} = '' or (t.projectId = :#{#dto.projectId}))" +
             " and (" +
-            "       :#{#dto.statusIssueCode} is null " +
-            "       or (:#{#dto.statusIssueCodeIsEqual} = true and s.code = :#{#dto.statusIssueCode}) " +
-            "       or (:#{#dto.statusIssueCodeIsEqual} = false and s.code != :#{#dto.statusIssueCode})" +
+            "       coalesce(:#{#dto.typeId}, null) is null " +
+            "       or (:#{#dto.isTypeIdEmpty} = true)" +
+            "       or (:#{#dto.typeIdIsEqual} = true and t.typeId in :#{#dto.typeId})" +
+            "       or (:#{#dto.typeIdIsEqual} = false and t.typeId not in :#{#dto.typeId})" +
             "   )" +
-            " and (:#{#dto.assignUserId} is null or (t.assignUserId = :#{#dto.assignUserId}))" +
+            " and (" +
+            "       coalesce(:#{#dto.priority}, null) is null " +
+            "       or (:#{#dto.isPriorityEmpty} = true) " +
+            "       or (:#{#dto.priorityIsEqual} = true and t.priority in :#{#dto.priority})" +
+            "       or (:#{#dto.priorityIsEqual} = false and t.priority not in :#{#dto.priority})" +
+            "   )" +
+            " and (" +
+            "       coalesce(:#{#dto.severity}, null) is null " +
+            "       or (:#{#dto.isSeverityEmpty} = true)" +
+            "       or (:#{#dto.severityIsEqual} = true and t.severity in :#{#dto.severity})" +
+            "       or (:#{#dto.severityIsEqual} = false and t.severity not in :#{#dto.severity})" +
+            "   )" +
+            " and (" +
+            "       coalesce(:#{#dto.assignUserId}, null) is null " +
+            "       or (:#{#dto.isAssignUserIdEmpty()} = true)" +
+            "       or (:#{#dto.assignUserIdIsEqual} = true and t.assignUserId in :#{#dto.assignUserId})" +
+            "       or (:#{#dto.assignUserIdIsEqual} = false and t.assignUserId not in :#{#dto.assignUserId})" +
+            "   )" +
             " and (:#{#dto.createUserId} is null or (t.createUserId = :#{#dto.createUserId}))" +
-            " and (:#{#dto.statusIssueId} is null or (t.statusIssueId = :#{#dto.statusIssueId}))" +
-            " and (:#{#dto.categoryId} is null or (t.categoryId = :#{#dto.categoryId}))" +
-            " and (:#{#dto.keyword} is null or (lower(t.subject) like lower(concat('%', trim(:#{#dto.keyword}) ,'%'))))" +
-            " and (t.enabled = 1)")
-    List<TaskDTO.TaskResponseDTO> getTasks(TaskDTO.TaskQueryDTO dto);
+            " and (" +
+            "       coalesce(:#{#dto.statusIssueId}, null) is null" +
+            "       or (:#{#dto.isStatusIssueEmpty} = true)" +
+            "       or (:#{#dto.statusIssueIsEqual} = true and t.statusIssueId in :#{#dto.statusIssueId})" +
+            "       or (:#{#dto.statusIssueIsEqual} = false and t.statusIssueId not in :#{#dto.statusIssueId})" +
+            "   )" +
+            " and (" +
+            "       coalesce(:#{#dto.categoryId}, null) is null " +
+            "       or (:#{#dto.isCategoryEmpty} = true)" +
+            "       or (:#{#dto.categoryIdIsEqual} = true and t.categoryId in :#{#dto.categoryId})" +
+            "       or (:#{#dto.categoryIdIsEqual} = false and t.categoryId not in :#{#dto.categoryId})" +
+            "   )" +
+            " and (" +
+            "       coalesce(:#{#dto.reviewUserId}, null) is null " +
+            "       or (:#{#dto.isReviewUserIdEmpty} = true)" +
+            "       or (:#{#dto.reviewUserIdIsEqual} = true and t.reviewUserId in :#{#dto.reviewUserId})" +
+            "       or (:#{#dto.reviewUserIdIsEqual} = false and t.reviewUserId not in :#{#dto.reviewUserId})" +
+            "   )" +
+            " and (" +
+            "       :#{#dto.startDate} is null " +
+            "       or (:#{#dto.startDateOperator} = 'bang' and t.startDate = :#{#dto.startDate})" +
+            "       or (:#{#dto.startDateOperator} = 'khac' and t.startDate != :#{#dto.startDate})" +
+            "       or (:#{#dto.startDateOperator} = 'lon' and t.startDate > :#{#dto.startDate})" +
+            "       or (:#{#dto.startDateOperator} = 'lonBang' and t.startDate >= :#{#dto.startDate})" +
+            "       or (:#{#dto.startDateOperator} = 'nho' and t.startDate < :#{#dto.startDate})" +
+            "       or (:#{#dto.startDateOperator} = 'nhoBang' and t.startDate <= :#{#dto.startDate})" +
+            "   )" +
+            " and (" +
+            "       :#{#dto.endDate} is null " +
+            "       or (:#{#dto.endDateOperator} = 'bang' and t.dueDate = :#{#dto.endDate})" +
+            "       or (:#{#dto.endDateOperator} = 'khac' and t.dueDate != :#{#dto.endDate})" +
+            "       or (:#{#dto.endDateOperator} = 'lon' and t.dueDate > :#{#dto.endDate})" +
+            "       or (:#{#dto.endDateOperator} = 'lonBang' and t.dueDate >= :#{#dto.endDate})" +
+            "       or (:#{#dto.endDateOperator} = 'nho' and t.dueDate < :#{#dto.endDate})" +
+            "       or (:#{#dto.endDateOperator} = 'nhoBang' and t.dueDate <= :#{#dto.endDate})" +
+            "   )" +
+            " and (:#{#dto.keyword} is null or :#{#dto.keyword} = '' or (lower(t.subject) like lower(concat('%', trim(:#{#dto.keyword}) ,'%'))))" +
+            " and (t.enabled = 1)" +
+            " order by t.createTime desc")
+    List<TaskDTO.TaskResponseDTO> getTasks(@Param("dto") TaskDTO.TaskQueryDTO dto);
 
     @Query("select new datn.backend.dto.TaskDTO$TaskDetailResponseDTO(t.id, t.taskCode, t.projectId, p.name, t.subject, t.description, t.isPublic, t.typeId, t.statusIssueId, t.priority, t.severity, t.parentId, t2.subject, t.assignUserId, t.reviewUserId, t.categoryId, t.startDate, t.dueDate, t.estimateTime, t.createUserId, u.username, t.createTime, t.updateUserId, t.updateTime, t.enabled)" +
             " from TaskEntity t " +
@@ -111,4 +159,6 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
     List<TaskEntity> getChildrenTaskByParentId(String parentId);
 
     List<TaskEntity> getTaskEntitiesByProjectIdAndEnabled(String projectId, Integer enabled);
+
+    List<TaskEntity> getTaskEntitiesByProjectIdAndAssignUserIdAndEnabled(String projectId, String userId, Integer enabled);
 }

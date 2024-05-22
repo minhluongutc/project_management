@@ -35,6 +35,10 @@ import {TaskCreateComponent} from "./task-create/task-create.component";
 import {TooltipModule} from "primeng/tooltip";
 import {DividerModule} from "primeng/divider";
 import {DialogModule} from "primeng/dialog";
+import {MultiSelectModule} from "primeng/multiselect";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {InputGroupModule} from "primeng/inputgroup";
+import {InputGroupAddonModule} from "primeng/inputgroupaddon";
 
 @NgModule({
   declarations: [
@@ -79,6 +83,10 @@ import {DialogModule} from "primeng/dialog";
     TooltipModule,
     DividerModule,
     DialogModule,
+    MultiSelectModule,
+    OverlayPanelModule,
+    InputGroupModule,
+    InputGroupAddonModule,
   ],
   exports: [TaskCreateComponent]
 })

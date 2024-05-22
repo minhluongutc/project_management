@@ -28,6 +28,9 @@ import {TreeTableModule} from "primeng/treetable";
 import {EditorModule} from "primeng/editor";
 import {TreeSelectModule} from "primeng/treeselect";
 import {FileUploadModule} from "primeng/fileupload";
+import { CalendarComponent } from './calendar/calendar.component';
+import {FullCalendarModule} from "@fullcalendar/angular";
+import {AutofocusDirective} from "../share/directives/auto-focus.directive";
 
 
 @NgModule({
@@ -36,35 +39,38 @@ import {FileUploadModule} from "primeng/fileupload";
     LoginComponent,
     ProfileComponent,
     ViewAttachmentComponent,
-    PostComponent
+    PostComponent,
+    CalendarComponent
   ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    PagesRoutingModule,
-    UiModule,
-    ProjectModule,
-    TasksModule,
-    AccordionModule,
-    FormsModule,
-    ButtonModule,
-    RippleModule,
-    DialogModule,
-    CalendarModule,
-    DropdownModule,
-    JiraInputTextComponent,
-    RadioButtonModule,
-    DividerModule,
-    NgxDocViewerModule,
-    PdfViewerModule,
-    TooltipModule,
-    FileSizePipe,
-    MeterGroupModule,
-    TreeTableModule,
-    EditorModule,
-    TreeSelectModule,
-    FileUploadModule
-  ],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        PagesRoutingModule,
+        UiModule,
+        ProjectModule,
+        TasksModule,
+        AccordionModule,
+        FormsModule,
+        ButtonModule,
+        RippleModule,
+        DialogModule,
+        CalendarModule,
+        DropdownModule,
+        JiraInputTextComponent,
+        RadioButtonModule,
+        DividerModule,
+        NgxDocViewerModule,
+        PdfViewerModule,
+        TooltipModule,
+        FileSizePipe,
+        MeterGroupModule,
+        TreeTableModule,
+        EditorModule,
+        TreeSelectModule,
+        FileUploadModule,
+        FullCalendarModule,
+        AutofocusDirective
+    ],
   providers: [DecimalPipe]
 })
 export class PagesModule { }

@@ -1,13 +1,14 @@
 import {
-  Component,
+  AfterViewInit,
+  Component, ElementRef,
   EventEmitter,
   forwardRef,
   Injector,
   Input,
   OnChanges,
   OnInit,
-  Output,
-  SimpleChanges
+  Output, Renderer2,
+  SimpleChanges, ViewChild
 } from '@angular/core';
 import {InputTextModule} from "primeng/inputtext";
 import {PaginatorModule} from "primeng/paginator";
@@ -15,6 +16,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl} from "@angular/forms
 import {noop} from "rxjs";
 import {DecimalPipe, NgIf} from "@angular/common";
 import {InputTextareaModule} from "primeng/inputtextarea";
+import {AutofocusDirective} from "../../directives/auto-focus.directive";
 
 export class ModelInput {
   groupType: 'noIcon' | 'icon' | 'textareaInputSpecial' | 'textarea' = 'noIcon';
@@ -55,7 +57,8 @@ class NumberConfig {
     InputTextModule,
     PaginatorModule,
     NgIf,
-    InputTextareaModule
+    InputTextareaModule,
+    AutofocusDirective
   ],
   providers: [
     {
@@ -72,7 +75,7 @@ class NumberConfig {
 
 })
 export class JiraInputTextComponent
-  implements OnInit, ControlValueAccessor, OnChanges {
+  implements OnInit, ControlValueAccessor, OnChanges, AfterViewInit {
 
   // input type
   @Input() jiraIsInputText = false;
@@ -95,6 +98,7 @@ export class JiraInputTextComponent
   // @Input() jiraIsTextAreaAutoResize = false;
   @Input() jiraShowFlexEnd = true;
   @Input() jiraAutofocus = false;
+  @Input() pvnId = 'demo';
   @Input() jiraIsTextArea = false;
   @Input() jiraDatepickerConfig: any = null;
   @Input() jiraTimepickerConfig: any = null;
@@ -128,9 +132,12 @@ export class JiraInputTextComponent
   inputTextClass: string = '';
   textError: string = '';
 
-  constructor(private inj: Injector, private decimalPipe: DecimalPipe) {
+  @ViewChild('focus') focus!: ElementRef;
 
-  }
+  constructor(private inj: Injector,
+              private decimalPipe: DecimalPipe,
+              private renderer: Renderer2
+  ) {}
 
   ngOnInit(): void {
     this.ngControl = this.inj.get(NgControl);
@@ -169,6 +176,16 @@ export class JiraInputTextComponent
     this.textError = '';
     this.setJiraConfig();
     this.setErrorMessage();
+  }
+
+  ngAfterViewInit() {
+    if (this.jiraAutofocus) {
+      this.pvnId = 'focus';
+      setTimeout(() => {
+        let elem = this.renderer.selectRootElement('#focus');
+        elem.focus();
+      }, 1000);
+    }
   }
 
   writeValue(obj: any): void {
@@ -247,6 +264,7 @@ export class JiraInputTextComponent
         returnFocusToInput: true,
       };
     }
+    // this.jiraConfig.autofocus = this.jiraAutofocus;
   }
 
   setErrorMessage() {

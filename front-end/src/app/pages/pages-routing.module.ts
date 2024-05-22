@@ -4,6 +4,7 @@ import {LayoutComponent} from "../share/ui/layout/layout.component";
 import {DashboardComponent} from "./dashboard/dashboard.component";
 import {ProfileComponent} from "./profile/profile.component";
 import {PostComponent} from "./post/post.component";
+import {CalendarComponent} from "./calendar/calendar.component";
 
 
 const routes: Routes = [
@@ -27,6 +28,10 @@ const routes: Routes = [
       {
         path: 'posts',
         component: PostComponent
+      },
+      {
+        path: 'calendar',
+        component: CalendarComponent
       },
       {
         path: 'projects',

@@ -32,7 +32,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'kanban-board',
+        redirectTo: 'tasks',
         pathMatch: 'full'
       },
       {

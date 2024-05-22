@@ -90,19 +90,11 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
-    // basic download template
-//    @GetMapping(value = "/tasks/import/template")
-//    public ResponseEntity<Object> downloadTemplate(Authentication authentication) {
-//        Resource resource = new ClassPathResource("templates/template_Tasks.xlsx");
-//        File file = null;
-//        try {
-//            file = resource.getFile();
-//        } catch (IOException e) {
-//            throw new CustomException("Biểu mẫu không tồn tại");
-//        }
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
-//                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
-//                .body(resource);
+//    @GetMapping(value = "/tasks/statistics/user/{userId}/task-completion-rate/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Object> getTaskCompletionRate(Authentication authentication,
+//                                                        @PathVariable String userId,
+//                                                        @PathVariable String projectId) {
+//        Object result = taskService.getTaskCompletionRate(authentication, userId);
+//        return ResponseUtils.getResponseEntity(result);
 //    }
 }

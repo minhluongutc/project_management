@@ -35,7 +35,24 @@
     padding: 0.75rem ;
   }
 
-  .input {
+  .p-multiselect {
+    display: flex;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    align-items: center;
+    box-shadow: none;
+
+    &:hover {
+      outline: none;
+      border-color: $bg-primary-link !important;
+    }
+    &:focus {
+      box-shadow: none;
+      outline: none;
+    }
+  }
+
+  .input,
+  .p-multiselect {
     width: 100% !important;
     height: 40px;
     border-radius: 3px;
@@ -239,9 +256,9 @@
     z-index: 100 !important;
   }
 
-  //.p-dialog-content {
-  //  overflow: inherit !important;
-  //}
+  .p-dialog-content {
+    overflow-y: visible !important;
+  }
 
   th {
     text-align: center;
@@ -253,7 +270,11 @@
   .p-dialog-footer > button,
   .p-element > button.p-component,
   p-paginator > .p-paginator > span.p-paginator-pages >button.p-paginator-page,
-  .p-datatable-header > div > button {
+  .p-datatable-header > div > button,
+  button.p-multiselect-close,
+  button.p-datepicker-next,
+  button.p-datepicker-prev,
+  button.p-ripple.p-button-rounded.p-button-text{
     width: auto;
     min-width: 40px;
   }
@@ -280,6 +301,38 @@
   p-tabview > .tabview-custom.p-tabview > .p-tabview-panels {
     max-height: 500px;
     overflow-y: scroll;
+  }
+
+  .p-datepicker .p-datepicker-header .p-datepicker-title {
+    display: flex;
+    line-height: 2rem;
+  }
+
+  .p-calendar-clear-icon {
+    margin-top: 0;
+  }
+
+  p-calendar.p-calendar-clearable .p-calendar-clear-icon {
+    color: #6b7280;
+    right: 2.35rem;
+  }
+
+  .p-overlaypanel {
+    z-index: 99 !important;
+  }
+
+  .fc-header-toolbar > div.fc-toolbar-chunk {
+    display: flex!important;
+  }
+
+  .p-datepicker .p-timepicker button {
+    width: 2rem !important;
+    height: 2rem !important;
+    color: #6b7280;
+    border: 0 none;
+    background: transparent;
+    border-radius: 50% !important;
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s !important;
   }
 
 }

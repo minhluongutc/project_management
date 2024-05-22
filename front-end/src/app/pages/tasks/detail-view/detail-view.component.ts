@@ -39,22 +39,32 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params: ParamMap) => {
-      console.log('params:', params);
-      console.log(params.get('taskCode'))
       this.getTasks(params);
     })
   }
 
   getTasks(queryParams: any) {
-    console.log(queryParams)
     let data = queryParams.params;
-    const projectId = this.route.snapshot?.parent?.parent?.paramMap.get('id') || null;
+    const projectId = this.route.snapshot?.parent?.parent?.paramMap.get('id') || data.projectId;
+    console.log(projectId)
+    data = {
+      ...data,
+      priority: data?.priority?.join(',') || null,
+      severity: data?.severity?.join(',') || null,
+    }
     if (projectId != null) {
-      data = { ...data, projectId: projectId }
+      data = {
+        ...data,
+        statusIssueId: data?.statusIssueId?.join(',') || null,
+        typeId: data?.typeId?.join(',') || null,
+        categoryId: data?.categoryId?.join(',') || null,
+        reviewUserId: data?.reviewUserId?.join(',') || null,
+        assignUserId: data?.assignUserId?.join(',') || null,
+        projectId
+      }
     }
     this.taskService.getTasks(data).subscribe({
       next: (res: any) => {
-        console.log('res:', res);
         this.listData = res?.data || [];
         this.totalRecords = this.listData.length || 0;
         if (queryParams.get('taskCode')) {
