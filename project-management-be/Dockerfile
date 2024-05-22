@@ -1,5 +1,5 @@
-# Use a Maven image to build the application
-FROM maven:3.8.3-openjdk-17 AS build
+# Use a Maven image with JDK 17 to build the application
+FROM maven:3.8.1-openjdk-17 AS build
 
 # Set the working directory
 WORKDIR /app
@@ -7,14 +7,17 @@ WORKDIR /app
 # Copy the pom.xml and download dependencies
 COPY pom.xml .
 
+# Download the dependencies
+RUN mvn dependency:go-offline -B
+
 # Copy the source code into the container
 COPY src ./src
 
 # Package the application
 RUN mvn clean package -DskipTests
 
-# Use an OpenJDK runtime image
-FROM openjdk:11-jre-slim
+# Use an OpenJDK runtime image for Java 17
+FROM openjdk:17-jre-slim
 
 # Set the working directory
 WORKDIR /app
