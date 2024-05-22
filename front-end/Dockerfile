@@ -4,10 +4,10 @@ COPY ["package.json", "./"]
 
 COPY .env .
 
-RUN yarn install
+RUN npm install
 
 COPY . .
 
-RUN yarn build
+RUN npm build
 
-CMD [ "yarn", "start:prod" ]
+CMD [ "npm", "start" ]
