@@ -14,15 +14,19 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {DialogService} from "primeng/dynamicdialog";
 import { JiraLabelComponent } from './label/jiraLabel.component';
-import {NgIf} from "@angular/common";
+import {NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
 import {DialogModule} from "primeng/dialog";
+import { SidebarSecondaryComponent } from './sidebar-secondary/sidebar-secondary.component';
+import { LayoutSecondaryComponent } from './layout-secondary/layout-secondary.component';
 
 @NgModule({
   declarations: [
     FooterComponent,
     HeaderComponent,
     LayoutComponent,
-    JiraLabelComponent
+    JiraLabelComponent,
+    SidebarSecondaryComponent,
+    LayoutSecondaryComponent
   ],
   imports: [
     SharedModule,
@@ -36,9 +40,11 @@ import {DialogModule} from "primeng/dialog";
     OverlayPanelModule,
     NgIf,
     DialogModule,
+    NgForOf,
+    NgTemplateOutlet,
   ],
   providers: [DialogService],
-  exports: [LayoutComponent, JiraLabelComponent]
+    exports: [LayoutComponent, JiraLabelComponent, LayoutSecondaryComponent, SidebarSecondaryComponent]
 })
 export class UiModule {
 }

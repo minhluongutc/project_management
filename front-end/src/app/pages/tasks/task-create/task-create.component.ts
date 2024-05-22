@@ -13,8 +13,9 @@ import {StatusIssueService} from "../../../service/status-issue.service";
 import {CategoryService} from "../../../service/category.service";
 import {DynamicDialogConfig} from "primeng/dynamicdialog";
 import {DocumentService} from "../../../service/document.service";
-import {FileService} from "../../../share/services/file.service";
 import {ConfirmationService} from "primeng/api";
+import {ProjectStoreService} from "../../projects/project-store.service";
+import {saveAs} from "file-saver";
 
 @Component({
   selector: 'app-task-create',
@@ -36,9 +37,13 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   reviewers: any[] = [];
   fileList: any[] = [];
 
+  fileImport: any;
+
   data2edit: any;
 
-  projectIdSelected: string | undefined = undefined;
+  visibleImportFile: boolean = false;
+
+  projectIdSelected: any;
   constructor(injector: Injector,
               private projectService: ProjectService,
               private taskService: TaskService,
@@ -49,66 +54,96 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
               private documentService: DocumentService,
               private dynamicDialogConfig: DynamicDialogConfig,
               private confirmationService: ConfirmationService,
-              private fileService: FileService) {
+              private projectStoreService: ProjectStoreService) {
     super(injector);
+    if (projectStoreService.id) {
+      this.projectIdSelected = projectStoreService.id;
+    }
     this.buildForm();
     this.severities = SEVERITIES;
     this.priories = PRIORIES;
-    console.log(this.dynamicDialogConfig)
   }
 
   async ngOnInit() {
-  try {
-    await this.getProjects();
-    console.log(this.projectIdSelected);
+    try {
+      await this.getProjects();
 
-    if (this.dynamicDialogConfig.data != undefined) {
-      this.projectIdSelected = this.dynamicDialogConfig.data.task.projectId;
-      const res: any = await this.taskService.getTaskById(this.dynamicDialogConfig.data.task.id).toPromise();
-      console.log(res)
-      this.data2edit = res.data;
-      this.projectIdSelected = this.data2edit.projectId;
-      const projectValue = {
-        label: this.data2edit.projectName,
-        key: this.data2edit.projectId,
+      if (this.dynamicDialogConfig.data != undefined) {
+        this.projectIdSelected = this.dynamicDialogConfig.data.task.projectId;
+        const res: any = await this.taskService.getTaskById(this.dynamicDialogConfig.data.task.id).toPromise();
+        this.data2edit = res.data;
+        this.projectIdSelected = this.data2edit.projectId;
+        const projectValue = {
+          label: this.data2edit.projectName,
+          key: this.data2edit.projectId,
+        }
+        const parentTask = {
+          label: this.data2edit.parentSubject,
+          key: this.data2edit.parentId,
+        }
+        this.getValuesOfProject();
+        this.form.patchValue({
+          projectId: projectValue,
+          subject: this.data2edit.subject,
+          description: this.data2edit.description,
+          time: null,
+          parentId: parentTask,
+          typeId: this.data2edit.typeId,
+          estimateTime: this.data2edit.estimateTime,
+          priority: this.data2edit.priority,
+          severity: this.data2edit.severity,
+          assignUserId: this.data2edit.assignUserId,
+          reviewUserId: this.data2edit.reviewUserId,
+          statusIssueId: this.data2edit.statusIssueId,
+          categoryId: this.data2edit.categoryId,
+          reporter: this.data2edit.createUserName,
+          isPublic: this.data2edit.isPublic
+        })
+        if (this.data2edit.startDate || this.data2edit.dueDate) {
+          this.form.patchValue({
+            time: [new Date(this.data2edit.startDate), new Date(this.data2edit.dueDate)]
+          })
+        } else {
+          this.form.patchValue({
+            time: null
+          })
+        }
+        this.getAttachments2Edit(this.data2edit.id);
       }
-      const parentTask = {
-        label: this.data2edit.parentSubject,
-        key: this.data2edit.parentId,
+
+      if (this.projectStoreService.id != '' && this.data2edit == undefined) {
+        let projectValue!: any;
+        const projectSelected = this.findProject(this.listProject, this.projectIdSelected);
+        projectValue = {...projectSelected}
+        this.setEnableFields(true);
+        this.getValuesOfProject();
+        this.form.patchValue({
+          projectId: projectValue,
+          subject: null,
+          description: null,
+          time: null,
+          parentId: null,
+          typeId: null,
+          estimateTime: null,
+          priority: null,
+          severity: null,
+          assignUserId: null,
+          reviewUserId: null,
+          statusIssueId: null,
+          categoryId: null,
+          reporter: this.user.username,
+          isPublic: false
+        })
       }
-      console.log("parentTask", parentTask)
-      this.getValuesOfProject();
-      console.log(projectValue)
-      this.form.patchValue({
-        projectId: projectValue,
-        subject: this.data2edit.subject,
-        description: this.data2edit.description,
-        time: [new Date(this.data2edit.startDate), new Date(this.data2edit.dueDate)],
-        parentId: parentTask,
-        typeId: this.data2edit.typeId,
-        estimateTime: this.data2edit.estimateTime,
-        priority: this.data2edit.priority,
-        severity: this.data2edit.severity,
-        assignUserId: this.data2edit.assignUserId,
-        reviewUserId: this.data2edit.reviewUserId,
-        statusIssueId: this.data2edit.statusIssueId,
-        categoryId: this.data2edit.categoryId,
-        reporter: this.data2edit.createUserName,
-        isPublic: this.data2edit.isPublic
-      })
-      this.getAttachments2Edit(this.data2edit.id);
-      console.log("this form", this.form.value)
+    } catch (err: any) {
+      this.createErrorToast('Lỗi', err.message);
     }
-  } catch (err: any) {
-    this.createErrorToast('Lỗi', err.message);
-  }
-
     if (this.projectIdSelected) {
       this.setEnableFields(true);
     } else {
       this.setEnableFields(false);
     }
-}
+  }
 
   buildForm() {
     this.form = this.fb.group({
@@ -129,7 +164,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       isPublic: [false],
       continue: [false]
     });
-    console.log(this.form.value)
   }
 
   getTypes(projectId: string | undefined) {
@@ -139,7 +173,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         .getTypes({projectId: projectId})
         .subscribe({
           next: (res: any) => {
-            // console.log("issueTypes", res.data)
             this.issueTypes = res.data;
           }
         })
@@ -168,7 +201,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         .getStatusIssue({projectId: projectId})
         .subscribe({
           next: (res: any) => {
-            // console.log("statuses", res.data)
             this.statuses = res.data;
           }
         })
@@ -182,7 +214,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         .getCategories({projectId: projectId})
         .subscribe({
           next: (res: any) => {
-            // console.log("categories", res.data)
             this.categories = res.data;
           }
         })
@@ -194,6 +225,9 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       const res: any = await this.projectService.getProjects(this.user.id, {}).toPromise();
       this.listProject = res.data;
       this.changeStructureListProject();
+      // if (this.dynamicDialogConfig.data == undefined) {
+      //   await this.buildForm()
+      // }
     } catch (err: any) {
       this.createErrorToast('Lỗi', err.message);
     }
@@ -203,7 +237,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     try {
       const data = {
         projectId: projectId,
-        otherTaskId: taskId  == undefined ? '' : taskId
+        otherTaskId: taskId == undefined ? null : taskId
       }
       const res: any = await this.taskService.getTaskAccordingLevel(data).toPromise();
       const listTask = res.data;
@@ -241,7 +275,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         children: this.setChildProject(item)
       }
     })
-    console.log(this.listProject)
   }
 
   setChildProject(item: any): any {
@@ -259,18 +292,22 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   onSelectProject($event: TreeNodeSelectEvent) {
-    console.log($event)
-
     this.setEnableFields(true);
+
+    this.form.get('typeId')?.enable();
+    this.form.get('assignUserId')?.enable();
+    this.form.get('reviewUserId')?.enable();
+    this.form.get('statusIssueId')?.enable();
+    this.form.get('categoryId')?.enable();
+    this.form.get('parentId')?.enable();
 
     this.form.get('projectId')?.setValue($event.node.key)
     this.projectIdSelected = $event.node.key;
-    console.log("projectIdSelected", this.projectIdSelected)
     this.getTypes(this.projectIdSelected);
     this.getUserByProject(this.projectIdSelected);
     this.getStatusIssueByProject(this.projectIdSelected);
     this.getCategories(this.projectIdSelected);
-    this.getTasks(this.projectIdSelected, this.data2edit.id);
+    this.getTasks(this.projectIdSelected, this.data2edit?.id || null);
   }
 
   getValuesOfProject() {
@@ -278,23 +315,38 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     this.getUserByProject(this.projectIdSelected);
     this.getStatusIssueByProject(this.projectIdSelected);
     this.getCategories(this.projectIdSelected);
-    this.getTasks(this.projectIdSelected, this.data2edit.id);
+    this.getTasks(this.projectIdSelected, this.data2edit?.id || null);
   }
 
   onUnselectProject($event: TreeNodeUnSelectEvent) {
-    console.log($event)
     this.projectIdSelected = undefined;
     this.setEnableFields(false);
   }
 
   onSelectFile($event: FileSelectEvent) {
-    console.log($event)
-    this.fileList = $event.currentFiles;
-    console.log(this.fileList)
+    if (this.data2edit) {
+      const formData = new FormData();
+      formData.append('file', $event.currentFiles[$event.currentFiles.length - 1]);
+      const dto = {
+        objectId: this.data2edit.id,
+        type: 1
+      }
+      formData.append('dto', new Blob([JSON.stringify(dto)], {type: 'application/json'}))
+      this.documentService.addAttachment(formData).subscribe({
+        next: (res: any) => {
+          this.createSuccessToast('Thành công', 'Thêm tài liệu thành công');
+          this.getAttachments2Edit(this.data2edit.id);
+        }, error: (err: any) => {
+          this.createErrorToast('Lỗi', err.message);
+        }
+      })
+
+    } else {
+      this.fileList = $event.currentFiles;
+    }
   }
 
   onRemoveFile($event: FileRemoveEvent) {
-    console.log($event)
     const fileRemoveIndex = this.fileList.findIndex((file: any) => file === $event);
     if (this.data2edit) {
       this.documentService.deleteAttachment(this.fileList[fileRemoveIndex].id).subscribe({
@@ -308,7 +360,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     } else {
       this.fileList.splice(fileRemoveIndex, 1);
     }
-    console.log(this.fileList);
   }
 
   onClearFiles($event: Event) {
@@ -334,8 +385,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       reporter: this.user.id,//Not use this field
       isPublic: this.form.value.isPublic
     }
-    console.log("form value insert", this.form.value)
-    console.log(data)
     const formData = new FormData();
     this.fileList.forEach((file: any) => {
       formData.append('files', file);
@@ -344,12 +393,17 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       'dto',
       new Blob([JSON.stringify(data)], {type: 'application/json'})
     )
-    console.log(this.form.value)
     this.taskService.insertTask(formData).subscribe({
       next: (res: any) => {
         this.createSuccessToast('Thành công', 'Tạo mới công việc thành công');
         this.form.reset();
         this.fileList = [];
+        const currentRoute = this.router.url.split('?')[0];
+        const param = this.router.url.split('?')[1];
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+          this.router.navigate([`${currentRoute}`], {queryParams: {param}});
+        });
+        this.closeDialog();
       }, error: (err: any) => {
         this.createErrorToast('Lỗi', err.message);
       }
@@ -375,8 +429,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       reporter: this.user.id,//Not use this field
       isPublic: this.form.value.isPublic
     }
-    console.log(data)
-    console.log(this.form.value)
     this.taskService.updateTask(this.data2edit.id, data).subscribe({
       next: (res: any) => {
         this.createSuccessToast('Thành công', 'Chỉnh sửa công việc thành công');
@@ -385,7 +437,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         this.closeDialog();
         const currentRoute = this.router.url.split('?')[0];
         const param = this.router.url.split('?')[1];
-        console.log(currentRoute)
         this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
           this.router.navigate([`${currentRoute}`], {queryParams: {taskCode: this.data2edit.taskCode}});
         });
@@ -396,22 +447,16 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   getAttachments2Edit(objectId: string) {
-    this.documentService.getAttachmentsByObjectId(objectId).subscribe({
+    this.documentService.getAttachmentsByObjectId(objectId, 1).subscribe({
       next: (res: any) => {
         this.fileList = res.data;
-        console.log("fileList:", this.fileList)
       }, error: (err: any) => {
         this.createErrorToast('Lỗi', err.message);
       }
     })
   }
 
-  getImage(id: string) {
-    return this.fileService.getImageUrl(id);
-  }
-
   confirmDeleteFile(file: any, event: Event) {
-    console.log(event)
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: 'bạn có muốn xóa tệp đính kèm này?',
@@ -447,5 +492,63 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       this.form.get('categoryId')?.disable();
       this.form.get('parentId')?.disable();
     }
+  }
+
+  showDialogImportFile() {
+    if (!this.projectIdSelected) {
+      this.createWarningToast('', 'Vui lòng chọn dự án');
+    } else {
+      this.visibleImportFile = true;
+    }
+  }
+
+  onDownloadTemplate() {
+    this.taskService.downLoadTemplate(this.projectIdSelected).subscribe({
+      next: (res: any) => {
+        saveAs(
+          res.body,
+          this.fileService.extractFileNameFromContentDisposition(
+            res.headers.get('content-disposition')
+          )
+        );
+      }
+    })
+  }
+
+
+  handleImportFile() {
+    if(this.fileImport) {
+      const formData = new FormData();
+      formData.append('file', this.fileImport);
+      this.taskService.importTemplate(this.projectIdSelected, formData).subscribe({
+        next: (res) => {
+          this.visibleImportFile = false;
+          if (res?.messageCode === '000') {
+            this.createSuccessToast('Thành công', res.messageDesc);
+          } else if (res.messageCode === '001') {
+            if (res.totalSuccess === 0){
+              this.createErrorToast('Lỗi', res.messageDesc);
+            } else {
+              this.createSuccessToast('Thành công', res.messageDesc);
+            }
+            this.closeDialog();
+            saveAs(this.fileService.base64toBlob(res.fileData), this.fileImport.name);
+            this.fileImport = null;
+          }
+        },error: (error) => {
+          this.createErrorToast('Lỗi', error.message);
+      }
+      })
+    } else {
+      this.createErrorToast('Lỗi', 'Vui lòng chọn file')
+    }
+  }
+
+  onSelectFileImport($event: FileSelectEvent) {
+    this.fileImport = $event.currentFiles[0];
+  }
+
+  confirmDeleteFileImport() {
+    this.fileImport = null;
   }
 }

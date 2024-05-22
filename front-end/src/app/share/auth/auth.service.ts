@@ -25,6 +25,10 @@ export class AuthService {
   ) {
   }
 
+  register(data: any) {
+    return this.http.post(this.signupUrl, data);
+  }
+
   login(username: string, password: string): Observable<AuthResponseData> {
     return this.http
       .post<AuthResponseData>(

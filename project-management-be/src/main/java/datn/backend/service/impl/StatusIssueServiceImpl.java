@@ -38,6 +38,7 @@ public class StatusIssueServiceImpl implements StatusIssueService {
         statusIssueEntity.setName(dto.getName());
         statusIssueEntity.setDescription(dto.getDescription());
         statusIssueEntity.setProjectId(dto.getProjectId());
+        statusIssueEntity.setProgress(dto.getProgress());
         statusIssueEntity.setUpdateTime(AuditUtils.updateTime());
         statusIssueEntity.setUpdateUserId(AuditUtils.updateUserId(authentication));
         statusIssueRepositoryJPA.save(statusIssueEntity);

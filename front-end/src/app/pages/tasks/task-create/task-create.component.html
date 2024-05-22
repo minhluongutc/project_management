@@ -1,9 +1,9 @@
 <div class="flex justify-between items-center">
   <p class="text-sm"> Các trường bắt buộc được ký hiệu bở dấu <span style="color: red">*</span></p>
   <p-button label="Nhập theo file" [text]="true" [plain]="true"
-            size="small" class="import-button font-light"></p-button>
+            size="small" class="import-button font-light" (onClick)="showDialogImportFile()"></p-button>
 </div>
-<form [formGroup]="form" class="grid grid-cols-2 gap-4 relative">
+<form [formGroup]="form" *ngIf="form" class="grid grid-cols-2 gap-4 relative">
     <div class="flex flex-col gap-2 pt-4">
       <jira-label [jiraLabel]="'Dự án'" [jiraRequired]="true"/>
       <p-treeSelect id="projectId"
@@ -41,6 +41,7 @@
       <p-calendar selectionMode="range"
                   formControlName="time"
                   [readonlyInput]="true"
+                  dateFormat="dd/mm/yy"
       />
     </div>
     <div class="flex flex-col gap-2 pt-4">
@@ -63,7 +64,7 @@
       />
     </div>
     <div class="flex flex-col gap-2 pt-4">
-        <jira-label [jiraLabel]="'Độ nghiêm trọng'"></jira-label>
+      <jira-label [jiraLabel]="'Độ nghiêm trọng'"></jira-label>
       <p-dropdown optionLabel="name"
                   optionValue="id"
                   placeholder="Chọn"
@@ -76,7 +77,7 @@
     <div class="flex flex-col gap-2 pt-4">
       <jira-label [jiraLabel]="'Người được giao'"></jira-label>
       <p-dropdown optionLabel="username"
-                  optionValue="id"
+                  optionValue="userId"
                   placeholder="Chọn"
                   formControlName="assignUserId"
                   [options]="assignees"
@@ -87,7 +88,7 @@
     <div class="flex flex-col gap-2 pt-4">
       <jira-label [jiraLabel]="'Người nghiệm thu'"></jira-label>
       <p-dropdown optionLabel="username"
-                  optionValue="id"
+                  optionValue="userId"
                   placeholder="Chọn"
                   formControlName="reviewUserId"
                   [options]="reviewers"
@@ -143,7 +144,7 @@
                       [showCancelButton]="false"
                       [chooseLabel]="'chọn file'"
                       [cancelLabel]="'hủy bỏ'"
-                      [accept]="'image/*, .pdf, .xlsx, .xls, .doc, .docx, .pdf, .ppt, .pptx, .txt, .zip, .rar'"
+                      [accept]="'image/*, .pdf, .xlsx, .xls, .doc, .docx, .pdf, .ppt, .pptx, .txt, .zip, .rar, .mp4'"
                       [chooseStyleClass]="'h-10 rounded-sm'"
                       [maxFileSize]="1000000000"
                       (onSelect)="onSelectFile($event)"
@@ -153,7 +154,7 @@
             @for (file of fileList; track $index) {
               <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-4">
-                  @if (file.type == "xlsx" || file.type == "application/vnd.ms-excel" || file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.type == "xsl") {
+                  @if (getFileType(file.type) == "excel") {
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="40px" fill="#FFF"
                          stroke-miterlimit="10" stroke-width="2" class="mdl-js">
                       <path stroke="#979593"
@@ -166,7 +167,7 @@
                       <path
                         d="M16.9492,66l7.8848-12.0337L17.6123,42h5.8115l3.9424,7.6486c0.3623,0.7252,0.6113,1.2668,0.7471,1.6236 h0.0508c0.2617-0.58,0.5332-1.1436,0.8164-1.69L33.1943,42h5.335l-7.4082,11.9L38.7168,66H33.041l-4.5537-8.4017 c-0.1924-0.3116-0.374-0.6858-0.5439-1.1215H27.876c-0.0791,0.2684-0.2549,0.631-0.5264,1.0878L22.6592,66H16.9492z"/>
                     </svg>
-                  } @else if (file.type == "pdf" || file.type == "application/pdf") {
+                  } @else if (getFileType(file.type) == "pdf") {
                     <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="auto" viewBox="0 0 75.320129 92.604164" class="mdl-js">
                       <g transform="translate(53.548057 -183.975276) scale(1.4843)">
                         <path fill="#ff2116" d="M-29.632812 123.94727c-3.551967 0-6.44336 2.89347-6.44336 6.44531v49.49804c0 3.55185 2.891393 6.44532 6.44336 6.44532H8.2167969c3.5519661 0 6.4433591-2.89335 6.4433591-6.44532v-40.70117s.101353-1.19181-.416015-2.35156c-.484969-1.08711-1.275391-1.84375-1.275391-1.84375a1.0584391 1.0584391 0 0 0-.0059-.008l-9.3906254-9.21094a1.0584391 1.0584391 0 0 0-.015625-.0156s-.8017392-.76344-1.9902344-1.27344c-1.39939552-.6005-2.8417968-.53711-2.8417968-.53711l.021484-.002z" color="#000" font-family="sans-serif" overflow="visible" paint-order="markers fill stroke" style="line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;white-space:normal;shape-padding:0;isolation:auto;mix-blend-mode:normal;solid-color:#000000;solid-opacity:1"/>
@@ -175,7 +176,7 @@
                         <path fill="#2c2c2c" d="M-20.930423 167.83862h2.364986q1.133514 0 1.840213.2169.706698.20991 1.189489.9446.482795.72769.482795 1.75625 0 .94459-.391832 1.6233-.391833.67871-1.056548.97958-.65772.30087-2.02913.30087h-.818651v3.72941h-1.581322zm1.581322 1.22447v3.33058h.783664q1.049552 0 1.44838-.39184.405826-.39183.405826-1.27345 0-.65772-.265887-1.06355-.265884-.41282-.587747-.50378-.314866-.098-1.000572-.098zm5.50664-1.22447h2.148082q1.560333 0 2.4909318.55276.9375993.55276 1.4133973 1.6443.482791 1.09153.482791 2.42096 0 1.3994-.4338151 2.49793-.4268149 1.09153-1.3154348 1.76324-.8816233.67172-2.5189212.67172h-2.267031zm1.581326 1.26645v7.018h.657715q1.378411 0 2.001144-.9516.6227329-.95858.6227329-2.5539 0-3.5125-2.6238769-3.5125zm6.4722254-1.26645h5.30372941v1.26645H-4.2075842v2.85478h2.9807225v1.26646h-2.9807225v4.16322h-1.5813254z" font-family="Franklin Gothic Medium Cond" letter-spacing="0" style="line-height:125%;-inkscape-font-specification:'Franklin Gothic Medium Cond'" word-spacing="4.26000023"/>
                       </g>
                     </svg>
-                  } @else if (file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || file.type == "docx") {
+                  } @else if (getFileType(file.type) == "docx") {
                     <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" stroke-miterlimit="10" stroke-width="2"
                          viewBox="0 0 96 96" width="40px" class="mdl-js">
                       <path stroke="#979593"
@@ -188,7 +189,7 @@
                       <path
                         d="M21.6245 60.6455c.0661.522.109.9769.1296 1.3657h.0762c.0306-.3685.0889-.8129.1751-1.3349.0862-.5211.1703-.961.2517-1.319L25.7911 44h4.5702l3.6562 15.1272c.183.7468.3353 1.6973.457 2.8532h.0608c.0508-.7979.1777-1.7184.3809-2.7615L37.8413 44H42l-5.1183 22h-4.86l-3.4885-14.5744c-.1016-.4197-.2158-.9663-.3428-1.6417-.127-.6745-.2057-1.1656-.236-1.4724h-.0608c-.0407.358-.1195.8896-.2364 1.595-.1169.7062-.211 1.2273-.2819 1.565L24.1 66h-4.9357L14 44h4.2349l3.1843 15.3882c.0709.3165.1392.7362.2053 1.2573z"/>
                     </svg>
-                  } @else if (file.type == "pptx" || file.type == "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+                  } @else if (getFileType(file.type) == "pptx") {
                     <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" stroke-miterlimit="10" stroke-width="2"
                          viewBox="0 0 96 96" width="40px" class="mdl-js">
                       <path stroke="#979593"
@@ -202,7 +203,7 @@
                       <path
                         d="M29.8541 42c2.9554 0 5.2196.6626 6.7895 1.9849C38.2145 45.3081 39 47.2246 39 49.7332c0 1.6109-.3888 3.0433-1.1653 4.2971-.7765 1.2548-1.8814 2.2299-3.3134 2.9262C33.0892 57.6518 31.429 58 29.5426 58H24.999v9H20V42h9.8541zm-4.855 12h3.9666c1.5464 0 2.7144-.3491 3.5051-1.0453.7897-.6972 1.1841-1.715 1.1841-3.0536 0-2.6004-1.5133-3.9011-4.5416-3.9011h-4.1142v8z"/>
                     </svg>
-                  } @else if (file.type == "rar" || file.type == "application/x-compressed") {
+                  } @else if (getFileType(file.type) == "rar") {
                     <svg xmlns="http://www.w3.org/2000/svg" id="Camada_2" data-name="Camada 2" viewBox="0 0 16 16"
                          width="40px"
                          class="mdl-js">
@@ -299,7 +300,7 @@
                             d="M10,5.057V8.189A.811.811,0,0,1,9.189,9H6.811A.811.811,0,0,1,6,8.189V5.057A1.265,1.265,0,0,0,5,6.283V8.717A1.282,1.282,0,0,0,6.283,10H9.717A1.282,1.282,0,0,0,11,8.717V6.283A1.265,1.265,0,0,0,10,5.057Z"/>
                       <rect class="cls-17" x="6" width="4" height="0.498"/>
                     </svg>
-                  } @else if (file.type == "zip" || file.type == "application/x-zip-compressed") {
+                  } @else if (getFileType(file.type) == "zip") {
                     <svg height="40" version="1.1" width="40" xmlns="http://www.w3.org/2000/svg"
                     >
                       <g transform="translate(0 -1028.4)">
@@ -334,7 +335,40 @@
                           fill="#ecf0f1"/>
                       </g>
                     </svg>
-                  } @else if (file.type.startsWith("image/") || file.type == "jpg" || file.type == "png") {
+                  } @else if (getFileType(file.type) == "video") {
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="40px" y="40px" width="40px" viewBox="0 0 64 64"
+                         style="enable-background:new 0 0 64 64;" xml:space="preserve" class="mdl-js">
+                      <style type="text/css">
+                        .st0 {fill: #C75C5C;} .st1 {fill: #4F5D73;} .st2 {opacity: 0.2;}.st3 {fill: #231F20;}.st4 {fill: #E0E0D1;}
+                      </style>
+                      <g id="Layer_1"><g><circle class="st0" cx="31.8" cy="32" r="32"/></g>
+                        <g>
+                          <g><rect x="16" y="30" class="st1" width="4" height="4"/></g>
+                          <g><rect x="16" y="37" class="st1" width="4" height="4"/></g>
+                          <g><rect x="16" y="44" class="st1" width="4" height="4"/></g>
+                          <g><rect x="16" y="23" class="st1" width="4" height="4"/></g>
+                          <g><rect x="16" y="16" class="st1" width="4" height="4"/></g>
+                          <g><rect x="44" y="30" class="st1" width="4" height="4"/></g>
+                          <g><rect x="44" y="37" class="st1" width="4" height="4"/></g>
+                          <g><rect x="44" y="44" class="st1" width="4" height="4"/></g>
+                          <g><rect x="44" y="23" class="st1" width="4" height="4"/></g>
+                          <g><rect x="44" y="16" class="st1" width="4" height="4"/></g>
+                          <g><rect x="24" y="16" class="st1" width="16" height="14"/></g>
+                          <g><rect x="24" y="34" class="st1" width="16" height="14"/></g>
+                        </g>
+                        <g class="st2">
+                          <path class="st3"
+                              d="M48,14H16c-2.2,0-4,1.8-4,4v32c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V18C52,15.8,50.2,14,48,14z M20,50h-4v-4h4    V50z M20,43h-4v-4h4V43z M20,36h-4v-4h4V36z M20,29h-4v-4h4V29z M20,22h-4v-4h4V22z M40,50H24V36h16V50z M40,32H24V18h16V32z     M48,50h-4v-4h4V50z M48,43h-4v-4h4V43z M48,36h-4v-4h4V36z M48,29h-4v-4h4V29z M48,22h-4v-4h4V22z"/>
+                        </g>
+                        <g>
+                          <path class="st4"
+                              d="M48,12H16c-2.2,0-4,1.8-4,4v32c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V16C52,13.8,50.2,12,48,12z M20,48h-4v-4h4    V48z M20,41h-4v-4h4V41z M20,34h-4v-4h4V34z M20,27h-4v-4h4V27z M20,20h-4v-4h4V20z M40,48H24V34h16V48z M40,30H24V16h16V30z     M48,48h-4v-4h4V48z M48,41h-4v-4h4V41z M48,34h-4v-4h4V34z M48,27h-4v-4h4V27z M48,20h-4v-4h4V20z"/>
+                        </g>
+                      </g>
+                      <g id="Layer_2">
+                      </g>
+                    </svg>
+                  } @else if (getFileType(file.type) == "image") {
                     @if (data2edit) {
                       <img class="h-[40px] w-[40px]" [src]="getImage(file.id)" alt="file img not found">
                     } @else {
@@ -386,3 +420,71 @@
     </div>
 </div>
 <p-confirmDialog></p-confirmDialog>
+<p-dialog
+  header="Nhập theo biểu mẫu"
+  [(visible)]="visibleImportFile"
+  [modal]="true"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  [resizable]="false">
+  <p-fileUpload [multiple]="false"
+                [showUploadButton]="true"
+                [showCancelButton]="false"
+                [chooseLabel]="'chọn file'"
+                [cancelLabel]="'hủy bỏ'"
+                [accept]="'.xlsx, .xls'"
+                [chooseStyleClass]="'h-10 rounded-sm'"
+                [maxFileSize]="3750000"
+                (onSelect)="onSelectFileImport($event)"
+                (onRemove)="onRemoveFile($event)"
+                (onClear)="onClearFiles($event)"
+                (onUpload)="handleImportFile()">
+    <ng-template pTemplate="content" let-files>
+      <p class="text-center">Tệp tải lên định dạng .xlsx hoặc .xls, tối đa 30MB</p>
+      <p class="text-center">tải biểu mẫu <span class="text-blue-600 cursor-pointer mb-2 hover:underline" (click)="onDownloadTemplate()">tại đây</span></p>
+      @if (fileImport) {
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-4">
+            @if (getFileType(fileImport.type) == "excel") {
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="40px" fill="#FFF"
+                   stroke-miterlimit="10" stroke-width="2" class="mdl-js">
+                <path stroke="#979593"
+                      d="M67.1716,7H27c-1.1046,0-2,0.8954-2,2v78 c0,1.1046,0.8954,2,2,2h58c1.1046,0,2-0.8954,2-2V26.8284c0-0.5304-0.2107-1.0391-0.5858-1.4142L68.5858,7.5858 C68.2107,7.2107,67.702,7,67.1716,7z"/>
+                <path fill="none" stroke="#979593" d="M67,7v18c0,1.1046,0.8954,2,2,2h18"/>
+                <path fill="#C8C6C4"
+                      d="M51 61H41v-2h10c.5523 0 1 .4477 1 1l0 0C52 60.5523 51.5523 61 51 61zM51 55H41v-2h10c.5523 0 1 .4477 1 1l0 0C52 54.5523 51.5523 55 51 55zM51 49H41v-2h10c.5523 0 1 .4477 1 1l0 0C52 48.5523 51.5523 49 51 49zM51 43H41v-2h10c.5523 0 1 .4477 1 1l0 0C52 42.5523 51.5523 43 51 43zM51 67H41v-2h10c.5523 0 1 .4477 1 1l0 0C52 66.5523 51.5523 67 51 67zM79 61H69c-.5523 0-1-.4477-1-1l0 0c0-.5523.4477-1 1-1h10c.5523 0 1 .4477 1 1l0 0C80 60.5523 79.5523 61 79 61zM79 67H69c-.5523 0-1-.4477-1-1l0 0c0-.5523.4477-1 1-1h10c.5523 0 1 .4477 1 1l0 0C80 66.5523 79.5523 67 79 67zM79 55H69c-.5523 0-1-.4477-1-1l0 0c0-.5523.4477-1 1-1h10c.5523 0 1 .4477 1 1l0 0C80 54.5523 79.5523 55 79 55zM79 49H69c-.5523 0-1-.4477-1-1l0 0c0-.5523.4477-1 1-1h10c.5523 0 1 .4477 1 1l0 0C80 48.5523 79.5523 49 79 49zM79 43H69c-.5523 0-1-.4477-1-1l0 0c0-.5523.4477-1 1-1h10c.5523 0 1 .4477 1 1l0 0C80 42.5523 79.5523 43 79 43zM65 61H55c-.5523 0-1-.4477-1-1l0 0c0-.5523.4477-1 1-1h10c.5523 0 1 .4477 1 1l0 0C66 60.5523 65.5523 61 65 61zM65 67H55c-.5523 0-1-.4477-1-1l0 0c0-.5523.4477-1 1-1h10c.5523 0 1 .4477 1 1l0 0C66 66.5523 65.5523 67 65 67zM65 55H55c-.5523 0-1-.4477-1-1l0 0c0-.5523.4477-1 1-1h10c.5523 0 1 .4477 1 1l0 0C66 54.5523 65.5523 55 65 55zM65 49H55c-.5523 0-1-.4477-1-1l0 0c0-.5523.4477-1 1-1h10c.5523 0 1 .4477 1 1l0 0C66 48.5523 65.5523 49 65 49zM65 43H55c-.5523 0-1-.4477-1-1l0 0c0-.5523.4477-1 1-1h10c.5523 0 1 .4477 1 1l0 0C66 42.5523 65.5523 43 65 43z"/>
+                <path fill="#107C41"
+                      d="M12,74h32c2.2091,0,4-1.7909,4-4V38c0-2.2091-1.7909-4-4-4H12c-2.2091,0-4,1.7909-4,4v32 C8,72.2091,9.7909,74,12,74z"/>
+                <path
+                  d="M16.9492,66l7.8848-12.0337L17.6123,42h5.8115l3.9424,7.6486c0.3623,0.7252,0.6113,1.2668,0.7471,1.6236 h0.0508c0.2617-0.58,0.5332-1.1436,0.8164-1.69L33.1943,42h5.335l-7.4082,11.9L38.7168,66H33.041l-4.5537-8.4017 c-0.1924-0.3116-0.374-0.6858-0.5439-1.1215H27.876c-0.0791,0.2684-0.2549,0.631-0.5264,1.0878L22.6592,66H16.9492z"/>
+              </svg>
+            } @else {
+              <svg width="40px" height="40px" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M10 8C10 5.79086 11.7909 4 14 4H34C36.2091 4 38 5.79086 38 8V29.5155C36.5699 28.5583 34.8501 28 33 28C28.0294 28 24 32.0294 24 37C24 38.8501 24.5583 40.5699 25.5155 42H14C11.7909 42 10 40.2091 10 38V8ZM14 12C14 11.4477 14.4477 11 15 11H33C33.5523 11 34 11.4477 34 12C34 12.5523 33.5523 13 33 13H15C14.4477 13 14 12.5523 14 12ZM15 15C14.4477 15 14 15.4477 14 16C14 16.5523 14.4477 17 15 17H33C33.5523 17 34 16.5523 34 16C34 15.4477 33.5523 15 33 15H15ZM14 24C14 23.4477 14.4477 23 15 23H33C33.5523 23 34 23.4477 34 24C34 24.5523 33.5523 25 33 25H15C14.4477 25 14 24.5523 14 24ZM15 19C14.4477 19 14 19.4477 14 20C14 20.5523 14.4477 21 15 21H33C33.5523 21 34 20.5523 34 20C34 19.4477 33.5523 19 33 19H15ZM14 28C14 27.4477 14.4477 27 15 27H24C24.5523 27 25 27.4477 25 28C25 28.5523 24.5523 29 24 29H15C14.4477 29 14 28.5523 14 28ZM40 37C40 40.866 36.866 44 33 44C29.134 44 26 40.866 26 37C26 33.134 29.134 30 33 30C36.866 30 40 33.134 40 37ZM35.567 33.0142C35.9575 32.6236 36.5907 32.6237 36.9812 33.0142C37.3717 33.4047 37.3717 34.0379 36.9812 34.4284L36.1902 35.2193L34.776 33.8051L35.567 33.0142ZM34.0689 34.5122L35.4831 35.9264L30.4143 40.9953H29.0001L29 39.581L34.0689 34.5122Z"
+                        fill="#333333"></path>
+                </g>
+              </svg>
+            }
+            <p>{{ fileImport.name }}</p>
+            -
+            <p>{{ fileImport.size | fileSize }}</p>
+          </div>
+          <i class="pi-trash pi cursor-pointer" style="font-size: 1.5rem" (click)="confirmDeleteFileImport()"></i>
+        </div>
+      }
+      <div class="flex justify-end items-center p-4 rounded-b">
+        <div class="flex gap-4">
+          <p-button label="Hủy" [text]="true" [plain]="true" size="small" (click)="visibleImportFile = !visibleImportFile"></p-button>
+          <p-button label="Thêm mới" size="small" [disabled]="!fileImport" (onClick)="handleImportFile()"></p-button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template let-file pTemplate="file">
+    </ng-template>
+  </p-fileUpload>
+</p-dialog>

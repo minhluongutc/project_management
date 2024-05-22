@@ -1,19 +1,23 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from "@angular/core";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {Observable} from "rxjs";
-import {AuthResponseData} from "../../share/auth/AuthResponseData.model";
 import {AuthService} from "../../share/auth/auth.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
+import {Observable} from "rxjs";
+import {AuthResponseData} from "../../share/auth/AuthResponseData.model";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+
   loginForm: FormGroup = new FormGroup<any>({});
+  signUpForm: FormGroup = new FormGroup<any>({});
   isLoading: boolean = false;
+
+  mode: 'login' | 'register' = 'login';
 
   constructor(
     private authService: AuthService,
@@ -29,6 +33,16 @@ export class LoginComponent {
         'password': new FormControl('', [Validators.required, Validators.minLength(6)])
       }
     )
+    this.signUpForm = new FormGroup(
+      {
+        'username': new FormControl('', [Validators.required]),
+        'password': new FormControl('', [Validators.required, Validators.minLength(6)]),
+        'confirmPassword': new FormControl('', [Validators.required, Validators.minLength(6)]),
+        'firstName': new FormControl('', [Validators.required]),
+        'lastName': new FormControl('', [Validators.required]),
+        'email': new FormControl('', [Validators.required, Validators.email]),
+      }
+    )
   }
 
   get username() {
@@ -39,7 +53,7 @@ export class LoginComponent {
     return this.loginForm.get('password');
   }
 
-  onSubmit(form: FormGroup) {
+  onSubmitLogin(form: FormGroup) {
     this.isLoading = true;
     const username = form.value.username;
     const password = form.value.password;
@@ -60,7 +74,25 @@ export class LoginComponent {
       });
   }
 
+  onSubmitSignUp(form: FormGroup) {
+    console.log(form)
+    this.authService.register(form.value).subscribe(
+      {
+        next: res => {
+          this.mode = 'login';
+          this.messageService.add({severity: 'success', summary: 'Thành công', detail: 'Đăng ký tài khoản thành công'});
+        }, error: err => {
+          this.showError(err.error.message);
+        }
+      }
+    )
+  }
+
   showError(message: string) {
     this.messageService.add({severity: 'error', summary: 'Thất bại', detail: message});
+  }
+
+  changeMode(mode: 'login' | 'register') {
+    this.mode = mode;
   }
 }

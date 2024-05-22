@@ -4,4 +4,5 @@ export class ProjectUser {
   lastName!: string;
   projectId!: string;
   professionalLevel!: string;
+  permission!: string;
 }

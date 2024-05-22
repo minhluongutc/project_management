@@ -1,0 +1,118 @@
+<div class='demo-app'>
+  <!--  <div class='demo-app-sidebar'>-->
+  <!--    <div class='demo-app-sidebar-section'>-->
+  <!--      <h2>Instructions</h2>-->
+  <!--      <ul>-->
+  <!--        <li>Select dates and you will be prompted to create a new event</li>-->
+  <!--        <li>Drag, drop, and resize events</li>-->
+  <!--        <li>Click an event to delete it</li>-->
+  <!--      </ul>-->
+  <!--    </div>-->
+  <!--    <div class='demo-app-sidebar-section'>-->
+  <!--      <label>-->
+  <!--        <input-->
+  <!--          type='checkbox'-->
+  <!--          [checked]='calendarVisible'-->
+  <!--          (change)='handleCalendarToggle()'-->
+  <!--        />-->
+  <!--        toggle whole calendar-->
+  <!--      </label>-->
+  <!--    </div>-->
+  <!--    <div class='demo-app-sidebar-section'>-->
+  <!--      <label>-->
+  <!--        <input-->
+  <!--          type='checkbox'-->
+  <!--          [checked]='calendarOptions().weekends'-->
+  <!--          (change)='handleWeekendsToggle()'-->
+  <!--        />-->
+  <!--        toggle weekends-->
+  <!--      </label>-->
+  <!--    </div>-->
+  <!--    <div class='demo-app-sidebar-section'>-->
+  <!--      <h2>All Events ({{currentEvents.length}})</h2>-->
+  <!--      <ul>-->
+  <!--        <li *ngFor='let event of currentEvents()'>-->
+  <!--          <b>{{event.startStr}}</b>-->
+  <!--          <i>{{event.title}}</i>-->
+  <!--        </li>-->
+  <!--      </ul>-->
+  <!--    </div>-->
+  <!--  </div>-->
+  <div class='demo-app-main'>
+    <full-calendar #calendar [options]='calendarOptions' [events]="listEvent">
+      <ng-template #eventContent let-arg>
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </ng-template>
+    </full-calendar>
+  </div>
+</div>
+@if (visibleModalAddEvent) {
+  <p-dialog header="Thêm mới sự kiện"
+            [(visible)]="visibleModalAddEvent"
+            [style]="{width: '50vw'}"
+            [modal]="true"
+            [resizable]="false"
+            [draggable]="false">
+    <div [formGroup]="form" class="grid grid-cols-2 gap-4">
+      <jira-input-text formControlName="title"
+                       jiraLabelText="Tiêu đề"
+                       [jiraRequired]="true"
+                       [jiraErrors]="getError('title')"
+                       [jiraShowError]="showError('title')"
+                       [jiraAutofocus]="true"
+      />
+      <jira-input-text formControlName="description"
+                       jiraLabelText="Mô tả"
+                       [jiraErrors]="getError('description')"
+                       [jiraShowError]="showError('description')"
+      />
+      <div class="flex flex-col gap-2">
+        <jira-label [jiraLabel]="'Dự án'"/>
+        <p-treeSelect id="projectId"
+                      class="md:w-20rem w-full"
+                      containerStyleClass="w-full"
+                      formControlName="projectId"
+                      placeholder="Chọn"
+                      [options]="listProject"
+                      (onNodeSelect)="onSelectProject($event)"
+                      (onNodeUnselect)="onUnselectProject($event)"
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <jira-label [jiraLabel]="'Công việc'"/>
+        <p-treeSelect class="md:w-20rem w-full"
+                      containerStyleClass="w-full"
+                      formControlName="taskId"
+                      ariaLabelledBy="name"
+                      placeholder="Chọn"
+                      [options]="listTask"
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <jira-label jiraLabel="Từ" [jiraRequired]="true"/>
+        <p-calendar formControlName="start"
+                    [showTime]="true"
+                    [hourFormat]="'24'"/>
+      </div>
+      <div class="flex flex-col gap-2">
+        <jira-label jiraLabel="Đến"/>
+        <p-calendar formControlName="end"
+                    [showTime]="true"
+                    [hourFormat]="'24'"/>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <p-divider></p-divider>
+      <div class="flex justify-end">
+        <p-button label="Hủy" [text]="true" [plain]="true" size="small" (click)="onCloseAddModal()"></p-button>
+        @if (isEdit) {
+          <p-button label="Chỉnh sửa" size="small" [disabled]="form.invalid" (click)="onSubmitForm()"></p-button>
+        } @else {
+          <p-button label="Thêm mới" size="small" [disabled]="form.invalid" (click)="onSubmitForm()"></p-button>
+        }
+      </div>
+    </ng-template>
+  </p-dialog>
+
+}

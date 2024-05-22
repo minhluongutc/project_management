@@ -44,4 +44,15 @@ export class TaskService extends BaseService {
   getTaskChildren(id: string) {
     return this.getRequest(`${this.SERVICE_URL}/${id}/children`);
   }
+
+  downLoadTemplate(projectId: any) {
+    return this.getRequest(`${this.SERVICE_URL}/${projectId}/import/template`, {
+      observe: 'response',
+      responseType: 'blob'
+    });
+  }
+
+  importTemplate(projectId: any, file: any) {
+    return this.postRequest(`${this.SERVICE_URL}/${projectId}/import`, file);
+  }
 }

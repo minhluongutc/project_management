@@ -1,0 +1,31 @@
+.profile-avatar {
+  // hover to show the edit icon
+  &:hover {
+    .edit-icon {
+      display: block;
+    }
+  }
+}
+
+
+input[type="file"].custom {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute !important;
+  white-space: nowrap;
+  width: 1px;
+}
+.custom-upload-button {
+  padding: 10px 17px;
+  background: #f1f5f9;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  border-radius: 3px;
+  &:hover {
+    background: #e2e8f0;
+  }
+}

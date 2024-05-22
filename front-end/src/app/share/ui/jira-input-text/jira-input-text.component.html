@@ -5,12 +5,14 @@
   </label>
 
   @if (jiraIsInputText) {
-    <input pInputText [class]="'input ' + inputTextClass"
+    <input [id]="pvnId" pInputText
+           [class]="'input ' + inputTextClass"
            [disabled]="jiraConfig.disabled"
            [placeholder]="jiraConfig.placeholder"
            (ngModelChange)="onInputChange($event)"
            (blur)="inputBlur($event)"
-           [(ngModel)]="value"/>
+           [(ngModel)]="value"
+    />
   }
   @else if (jiraIsInputNumber) {
     <p-inputNumber [prefix]="jiraConfig.numberConfig.prefix" [suffix]="jiraConfig.numberConfig.suffix"

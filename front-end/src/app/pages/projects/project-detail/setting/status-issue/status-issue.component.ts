@@ -54,11 +54,15 @@ export class StatusIssueComponent  extends BaseComponent implements OnInit {
     console.log(this.clonedValue)
     const data: StatusIssue = {
       id: item.id,
-      name: item.name.trim(),
-      description: item.description.trim(),
-      projectId: item.projectId
+      name: item.name?.trim(),
+      description: item.description?.trim(),
+      projectId: item.projectId,
+      progress: item.progress
     };
-    if (this.clonedValue.name !== item.name || this.clonedValue.description !== item.description) {
+    if (
+      this.clonedValue.name !== item.name ||
+      this.clonedValue.description !== item.description ||
+      this.clonedValue.progress !== item.progress) {
       item.id ? this.updateStatusIssue(data) : this.createStatusIssue(data);
     }
   }

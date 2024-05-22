@@ -6,21 +6,401 @@
           Danh sách công việc
         </div>
         <div class="flex gap-2 justify-center items-end flex-col">
-          <div class="flex">
+          <div class="flex gap-1">
             <p class="text-xl">Xem Danh sách</p>
             <p-inputSwitch [(ngModel)]="isViewList" (ngModelChange)="changeStage($event)"></p-inputSwitch>
           </div>
           @if (isViewList) {
-            <div class="flex">
+            <div class="flex gap-1">
               <p class="text-xl">Xem dạng cây</p>
               <p-inputSwitch [(ngModel)]="isViewTree" (ngModelChange)="changeStageViewList($event)"></p-inputSwitch>
             </div>
           }
         </div>
-<!--        <p-selectButton [options]="stateView" [(ngModel)]="value" optionLabel="label" optionValue="value"-->
-<!--                        (onChange)="checkChange($event)" styleClass="text-sm"></p-selectButton>-->
       </div>
+      <p-divider></p-divider>
+      <div>
+        <div class="flex justify-between">
+          @if (showAdvancedFilter) {
+            <div class="text-xl mt-2 mb-1 text-black font-semibold antialiased tracking-normal">
+              Tìm kiếm nâng cao
+            </div>
+            <div class="flex gap-2">
+              <p-button (click)="op.toggle($event)" icon="pi pi-filter w-10" severity="secondary" label="Bộ lọc nhanh"
+                        (onClick)="saveFilter()" pTooltip="Lưu bộ lọc" iconPos="right"></p-button>
+              <p-button icon="pi pi-refresh w-10" severity="secondary" (onClick)="resetFilter()"
+                        pTooltip="Đặt lại bộ lọc"></p-button>
+              <p-button icon="pi pi-angle-down w-10" severity="secondary"
+                        (onClick)="this.showAdvancedFilter = !this.showAdvancedFilter"
+                        pTooltip="Ẩn tìm kiếm nâng cao"></p-button>
+            </div>
+          } @else {
+            <div class="text-xl mt-2 mb-1 text-black font-semibold antialiased tracking-normal">
+              Tìm kiếm
+            </div>
+            <div class="flex gap-2">
+              <p-button (click)="op.toggle($event)" icon="pi pi-filter" severity="secondary" label="Bộ lọc nhanh"
+                        (onClick)="saveFilter()" pTooltip="Lưu bộ lọc" iconPos="right"></p-button>
+              <p-button icon="pi pi-refresh w-10" severity="secondary" (onClick)="resetFilter()"
+                        pTooltip="Đặt lại bộ lọc"></p-button>
+              <p-button icon="pi pi-angle-up w-10" severity="secondary"
+                        (onClick)="this.showAdvancedFilter = !this.showAdvancedFilter"
+                        pTooltip="Hiển thị tìm kiếm nâng cao"></p-button>
+            </div>
+          }
+        </div>
+        <div class="grid grid-cols-4 gap-4">
+          <div class="flex flex-col gap-0.5">
+            <jira-label [jiraLabel]="'Nhập tên'"/>
+            <p-iconField iconPosition="right">
+              <p-inputIcon styleClass="pi pi-search"/>
+              <input type="text" pInputText placeholder="Tiêu đề" [(ngModel)]="keyword" (keydown.enter)="addQueryParams()"/>
+            </p-iconField>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <jira-label [jiraLabel]="'Dự án'"/>
+            <p-treeSelect class="md:w-20rem w-full"
+                          containerStyleClass="w-full"
+                          placeholder="Chọn"
+                          [options]="listProject"
+                          [disabled]="projectStoreService.id!=''"
+                          [(ngModel)]="projectValue"
+                          (onNodeSelect)="onSelectProject($event)"
+                          (onNodeUnselect)="onUnselectProject($event)"
+            />
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <jira-label [jiraLabel]="'Độ ưu tiên'"></jira-label>
+            <div class="grid grid-cols-10 gap-1">
+              <div class="col-start-1 col-end-5">
+                <p-dropdown optionLabel="name"
+                            optionValue="id"
+                            placeholder="Chọn"
+                            [showClear]="false"
+                            [options]="QUERY_OPERATOR"
+                            (onChange)="addQueryParams()"
+                            [(ngModel)]="priorityIsEqual"
+                />
+              </div>
+              <div class="col-start-5 col-end-11">
+                <p-multiSelect optionLabel="name"
+                               optionValue="id"
+                               placeholder="Chọn"
+                               [showClear]="true"
+                               [showHeader]="false"
+                               [options]="priories"
+                               (onChange)="addQueryParams()"
+                               (onClear)="addQueryParams()"
+                               [(ngModel)]="priority"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <jira-label [jiraLabel]="'Độ nghiêm trọng'"></jira-label>
+            <div class="grid grid-cols-10 gap-1">
+              <div class="col-start-1 col-end-5">
+                <p-dropdown optionLabel="name"
+                            optionValue="id"
+                            placeholder="Chọn"
+                            [showClear]="false"
+                            [options]="QUERY_OPERATOR"
+                            (onChange)="addQueryParams()"
+                            [(ngModel)]="severityIsEqual"
+                />
+              </div>
+              <div class="col-start-5 col-end-11">
+                <p-multiSelect optionLabel="name"
+                               optionValue="id"
+                               placeholder="Chọn"
+                               [showHeader]="false"
+                               [options]="severities"
+                               [showClear]="true"
+                               (onChange)="addQueryParams()"
+                               (onClear)="addQueryParams()"
+                               [(ngModel)]="severity"
+                />
+              </div>
+            </div>
+          </div>
+          @if (showAdvancedFilter) {
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Loại công việc'"/>
+              <div class="grid grid-cols-10 gap-1">
+                <div class="col-start-1 col-end-5">
+                  <p-dropdown optionLabel="name"
+                              optionValue="id"
+                              placeholder="Chọn"
+                              [showClear]="false"
+                              [options]="QUERY_OPERATOR"
+                              (onChange)="addQueryParams()"
+                              [(ngModel)]="typeIdIsEqual"
+                  />
+                </div>
+                <div class="col-start-5 col-end-11">
+                  <p-multiSelect optionLabel="name"
+                                 optionValue="id"
+                                 placeholder="Chọn"
+                                 [options]="issueTypes"
+                                 [showClear]="true"
+                                 [showHeader]="false"
+                                 [disabled]="projectId == '' || projectId == null"
+                                 (onChange)="addQueryParams()"
+                                 (onClear)="addQueryParams()"
+                                 [(ngModel)]="typeId"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Trạng thái'"></jira-label>
+              <div class="grid grid-cols-10 gap-1">
+                <div class="col-start-1 col-end-5">
+                  <p-dropdown optionLabel="name"
+                              optionValue="id"
+                              placeholder="Chọn"
+                              [showClear]="false"
+                              [options]="QUERY_OPERATOR"
+                              (onChange)="addQueryParams()"
+                              [(ngModel)]="statusIssueIsEqual"
+                  />
+                </div>
+                <div class="col-start-5 col-end-11">
+                  <p-multiSelect optionLabel="name"
+                                 optionValue="id"
+                                 placeholder="Chọn"
+                                 [showClear]="true"
+                                 [showHeader]="false"
+                                 [options]="statuses"
+                                 [disabled]="projectId == '' || projectId == null"
+                                 (onChange)="addQueryParams()"
+                                 (onClear)="addQueryParams()"
+                                 [(ngModel)]="statusIssueId"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Danh mục'"></jira-label>
+              <div class="grid grid-cols-10 gap-1">
+                <div class="col-start-1 col-end-5">
+                  <p-dropdown optionLabel="name"
+                              optionValue="id"
+                              placeholder="Chọn"
+                              [showClear]="false"
+                              [options]="QUERY_OPERATOR"
+                              (onChange)="addQueryParams()"
+                              [(ngModel)]="categoryIdIsEqual"
+                  />
+                </div>
+                <div class="col-start-5 col-end-11">
+                  <p-multiSelect optionLabel="name"
+                                 optionValue="id"
+                                 placeholder="Chọn"
+                                 [options]="categories"
+                                 [showClear]="true"
+                                 [showHeader]="false"
+                                 [disabled]="projectId=='' || projectId== null"
+                                 (onChange)="addQueryParams()"
+                                 (onClear)="addQueryParams()"
+                                 [(ngModel)]="categoryId"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Người nghiệm thu'"></jira-label>
+              <div class="grid grid-cols-10 gap-1">
+                <div class="col-start-1 col-end-5">
+                  <p-dropdown optionLabel="name"
+                              optionValue="id"
+                              placeholder="Chọn"
+                              [showClear]="false"
+                              [options]="QUERY_OPERATOR"
+                              (onChange)="addQueryParams()"
+                              [(ngModel)]="reviewUserIdIsEqual"
+                  />
+                </div>
+                <div class="col-start-5 col-end-11">
+                  <p-multiSelect optionLabel="username"
+                                 optionValue="userId"
+                                 placeholder="Chọn"
+                                 [options]="reviewers"
+                                 [showClear]="true"
+                                 [showHeader]="false"
+                                 [disabled]="projectId=='' || projectId== null"
+                                 (onChange)="addQueryParams()"
+                                 (onClear)="addQueryParams()"
+                                 [(ngModel)]="reviewUserId"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Người được giao'"></jira-label>
+              <div class="grid grid-cols-10 gap-1">
+                <div class="col-start-1 col-end-5">
+                  <p-dropdown optionLabel="name"
+                              optionValue="id"
+                              placeholder="Chọn"
+                              [showClear]="false"
+                              [options]="QUERY_OPERATOR"
+                              (onChange)="addQueryParams()"
+                              [(ngModel)]="assignUserIdIsEqual"
+                  />
+                </div>
+                <div class="col-start-5 col-end-11">
+                  <p-multiSelect optionLabel="username"
+                                 optionValue="userId"
+                                 placeholder="Chọn"
+                                 [options]="assignees"
+                                 [showClear]="true"
+                                 [disabled]="projectId=='' || projectId== null"
+                                 (onChange)="addQueryParams()"
+                                 [(ngModel)]="assignUserId"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Ngày bắt đầu'"></jira-label>
+              <div class="grid grid-cols-10 gap-1">
+                <div class="col-start-1 col-end-5">
+                  <p-dropdown optionLabel="name"
+                              optionValue="id"
+                              placeholder="Chọn"
+                              [showClear]="false"
+                              [options]="QUERY_OPERATOR_DATE"
+                              (onChange)="addQueryParams()"
+                              [(ngModel)]="startDateOperator"
+                  />
+                </div>
+                <div class="col-start-5 col-end-11">
+                  <p-calendar [(ngModel)]="startDate"
+                              [iconDisplay]="'input'"
+                              [showIcon]="true"
+                              [showClear]="true"
+                              placeholder="dd/mm/yyyy"
+                              dateFormat="dd/mm/yy"
+                              (onSelect)="addQueryParams()"
+                              (onClear)="addQueryParams()"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <jira-label [jiraLabel]="'Ngày hết hạn'"></jira-label>
+              <div class="grid grid-cols-10 gap-1">
+                <div class="col-start-1 col-end-5">
+                  <p-dropdown optionLabel="name"
+                              optionValue="id"
+                              placeholder="Chọn"
+                              [showClear]="false"
+                              [options]="QUERY_OPERATOR_DATE"
+                              (onChange)="addQueryParams()"
+                              [(ngModel)]="endDateOperator"
+                  />
+                </div>
+                <div class="col-start-5 col-end-11">
+                  <p-calendar [(ngModel)]="endDate"
+                              [iconDisplay]="'input'"
+                              [showIcon]="true"
+                              [showClear]="true"
+                              dateFormat="dd/mm/yy"
+                              placeholder="dd/mm/yyyy"
+                              (onSelect)="addQueryParams()"
+                              (onClear)="addQueryParams()"
+                  />
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+      <p-divider></p-divider>
     </div>
     <router-outlet></router-outlet>
   </div>
 </div>
+
+<div class="card flex justify-content-center">
+  <p-overlayPanel #op>
+    <div class="flex flex-col gap-3 w-25rem min-w-[360px]">
+      <div class="flex justify-between">
+        <span class="font-medium text-900 block mb-1">Danh sách bộ lọc</span>
+        @if (!addFilterMode) {
+          <span class="text-sm text-blue-600 cursor-pointer" (click)="choseFilterName()">Lưu lại</span>
+        }
+      </div>
+      @if (addFilterMode) {
+        <div class="flex flex-col gap-2">
+          <input type="text" pInputText [(ngModel)]="addFilterNameValue" (keydown.enter)="onAddFilter()"/>
+          <div class="flex gap-2 pb-3 justify-end">
+            <p-button label="Thêm mới"
+                      size="small"
+                      class="import-button font-light"
+                      icon="pi pi-pencil"
+                      [text]="true"
+                      [plain]="true"
+                      [styleClass]="'h-[32px]'"
+                      [disabled]="addFilterNameValue == ''"
+                      (onClick)="onAddFilter()"
+            />
+            <p-button label="Hủy"
+                      [text]="true"
+                      [plain]="true"
+                      size="small"
+                      class="import-button font-light"
+                      [styleClass]="'h-[32px]'"
+                      icon="pi pi-pencil"
+                      (onClick)="onCancelAddFilter()"
+            />
+          </div>
+        </div>
+      }
+
+      <div>
+        <span class="font-medium text-900 block mb-2">Bộ lọc tùy chỉnh</span>
+        @if (filters.length < 1) {
+          <span class="text-sm">Chưa có dữ liệu</span>
+        } @else {
+          <ul class="list-none p-0 ml-2 m-0 flex flex-col">
+            @for (filter of filters; track $index) {
+              <li class="flex items-center justify-between">
+                @if (editFilterMode && editFilterId == filter.id) {
+                  <input type="text" pInputText [(ngModel)]="editFilterValue"
+                         (keydown.enter)="onUpdateFilter(filter.id)"/>
+                  <div class="flex gap-2">
+                    <button pButton pRipple type="button" icon="pi pi-check"
+                            class="p-button-rounded p-button-text" (click)="onUpdateFilter(filter.id)"></button>
+                    <button pButton pRipple type="button" icon="pi pi-times"
+                            class="p-button-rounded p-button-text p-button-danger"
+                            (click)="editFilterMode = false"></button>
+                  </div>
+                } @else {
+                  <span class="text-sm cursor-pointer" (click)="onQuickFilter(filter)">{{ filter.name }}</span>
+                  <div class="flex gap-2">
+                    <button pButton pRipple type="button" icon="pi pi-pencil"
+                            class="p-button-rounded p-button-text" (click)="onEditFilterMode(filter.name, filter.id)"></button>
+                    <button pButton pRipple type="button" icon="pi pi-trash"
+                            class="p-button-rounded p-button-text p-button-danger" (click)="confirmDeleteFilter(filter.id, $event)"></button>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+        }
+        <ul class="list-none p-0 m-0 flex flex-column gap-3">
+        </ul>
+      </div>
+      <div>
+        <span class="font-medium text-900 block mb-2">Bộ lọc mặc định</span>
+        <span class="text-sm">Chưa có dữ liệu</span>
+        <ul class="list-none p-0 m-0 flex flex-column gap-3">
+        </ul>
+      </div>
+    </div>
+  </p-overlayPanel>
+</div>
+<p-confirmDialog />

@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../../auth/auth.service";
 import {User} from "../../../auth/user.model";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {DialogService, DynamicDialogRef} from "primeng/dynamicdialog";
 import {TaskCreateComponent} from "../../../../pages/tasks/task-create/task-create.component";
+import {FileService} from "../../../services/file.service";
 
 @Component({
   selector: 'app-header',
@@ -18,8 +19,10 @@ export class HeaderComponent implements OnInit {
 
   ref: DynamicDialogRef | undefined;
   constructor(
-    private authService: AuthService,
+    protected authService: AuthService,
+    private fileService: FileService,
     private router: Router,
+    private route: ActivatedRoute,
     public dialogService: DialogService
   ) {
     this.userSub = Subscription.EMPTY;
@@ -35,6 +38,9 @@ export class HeaderComponent implements OnInit {
     if (!this.isAuthenticated) {
       this.router.navigate(['/login']);
     }
+    console.log(this.route?.parent?.snapshot.paramMap.get('id'));
+    console.log(this.route.snapshot?.parent?.paramMap.get('id'));
+    console.log(this.route.snapshot)
   }
 
   showCreateTask() {
@@ -47,6 +53,10 @@ export class HeaderComponent implements OnInit {
         '640px': '90vw'
       },
     })
+  }
+
+  getImage(id: any) {
+    return this.fileService.getFileUrl(id) || '/assets/images/image-default-user.jpg';
   }
 
   onLogout() {

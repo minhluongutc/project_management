@@ -10,7 +10,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -21,6 +20,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Getter
     String id;
+    @Getter
     String username;
     @Getter
     String email;
@@ -32,8 +32,6 @@ public class UserDetailsImpl implements UserDetails {
     String lastName;
     @Getter
     String avatarId;
-    @Getter
-    String companyId;
 
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -43,8 +41,6 @@ public class UserDetailsImpl implements UserDetails {
                            String password,
                            String firstName,
                            String lastName,
-                           String avatarId,
-                           String companyId,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
@@ -53,7 +49,6 @@ public class UserDetailsImpl implements UserDetails {
         this.firstName = firstName;
         this.lastName = lastName;
         this.avatarId = avatarId;
-        this.companyId = companyId;
         this.authorities = authorities;
     }
 
@@ -69,8 +64,6 @@ public class UserDetailsImpl implements UserDetails {
                 user.getPassword(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getAvatarId(),
-                user.getCompanyId(),
                 authorities);
     }
 

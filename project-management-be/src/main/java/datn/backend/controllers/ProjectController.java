@@ -5,6 +5,7 @@ import datn.backend.service.ProjectService;
 import datn.backend.service.jpa.ProjectServiceJPA;
 import datn.backend.utils.ResponseUtils;
 import datn.backend.utils.response.ResponseTreeNode;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,8 +43,16 @@ public class ProjectController {
 
     @PostMapping(value = "/projects", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> insertProject(Authentication authentication,
-                                                @RequestBody ProjectDTO.ProjectInsertDTO dto) {
+                                                @Valid @RequestBody ProjectDTO.ProjectInsertDTO dto) {
         Object result = projectService.insertProject(authentication, dto);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
+    @PutMapping(value = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> updateProject(Authentication authentication,
+                                                @PathVariable String id,
+                                                @Valid @RequestBody ProjectDTO.ProjectUpdateDTO dto) {
+        Object result = projectService.updateProject(authentication, id, dto);
         return ResponseUtils.getResponseEntity(result);
     }
 }

@@ -4,7 +4,6 @@ import {TaskService} from "../../../service/task.service";
 import {ParamMap} from "@angular/router";
 import {Column} from "../../../models/column.model";
 import {PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
-import {TablePageEvent} from "primeng/table";
 import FileSaver from 'file-saver';
 
 @Component({
@@ -19,12 +18,12 @@ export class ListViewComponent extends BaseComponent implements OnInit {
   exportColumns!: any[];
 
   constructor(injector: Injector,
-              private taskService: TaskService
+              private taskService: TaskService,
   ) {
     super(injector);
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<any> {
     this.route.queryParamMap.subscribe((params: ParamMap) => {
       console.log('params:', params);
       this.getTasks(params);
@@ -34,9 +33,22 @@ export class ListViewComponent extends BaseComponent implements OnInit {
   getTasks(queryParams: any) {
     console.log(queryParams)
     let data = queryParams.params;
-    const projectId = this.route.snapshot?.parent?.parent?.paramMap.get('id') || null;
+    const projectId = this.route.snapshot?.parent?.parent?.paramMap.get('id') || data.projectId;
+    data = {
+      ...data,
+      priority: data?.priority?.join(',') || null,
+      severity: data?.severity?.join(',') || null,
+    }
     if (projectId != null) {
-      data = { ...data, projectId: projectId }
+      data = {
+        ...data,
+        statusIssueId: data?.statusIssueId?.join(',') || null,
+        typeId: data?.typeId?.join(',') || null,
+        categoryId: data?.categoryId?.join(',') || null,
+        reviewUserId: data?.reviewUserId?.join(',') || null,
+        assignUserId: data?.assignUserId?.join(',') || null,
+        projectId
+      }
     }
     this.taskService.getTasks(data).subscribe({
       next: (res: any) => {
@@ -82,4 +94,5 @@ export class ListViewComponent extends BaseComponent implements OnInit {
 
   protected readonly PRIORIES = PRIORIES;
   protected readonly SEVERITIES = SEVERITIES;
+
 }

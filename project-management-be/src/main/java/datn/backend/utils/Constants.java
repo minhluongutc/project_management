@@ -14,7 +14,10 @@ public class Constants {
     public static final String FILE_MINIO_CHANNEL = "jiraclone";
 
     public enum DOCUMENT_TYPE {
-        TASK(1);
+        TASK(1),
+        AVATAR(2),
+        COVER(3),
+        POST(4);
 
         public final Integer value;
 
@@ -47,6 +50,31 @@ public class Constants {
         STATUS_ISSUE(int value, String name) {
             this.value = value;
             this.name = name;
+        }
+    }
+
+    public enum PROFESSIONAL_LEVEL {
+        INTERN(1),
+        FRESHER(2),
+        JUNIOR(3),
+        MIDDLE(4),
+        SENIOR(5);
+        public final int value;
+
+        PROFESSIONAL_LEVEL(int value) {
+            this.value = value;
+        }
+    }
+
+    public enum PERMISSION {
+        MEMBER(1),
+        LEADER(2),
+        PROJECT_MANAGEMENT(3),
+        ADMIN(4);
+        public final int value;
+
+        PERMISSION(int value) {
+            this.value = value;
         }
     }
 }

@@ -15,5 +15,6 @@ import lombok.experimental.FieldDefaults;
 public class ProjectUserDTO {
     String userId;
     String projectId;
+    Integer permission;
     Integer professionalLevel;
 }

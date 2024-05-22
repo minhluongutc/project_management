@@ -1,23 +1,29 @@
 <div class="pl-6 pr-6">
   <h3 class="font-bold text-2xl pt-4 pb-4">Quản lý thành viên</h3>
-  <div class="grid grid-cols-4 w-full pb-4 pt-2">
-    <p-iconField iconPosition="right">
-      <p-inputIcon styleClass="pi pi-search cursor-pointer" (click)="getUsers()"/>
-      <input type="text"
-             class="w-full"
-             pInputText placeholder="Nhập tên, email"
-             AutofocusCustom
-             [(ngModel)]="keySearch"
-             (keydown.enter)="getUsers()"
-      />
-    </p-iconField>
+  <div>
+    <div class="grid grid-cols-8 w-full pb-4 pt-2 gap-4">
+      <div class="col-span-2">
+        <p-iconField iconPosition="right">
+          <p-inputIcon styleClass="pi pi-search cursor-pointer" (click)="getUsers()"/>
+          <input type="text"
+                 class="w-full"
+                 pInputText placeholder="Nhập tên, email"
+                 AutofocusCustom
+                 [(ngModel)]="keySearch"
+                 (keydown.enter)="getUsers()"
+          />
+        </p-iconField>
+      </div>
+      <p-button styleClass="w-full" label="Tạo tài khoản" (onClick)="onVisibleDialogCreateUser()"></p-button>
+      <p-button styleClass="w-full" label="Thêm thành viên" (onClick)="onVisibleDialogAddUser()"></p-button>
+    </div>
   </div>
   <p-table [value]="listData"
            [paginator]="true"
            [rows]="rows"
            editMode="row"
            dataKey="id"
-           styleClass="p-datatable-striped">
+           styleClass="p-datatable-striped p-datatable-gridlines">
     <ng-template pTemplate="header" let-columns>
       <tr class="text-sm">
         <th pSortableColumn="lastName">Tên thành viên
@@ -32,13 +38,19 @@
         <th pSortableColumn="professionalLevel">Trình độ
           <p-sortIcon field="professionalLevel"></p-sortIcon>
         </th>
+        <th pSortableColumn="permission">Chức vụ
+          <p-sortIcon field="permission"></p-sortIcon>
+        </th>
         <th class="text-center">Thao tác</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
-      <tr class="h-[48px] hover:bg-gray-300 cursor-pointer" [pEditableRow]="item">
+      <tr class="h-[48px] hover:bg-gray-300" [pEditableRow]="item">
         <td class="text-sm">
           {{item.firstName}} {{item.lastName}}
+          @if (item.userId == user.id) {
+            <p-tag value="Bạn" [rounded]="true"></p-tag>
+          }
         </td>
         <td class="text-sm">
           {{item.username}}
@@ -62,10 +74,26 @@
             </ng-template>
           </p-cellEditor>
         </td>
+        <td class="text-sm">
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-dropdown [options]="PERMISSION"
+                          optionLabel="name"
+                          optionValue="id"
+                          appendTo="body"
+                          [(ngModel)]="item.permission"
+                          [style]="{'width':'100%'}">
+              </p-dropdown>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ findPermissionById(item.permission) }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
         <td>
           <div class="flex justify-center items-center gap-2">
-            <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-filter"
-                    class="p-button-secondary p-button-text"></button>
+<!--            <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-filter"-->
+<!--                    class="p-button-secondary p-button-text"></button>-->
             <button #addButton *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
                     (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
             <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
@@ -76,6 +104,7 @@
                     class="p-button-rounded p-button-text p-button-danger"></button>
             <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-trash"
                     (click)="confirmDelete(item, $event)"
+                    [disabled]="item.userId==user.id"
                     class="p-button-rounded p-button-text p-button-danger"></button>
           </div>
         </td>
@@ -83,3 +112,128 @@
     </ng-template>
   </p-table>
 </div>
+<p-dialog header="Thông tin thành viên"
+          [(visible)]="visibleDialogCreateUser"
+          [modal]="true"
+          [style]="{ width: '50vw' }"
+          [draggable]="false"
+          [resizable]="false">
+  <div [formGroup]="form" class="grid grid-cols-2 gap-4">
+    <jira-input-text formControlName="email"
+                     jiraLabelText="email"
+                     [jiraRequired]="true"
+                     [jiraErrors]="getError('email')"
+                     [jiraShowError]="showError('email')"
+                     [jiraErrorDefs]="emailDefineErrors"
+    />
+    <jira-input-text formControlName="username"
+                     jiraLabelText="Tên đăng nhập"
+                     [jiraRequired]="true"
+                     [jiraErrors]="getError('username')"
+                     [jiraShowError]="showError('username')"
+                     [jiraErrorDefs]="usernameDefineErrors"
+    />
+    <jira-input-text formControlName="firstName"
+                     jiraLabelText="Tên"
+                     [jiraRequired]="true"
+                     [jiraErrors]="getError('firstName')"
+                     [jiraShowError]="showError('firstName')"
+    />
+    <jira-input-text formControlName="lastName"
+                     jiraLabelText="Họ"
+                     [jiraRequired]="true"
+                     [jiraErrors]="getError('lastName')"
+                     [jiraShowError]="showError('lastName')"
+    />
+    <div class="flex flex-col gap-2">
+      <jira-label [jiraLabel]="'Phân quyền'" [jiraRequired]="true"></jira-label>
+      <p-dropdown optionLabel="name"
+                  optionValue="id"
+                  placeholder="Chọn"
+                  formControlName="permission"
+                  [options]="PERMISSION"
+                  (onChange)="updateDropdownValue($event, 'permission')"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <jira-label [jiraLabel]="'Mức độ chuyên môn'" [jiraRequired]="true"></jira-label>
+      <p-dropdown optionLabel="name"
+                  optionValue="id"
+                  placeholder="Chọn"
+                  formControlName="professionalLevel"
+                  [options]="PROFESSIONAL_LEVELS"
+                  (onChange)="updateDropdownValue($event, 'professionalLevel')"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <jira-label jiraLabel="Ngày sinh"></jira-label>
+      <p-calendar formControlName="dateOfBirth" [touchUI]="true" [readonlyInput]="true" dateFormat="dd/mm/yy"
+                  [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"></p-calendar>
+    </div>
+    <jira-input-text formControlName="address"
+                     jiraLabelText="address"
+                     [jiraErrors]="getError('address')"
+                     [jiraShowError]="showError('address')"
+    />
+    <jira-input-text formControlName="contact"
+                     jiraLabelText="contact"
+                     [jiraErrors]="getError('contact')"
+                     [jiraShowError]="showError('contact')"
+                     [jiraErrorDefs]="contactDefineErrors"
+    />
+    <div class="flex flex-col gap-2">
+      <jira-label jiraLabel="Giới tính" [jiraRequired]="true"></jira-label>
+      <div class="field-checkbox flex gap-2">
+        @for (item of GENDER; track $index) {
+          <p-radioButton [inputId]="item.id" [value]="item.id" formControlName="gender"></p-radioButton>
+          <label [for]="item.id" class="ml-2">{{ item.name }}</label>
+        }
+      </div>
+    </div>
+  </div>
+  <div class="flex justify-end pt-4">
+    <p-button label="Hủy" [text]="true" [plain]="true" size="small" (click)="onCloseModalCreateUser()"></p-button>
+    <p-button label="Thêm mới" size="small" [disabled]="form.invalid" (click)="handleCreateUser()"></p-button>
+  </div>
+</p-dialog>
+
+<p-dialog header="Thông tin thành viên"
+          [(visible)]="visibleDialogAddUser"
+          [modal]="true"
+          [style]="{ width: '50vw' }"
+          [draggable]="false"
+          [resizable]="false">
+  <div [formGroup]="addUserForm" class="grid grid-cols-1 gap-4">
+    <jira-input-text formControlName="email"
+                     jiraLabelText="email"
+                     [jiraRequired]="true"
+                     [jiraErrors]="getErrorCustom(addUserForm, 'email')"
+                     [jiraShowError]="showErrorCustom(addUserForm, 'email')"
+                     [jiraErrorDefs]="emailDefineErrors"
+    />
+    <div class="flex flex-col gap-2">
+      <jira-label [jiraLabel]="'Phân quyền'" [jiraRequired]="true"></jira-label>
+      <p-dropdown optionLabel="name"
+                  optionValue="id"
+                  placeholder="Chọn"
+                  formControlName="permission"
+                  [options]="PERMISSION"
+                  (onChange)="updateDropdownValueCustom($event, addUserForm, 'permission')"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <jira-label [jiraLabel]="'Mức độ chuyên môn'" [jiraRequired]="true"></jira-label>
+      <p-dropdown optionLabel="name"
+                  optionValue="id"
+                  placeholder="Chọn"
+                  formControlName="professionalLevel"
+                  [options]="PROFESSIONAL_LEVELS"
+                  (onChange)="updateDropdownValueCustom($event, addUserForm, 'professionalLevel')"
+      />
+    </div>
+  </div>
+  <div class="flex justify-end pt-4">
+    <p-button label="Hủy" [text]="true" [plain]="true" size="small" (click)="onCloseModalAddUser()"></p-button>
+    <p-button label="Thêm mới" size="small" [disabled]="addUserForm.invalid" (click)="handleAddUser()"></p-button>
+  </div>
+</p-dialog>

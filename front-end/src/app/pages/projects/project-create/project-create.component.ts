@@ -77,6 +77,7 @@ export class ProjectCreateComponent extends BaseComponent implements OnInit {
       {
         next: (res: any) => {
           this.createSuccessToast('Thành công', 'Thêm mới dự án thành công');
+          this.router.navigate(['/projects']).then();
         },
         error: (err: any) => {
           this.createErrorToast('Error', err.message);

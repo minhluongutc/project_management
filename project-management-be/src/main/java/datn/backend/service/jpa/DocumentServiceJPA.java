@@ -24,9 +24,9 @@ public class DocumentServiceJPA {
         return documentRepositoryJPA.findAll();
     }
 
-    public List<AttachmentDTO.AttachmentResponsePrimengDTO> getAttachmentsByObjectId(String objectId) {
+    public List<AttachmentDTO.AttachmentResponsePrimengDTO> getAttachmentsByObjectIdAndType(String objectId, Integer type) {
         List<AttachmentDTO.AttachmentResponsePrimengDTO> attachmentResponsePrimengDTO = new ArrayList<>();
-        List<AttachmentDTO.AttachmentResponseDTO> attachmentResponseDTO = documentRepositoryJPA.getAttachmentsByObjectId(objectId);
+        List<AttachmentDTO.AttachmentResponseDTO> attachmentResponseDTO = documentRepositoryJPA.getAttachmentsByObjectIdAndType(objectId, type);
         String fileType = "unknown";
         for (AttachmentDTO.AttachmentResponseDTO attachment : attachmentResponseDTO) {
             fileType = attachment.getFileName().substring(attachment.getFileName().lastIndexOf(".") + 1);

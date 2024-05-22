@@ -32,7 +32,7 @@ export class FileService extends BaseService {
     });
   }
 
-  getImageUrl(id: string) {
+  getFileUrl(id: string) {
     return `${Environment.baseUrl}/public/api/files/${id}`;
   }
 

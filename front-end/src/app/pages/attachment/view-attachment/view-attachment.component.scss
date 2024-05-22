@@ -1,0 +1,50 @@
+.cell-note {
+  position: relative;
+}
+
+.cell-note:after {
+  content: "";
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+  border-left: 7px solid transparent;
+  border-top: 7px solid red;
+}
+/* Style cho tab */
+.nav-tabs {
+  overflow-x: auto;
+  white-space: nowrap;
+  border-bottom: 1px solid #ddd;
+  min-height: 40px;
+}
+
+/* Style cho mỗi tab */
+.nav-tabs > li {
+  float: none;
+  display: inline-block;
+  zoom: 1;
+}
+
+/* Style cho tab đang được chọn */
+.nav-tabs > li.active > a {
+  color: #555;
+  cursor: default;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+}
+
+/* Style cho link trong mỗi tab */
+.nav-tabs > li > a {
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+  padding: 10px 15px;
+}
+
+/* Style cho link trong tab khi hover */
+.nav-tabs > li > a:hover {
+  border-color: #eee #eee #ddd;
+}

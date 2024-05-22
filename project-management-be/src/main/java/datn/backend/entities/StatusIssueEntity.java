@@ -35,6 +35,9 @@ public class StatusIssueEntity implements Serializable {
     @Column(name = "DESCRIPTION")
     String description;
 
+    @Column(name = "PROGRESS")
+    Integer progress;
+
     @Column(name = "CREATE_TIME")
     Date createTime;
 

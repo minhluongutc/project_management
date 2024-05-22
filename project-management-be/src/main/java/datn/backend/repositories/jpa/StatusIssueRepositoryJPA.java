@@ -19,4 +19,6 @@ public interface StatusIssueRepositoryJPA extends JpaRepository<StatusIssueEntit
             " and s.enabled = 1" +
             " order by s.code desc")
     List<StatusIssueEntity> getStatusIssue(String projectId, String keySearch);
+
+    StatusIssueEntity getStatusIssueEntitiesByIdAndCodeAndEnabled(String id, Integer code, Integer enabled);
 }

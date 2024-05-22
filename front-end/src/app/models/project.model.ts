@@ -2,5 +2,7 @@ export class Project {
   id?: number;
   name!: string;
   description!: string;
-  parentId!: number;
+  parentId?: number;
+  warningTime?: number;
+  dangerTime?: number;
 }
