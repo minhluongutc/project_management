@@ -1,8 +1,8 @@
 FROM node:18.17.0
 
-COPY ["package.json", "./"]
+WORKDIR /usr/app
+COPY ./ /usr/app
 
-RUN npm install -g @angular/cli
 
 RUN npm install
 
