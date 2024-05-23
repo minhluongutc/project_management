@@ -1,4 +1,4 @@
-FROM node:21.7.1
+FROM node:18.17.0
 
 COPY ["package.json", "./"]
 
