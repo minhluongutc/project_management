@@ -2,6 +2,8 @@ FROM node:18.17.0
 
 COPY ["package.json", "./"]
 
+RUN npm install -g @angular/cli
+
 RUN npm install
 
 COPY . .
