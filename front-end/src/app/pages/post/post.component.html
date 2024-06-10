@@ -2,6 +2,23 @@
   <h3 class="pt-4 pb-4 font-bold text-2xl">Danh sách bài viết</h3>
   <p-button label="Thêm mới bài viết" (onClick)="showModalAddPost()"></p-button>
 </div>
+<div class="m-4">
+  <div class="text-xl mt-2 mb-1 text-black font-semibold antialiased tracking-normal">
+    Tìm kiếm
+  </div>
+  <div class="grid grid-cols-4 gap-4">
+    <div class="flex flex-col gap-4">
+      <jira-label [jiraLabel]="'Dự án'"/>
+      <p-treeSelect class="md:w-20rem w-full"
+                    containerStyleClass="w-full"
+                    placeholder="Chọn"
+                    [options]="listProject"
+                    (onNodeSelect)="onSelectProject($event)"
+                    (onNodeUnselect)="onUnselectProject($event)"
+      />
+    </div>
+  </div>
+</div>
 @for (item of listData; track $index) {
   <main class="pb-4 bg-white dark:bg-gray-900 antialiased">
     <div class="flex justify-between px-4 mx-auto max-w-screen-xl ">

@@ -35,6 +35,7 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setId(AuditUtils.generateUUID());
         commentEntity.setObjectId(objectId);
         commentEntity.setContent(content);
+        commentEntity.setType(Constants.COMMENT_OBJECT_TYPE.TASK.value);
         commentEntity.setEnabled(Constants.STATUS.ACTIVE.value);
         commentEntity.setCreateUserId(AuditUtils.getUserId(authentication));
         commentEntity.setCreateTime(AuditUtils.createTime());

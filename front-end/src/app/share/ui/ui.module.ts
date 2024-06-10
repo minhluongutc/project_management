@@ -11,13 +11,14 @@ import {HeaderComponent} from "./layout/header/header.component";
 import {ListboxModule} from "primeng/listbox";
 import {FormsModule} from "@angular/forms";
 import {OverlayPanelModule} from "primeng/overlaypanel";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {DialogService} from "primeng/dynamicdialog";
-import { JiraLabelComponent } from './label/jiraLabel.component';
-import {NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
+import {JiraLabelComponent} from './label/jiraLabel.component';
+import {DatePipe, NgForOf, NgIf, NgTemplateOutlet} from "@angular/common";
 import {DialogModule} from "primeng/dialog";
-import { SidebarSecondaryComponent } from './sidebar-secondary/sidebar-secondary.component';
-import { LayoutSecondaryComponent } from './layout-secondary/layout-secondary.component';
+import {SidebarSecondaryComponent} from './sidebar-secondary/sidebar-secondary.component';
+import {LayoutSecondaryComponent} from './layout-secondary/layout-secondary.component';
+import {CardModule} from "primeng/card";
+import {BadgeModule} from "primeng/badge";
 
 @NgModule({
   declarations: [
@@ -42,6 +43,9 @@ import { LayoutSecondaryComponent } from './layout-secondary/layout-secondary.co
     DialogModule,
     NgForOf,
     NgTemplateOutlet,
+    CardModule,
+    BadgeModule,
+    DatePipe,
   ],
   providers: [DialogService],
     exports: [LayoutComponent, JiraLabelComponent, LayoutSecondaryComponent, SidebarSecondaryComponent]

@@ -23,8 +23,21 @@ export class TaskService extends BaseService {
     });
   }
 
+  getTaskStatistic(queryParams: Record<string, any>) {
+    return this.getRequest(`${this.SERVICE_URL}/statistics`, {
+      params: this.buildParams(queryParams)
+    });
+  }
+
   getTasks(queryParams: Record<string, any>) {
     return this.getRequest(this.SERVICE_URL, {
+      params: this.buildParams(queryParams)
+    });
+  }
+
+  getTasksNotSchedule(projectId: any) {
+    const queryParams: Record<string, any> = {projectId}
+    return this.getRequest(`${this.SERVICE_URL}/user-calendar`, {
       params: this.buildParams(queryParams)
     });
   }

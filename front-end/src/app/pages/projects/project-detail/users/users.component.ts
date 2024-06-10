@@ -57,7 +57,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
   constructor(injector: Injector,
               private projectUserService: ProjectUserService,
               private confirmationService: ConfirmationService,
-              private userService: UserService
+              private userService: UserService,
   ) {
     super(injector);
     this.projectId = this.route.snapshot?.parent?.paramMap.get('id') || null;
@@ -142,10 +142,6 @@ export class UsersComponent extends BaseComponent implements OnInit {
 
   onRowEditCancel(item: any) {
     this.getUsers()
-  }
-
-  confirmDelete(item: any, $event: MouseEvent) {
-
   }
 
   changeProfessionalLevelAndPermissionProject(data: any) {
@@ -246,6 +242,27 @@ export class UsersComponent extends BaseComponent implements OnInit {
       email: '',
       professionalLevel: 1,
       permission: 1,
+    });
+  }
+
+  confirmDelete(item: any, event: Event) {
+    console.log(event)
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: `bạn có muốn chắc xóa <strong>${item.firstName}</strong> ra khỏi dự án?`,
+      header: 'Xác nhận xóa',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: "p-button-danger p-button-text",
+      rejectButtonStyleClass: "p-button-text p-button-text",
+      acceptIcon: "none",
+      rejectIcon: "none",
+
+      accept: () => {
+        // this.deleteCategory(item.id)
+      },
+      reject: () => {
+        console.log("is reject")
+      }
     });
   }
 

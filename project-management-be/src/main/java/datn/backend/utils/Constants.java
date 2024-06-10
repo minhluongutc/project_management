@@ -36,6 +36,16 @@ public class Constants {
         }
     }
 
+    public enum IS_READ {
+        YES(true),
+        NO(false);
+        public final boolean value;
+
+        IS_READ(boolean value) {
+            this.value = value;
+        }
+    }
+
     public enum STATUS_ISSUE {
         NEW(1, "New"),
         CONFIRMED(2, "Confirmed"),
@@ -74,6 +84,16 @@ public class Constants {
         public final int value;
 
         PERMISSION(int value) {
+            this.value = value;
+        }
+    }
+
+    public enum COMMENT_OBJECT_TYPE {
+        TASK(1),
+        POST(2);
+        public final int value;
+
+        COMMENT_OBJECT_TYPE(int value) {
             this.value = value;
         }
     }

@@ -38,4 +38,6 @@ public interface UpdateHistoryTaskRepositoryJPA extends JpaRepository<UpdateHist
             " where u.taskId = :taskId" +
             " order by u.modifyTime asc")
     List<UpdateHistoryTaskDTO> getUpdateHistoryTaskEntitiesByTaskId(String taskId);
+
+    List<UpdateHistoryTaskEntity> getUpdateHistoryTaskEntitiesByTaskIdAndNewStatusIssueId(String taskId, String newStatusIssueId);
 }

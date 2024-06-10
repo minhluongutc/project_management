@@ -18,15 +18,15 @@
           }
         </div>
       </div>
-      <p-divider></p-divider>
-      <div>
+      <p-divider *ngIf="!isViewTree"></p-divider>
+      <div *ngIf="!isViewTree">
         <div class="flex justify-between">
           @if (showAdvancedFilter) {
             <div class="text-xl mt-2 mb-1 text-black font-semibold antialiased tracking-normal">
               Tìm kiếm nâng cao
             </div>
             <div class="flex gap-2">
-              <p-button (click)="op.toggle($event)" icon="pi pi-filter w-10" severity="secondary" label="Bộ lọc nhanh"
+              <p-button (click)="op.toggle($event)" icon="pi pi-filter w-10" severity="secondary" label="Lưu bộ lọc"
                         (onClick)="saveFilter()" pTooltip="Lưu bộ lọc" iconPos="right"></p-button>
               <p-button icon="pi pi-refresh w-10" severity="secondary" (onClick)="resetFilter()"
                         pTooltip="Đặt lại bộ lọc"></p-button>
@@ -39,7 +39,7 @@
               Tìm kiếm
             </div>
             <div class="flex gap-2">
-              <p-button (click)="op.toggle($event)" icon="pi pi-filter" severity="secondary" label="Bộ lọc nhanh"
+              <p-button (click)="op.toggle($event)" icon="pi pi-filter" severity="secondary" label="Lưu bộ lọc"
                         (onClick)="saveFilter()" pTooltip="Lưu bộ lọc" iconPos="right"></p-button>
               <p-button icon="pi pi-refresh w-10" severity="secondary" (onClick)="resetFilter()"
                         pTooltip="Đặt lại bộ lọc"></p-button>

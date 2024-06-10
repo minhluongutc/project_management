@@ -16,6 +16,8 @@ import {DocumentService} from "../../../service/document.service";
 import {ConfirmationService} from "primeng/api";
 import {ProjectStoreService} from "../../projects/project-store.service";
 import {saveAs} from "file-saver";
+import {WebsocketService} from "../../../service/websocket.service";
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-task-create',
@@ -54,7 +56,8 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
               private documentService: DocumentService,
               private dynamicDialogConfig: DynamicDialogConfig,
               private confirmationService: ConfirmationService,
-              private projectStoreService: ProjectStoreService) {
+              private projectStoreService: ProjectStoreService,
+              private websocketService: WebsocketService) {
     super(injector);
     if (projectStoreService.id) {
       this.projectIdSelected = projectStoreService.id;
@@ -367,7 +370,9 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   insertTask() {
+    const taskId = uuidv4();
     const data: Task = {
+      id: taskId,
       projectId: this.form.value.projectId?.key,
       subject: this.form.value.subject,
       description: this.form.value.description,
@@ -395,6 +400,13 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     )
     this.taskService.insertTask(formData).subscribe({
       next: (res: any) => {
+        const notificationData = {
+          fromUserId: this.user.id,
+          toUserId: this.form.value.assignUserId,
+          taskId: taskId
+        }
+        this.createNotification(notificationData);
+
         this.createSuccessToast('Thành công', 'Tạo mới công việc thành công');
         this.form.reset();
         this.fileList = [];
@@ -404,10 +416,24 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
           this.router.navigate([`${currentRoute}`], {queryParams: {param}});
         });
         this.closeDialog();
+
+        // send notification
+
       }, error: (err: any) => {
         this.createErrorToast('Lỗi', err.message);
       }
     })
+  }
+
+  createNotification(data: any) {
+    const notificationData: any = {
+      fromUserId: data.fromUserId,
+      toUserId: data.toUserId,
+      taskId: data.taskId,
+      content: `Bạn được giao một công việc mới`,
+      actionType: 1
+    }
+    this.websocketService.onNotify("ABC", notificationData);
   }
 
   updateTask() {

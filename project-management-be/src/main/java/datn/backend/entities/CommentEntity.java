@@ -28,6 +28,9 @@ public class CommentEntity {
     @Column(name = "CONTENT")
     String content;
 
+    @Column(name = "TYPE")
+    Integer type;
+
     @Column(name = "CREATE_USER_ID")
     String createUserId;
 

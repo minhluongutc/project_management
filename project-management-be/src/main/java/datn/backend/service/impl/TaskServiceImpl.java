@@ -31,7 +31,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -50,6 +49,7 @@ public class TaskServiceImpl implements TaskService {
     final StatusIssueRepositoryJPA statusIssueRepositoryJPA;
     final CategoryRepositoryJPA categoryRepositoryJPA;
     final UpdateHistoryTaskRepositoryJPA updateHistoryTaskRepositoryJPA;
+    final UserCalendarRepositoryJPA userCalendarRepositoryJPA;
 
     final DocumentService documentService;
     final ProjectUserService projectUserService;
@@ -137,7 +137,7 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity taskEntity = new TaskEntity();
         taskEntity = modelMapper.map(dto, TaskEntity.class);
         taskEntity.setTaskCode(generateTaskCodeUniqueEachProject(dto.getProjectId()));
-        taskEntity.setId(AuditUtils.generateUUID());
+//        taskEntity.setId(AuditUtils.generateUUID());
         taskEntity.setCreateUserId(AuditUtils.createUserId(authentication));
         taskEntity.setCreateTime(AuditUtils.createTime());
         taskEntity.setEnabled(AuditUtils.enable());
@@ -429,6 +429,74 @@ public class TaskServiceImpl implements TaskService {
         return message;
     }
 
+    @Override
+    public Object getUserCalendarTask(Authentication authentication, String projectId) {
+        List<TaskEntity> tasks = taskRepositoryJPA.getTaskEntitiesByProjectIdAndAssignUserId(projectId, AuditUtils.getUserId(authentication));
+        String[] TaskInCalendar = userCalendarRepositoryJPA.getUserCalendars(AuditUtils.getUserId(authentication), projectId).stream().map(UserCalendarResponseDTO::getTaskId).toArray(String[]::new);
+        // get tasks in tasks but not in TaskInCalendar
+        return tasks.stream().filter(task -> !Arrays.asList(TaskInCalendar).contains(task.getId())).toList();
+    }
+
+    @Override
+    public Object getTaskStatistics(Authentication authentication, String projectId, String userId) {
+
+        List<TaskEntity> allTask = taskRepositoryJPA.getTaskEntitiesByProjectId(projectId);
+        if (userId != null && !userId.isEmpty()) {
+            allTask = allTask.stream().filter(task -> Objects.equals(task.getAssignUserId(), userId)).toList();
+        }
+        List<TaskEntity> taskLateNotDone = new ArrayList<>();
+        List<TaskEntity> taskDoneInTime = new ArrayList<>();
+        List<TaskEntity> taskLateDone = new ArrayList<>();
+        List<TaskEntity> taskToDo = new ArrayList<>();
+        for (TaskEntity task : allTask) {
+            if (task.getStatusIssueId() != null) {
+                StatusIssueEntity statusDone = statusIssueRepositoryJPA.getStatusIssueEntitiesByIdAndCodeAndEnabled(task.getStatusIssueId(), Constants.STATUS_ISSUE.DONE.value, Constants.STATUS.ACTIVE.value);
+
+                if (statusDone != null) { // nếu công việc đang ở trạng thái Done
+                    if (task.getDueDate() != null) {
+                        if (task.getDueDate().before(statusDone.getCreateTime())) { // nếu công việc hoàn thành trễ
+                            taskLateDone.add(task);
+                        } else { // nếu công việc hoàn thành đúng hạn
+                            taskDoneInTime.add(task);
+                        }
+                    } else {
+                        taskDoneInTime.add(task);
+                    }
+                } else { // nếu công việc chưa hoàn thành
+                    if (task.getDueDate() != null) {
+                        if (task.getDueDate().before(new Date())) {
+                            taskLateNotDone.add(task);
+                        } else {
+                            taskToDo.add(task);
+                        }
+                    } else {
+                        taskToDo.add(task);
+                    }
+                }
+            }
+        }
+        return new StatisticsDTO(
+                taskDoneInTime.size(),
+                taskLateNotDone.size(),
+                taskLateDone.size(),
+                taskToDo.size()
+        );
+
+//        return new StatisticsDTO(
+//                calculatePercent(taskDoneInTime.size(), allTask.size()),
+//                calculatePercent(taskLateNotDone.size(), allTask.size()),
+//                calculatePercent(taskLateDone.size(), allTask.size()),
+//                calculatePercent(taskToDo.size(), allTask.size())
+//        );
+    }
+
+    private float calculatePercent(int value, int total) {
+        if (total == 0) {
+            throw new IllegalArgumentException("Tổng không thể bằng 0");
+        }
+        return ((float) value / total) * 100;
+    }
+
     private boolean validateFileImport(Row row, String projectId) throws ParseException {
         List<TypeEntity> listType = typeRepositoryJPA.getTypes(projectId, null);
         List<UserDTO.UserResponseDTO> ListUser = projectUserService.getUsers(projectId);
@@ -570,11 +638,9 @@ public class TaskServiceImpl implements TaskService {
         return null;
     }
 
-    private Boolean checkExpiredTask(Date dueDate, String statusName, String doneTime) {
-        if (dueDate == null) {
-            return false;
-        }
-        Date currentDate = new Date();
-        return currentDate.before(dueDate);
+    private Boolean isExpiredTaskDone(Date dueDate, Date doneTime) {
+        // compare doneTime with dueDate
+        if (doneTime == null) return false;
+        return doneTime.after(dueDate);
     }
 }

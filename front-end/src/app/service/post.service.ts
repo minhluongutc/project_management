@@ -16,11 +16,8 @@ export class PostService extends BaseService {
   }
 
   getPosts(projectId: string | null) {
-    const queryParams: Record<string, any> = {
-      projectId: projectId
-    }
     return this.getRequest(this.SERVICE_URL, {
-      params: this.buildParams({})
+      params: this.buildParams({projectId})
     });
   }
 

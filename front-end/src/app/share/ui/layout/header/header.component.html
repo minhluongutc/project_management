@@ -25,10 +25,17 @@
     </div>
     <div class="p-toolbar-group-end">
       <div class="flex align-items-center gap-2">
-        <p-avatar class="header-right" icon="pi pi-bell" [style]="{width: 36, height: 36}" shape="circle"></p-avatar>
-        <p-avatar class="header-right" icon="pi pi-question-circle" [style]="{width: 36, height: 36}"
-                  shape="circle"></p-avatar>
-        <p-avatar class="header-right" icon="pi pi-cog" [style]="{width: 36, height: 36}" shape="circle"></p-avatar>
+          <p-avatar class="header-right relative"
+                    severity="danger"
+                    pBadge [value]="notificationNotRead"
+                    icon="pi pi-bell"
+                    [style]="{width: 36, height: 36}"
+                    shape="circle"
+                    (click)="notification.toggle($event)">
+          </p-avatar>
+          <!--        <p-avatar class="header-right" icon="pi pi-question-circle" [style]="{width: 36, height: 36}"-->
+          <!--                  shape="circle"></p-avatar>-->
+          <!--        <p-avatar class="header-right" icon="pi pi-cog" [style]="{width: 36, height: 36}" shape="circle"></p-avatar>-->
         <p-avatar class="header-right rounded-full" [style]="{width: 36, height: 36}" (click)="op.toggle($event)"
                   [image]="getImage(userData.avatarId)" shape="circle"
                   size="normal"></p-avatar>
@@ -44,5 +51,24 @@
       </ul>
     </ng-template>
   </p-overlayPanel>
+    <p-overlayPanel #notification>
+        <div class="flex flex-col gap-2 w-25rem">
+            @for (notification of notifications; track $index) {
+                <p-card styleClass="w-[350px] hover:bg-gray-100 cursor-pointer"
+                        [class.opacity-60]="notification.isRead" (click)="onReadNotify(notification.id, notification.taskCode)">
+                    <div class="flex gap-1 h-[54px]">
+                        <img [src]="getImage(notification.avatarId)" alt="Avatar"
+                             class="w-[54px] h-[54px] rounded-full leading-[93px]">
+                        <div class="flex flex-col">
+                          <p class="text-sm content-tag"><strong>{{ notification.projectName }}</strong> / {{ notification.taskCode }}</p>
+                            <p>{{ notification.content }}</p>
+                        </div>
+                    </div>
+                    <p class="text-xs">{{ notification.createTime | date: 'dd/MM/yyyy, h:mm a' }}</p>
+                </p-card>
+            }
+
+        </div>
+    </p-overlayPanel>
 
 </div>

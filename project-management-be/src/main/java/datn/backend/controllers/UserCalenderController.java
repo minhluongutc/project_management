@@ -1,5 +1,6 @@
 package datn.backend.controllers;
 
+import datn.backend.dto.TaskDTO;
 import datn.backend.dto.UserCalendarRequestDTO;
 import datn.backend.service.UserCalendarService;
 import datn.backend.service.jpa.UserCalendarServiceJPA;
@@ -24,8 +25,8 @@ public class UserCalenderController {
 
     @GetMapping(value = "/user-calender", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getUserCalender(Authentication authentication,
-                                                  String projectId) {
-        Object result = userCalendarServiceJPA.getUserCalendars(authentication, projectId);
+                                                  TaskDTO.TaskQueryDTO dto) {
+        Object result = userCalendarService.convertTaskToCalendar(authentication, dto);
         return ResponseUtils.getResponseEntity(result);
     }
 

@@ -5,6 +5,7 @@ import {DashboardComponent} from "./dashboard/dashboard.component";
 import {ProfileComponent} from "./profile/profile.component";
 import {PostComponent} from "./post/post.component";
 import {CalendarComponent} from "./calendar/calendar.component";
+import {TestWSComponent} from "./test-ws/test-ws.component";
 
 
 const routes: Routes = [
@@ -16,6 +17,10 @@ const routes: Routes = [
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'
+      },
+      {
+        path: 'chat/:userId',
+        component: TestWSComponent
       },
       {
         path: 'dashboard',

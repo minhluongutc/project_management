@@ -4,13 +4,16 @@ import {UserCalendarService} from "../../service/user-calendar.service";
 import {FullCalendarComponent} from "@fullcalendar/angular";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from '@fullcalendar/interaction';
+import interactionPlugin, {Draggable, DropArg} from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import {BaseComponent} from "../../share/ui/base-component/base.component";
 import {Validators} from "@angular/forms";
 import {ProjectService} from "../../service/project.service";
 import {TreeNodeSelectEvent, TreeNodeUnSelectEvent} from "primeng/tree";
 import {TaskService} from "../../service/task.service";
+import {DynamicDialogRef} from "primeng/dynamicdialog";
+import {TaskCreateComponent} from "../tasks/task-create/task-create.component";
+
 
 @Component({
   selector: 'app-calendar',
@@ -22,15 +25,21 @@ export class CalendarComponent extends BaseComponent implements OnInit {
   listTask: any[] = [];
   isEdit: boolean = false;
   eventIdSelected: any;
+  taskIdSelected: any;
 
   listEvent: EventInput[] = []
   events: EventInput[] = []
   calendarVisible: boolean = true;
 
+  projectIdSelected: string = '';
+  taskSelected: any;
+
   currentEvents: EventApi[] = [];
   @ViewChild('calendar') calendarComponent: FullCalendarComponent | undefined;
   calendarOptions!: CalendarOptions
   visibleModalAddEvent: boolean = false;
+
+  dynamicDialogRef: DynamicDialogRef | undefined;
 
   constructor(injector: Injector,
               private projectService: ProjectService,
@@ -38,11 +47,29 @@ export class CalendarComponent extends BaseComponent implements OnInit {
               private changeDetector: ChangeDetectorRef,
               private userCalendarService: UserCalendarService) {
     super(injector);
-    this.getUserCalendar();
+    this.getUserCalendar(null);
     this.getProjects();
+    this.getTaskInSidebar(this.projectIdSelected);
   }
 
   async ngOnInit() {
+    let draggableEl = document.getElementById('external-events');
+
+    if (draggableEl) {
+      new Draggable(draggableEl, {
+        itemSelector: '.fc-event-custom',
+        eventData: function (eventEl: any) {
+          console.log(eventEl);
+          // if (self.theCheckbox) {
+          //   eventEl.parentNode.removeChild(eventEl);
+          // }
+          return {
+            title: eventEl.innerText
+          };
+        }
+      });
+    }
+
     this.buildForm();
     console.log(this.listEvent)
     this.calendarOptions = {
@@ -60,10 +87,12 @@ export class CalendarComponent extends BaseComponent implements OnInit {
       initialView: 'dayGridMonth', // alternatively, use the `events` setting to fetch from a feed
       weekends: true,
       editable: true,
-      selectable: true,
+      // selectable: true,
       selectMirror: true,
       dayMaxEvents: true,
-      select: this.handleDateSelect.bind(this),
+      droppable: true,
+      drop: this.onDropEvent.bind(this),
+      // select: this.handleDateSelect.bind(this),
       eventClick: this.handleEventClick.bind(this),
       eventsSet: this.handleEvents.bind(this),
       eventChange: this.handleChange.bind(this)
@@ -75,8 +104,27 @@ export class CalendarComponent extends BaseComponent implements OnInit {
     console.log(this.calendarOptions)
   }
 
-  getUserCalendar() {
-    this.userCalendarService.getUserCalendar({projectId: null})
+  getTaskInSidebar(projectId: any) {
+    this.taskService.getTasksNotSchedule(projectId).subscribe({
+      next: (res: any) => {
+        this.listData = res?.data || [];
+        this.totalRecords = this.listData.length || 0;
+      }, error: (err: any) => {
+        this.createErrorToast("Lỗi", err.message);
+      }
+    })
+  }
+
+  onSelectFilterProject($event: TreeNodeSelectEvent) {
+    this.getTaskInSidebar($event.node.key)
+  }
+
+  onUnselectFilterProject($event: TreeNodeUnSelectEvent) {
+    this.getTaskInSidebar(null);
+  }
+
+  getUserCalendar(projectId: any) {
+    this.userCalendarService.getUserCalendar({projectId})
       .subscribe({
         next: (res) => {
           console.log(res);
@@ -133,6 +181,7 @@ export class CalendarComponent extends BaseComponent implements OnInit {
 
   onSelectProject($event: TreeNodeSelectEvent) {
     this.getTasks($event.node.key)
+    this.getUserCalendar($event.node.key);
   }
 
   onUnselectProject($event: TreeNodeUnSelectEvent) {
@@ -187,13 +236,11 @@ export class CalendarComponent extends BaseComponent implements OnInit {
   handleDateSelect(selectInfo: DateSelectArg) {
     this.visibleModalAddEvent = true;
     console.log(selectInfo);
-    console.log(new Date(selectInfo.startStr).setHours(0))
-    console.log(new Date(selectInfo.startStr))
 
     this.form.patchValue({
       start: selectInfo.allDay ? new Date(new Date(selectInfo.startStr).setHours(0)) : new Date(selectInfo.startStr),
       end: selectInfo.allDay ? new Date(new Date(selectInfo.endStr).setHours(0)) : new Date(selectInfo.endStr),
-      allDay: selectInfo.allDay
+      allDay: this.checkAllDay(new Date(selectInfo.startStr), new Date(selectInfo.endStr))
     })
     // const title = '123'
     // const calendarApi = selectInfo.view.calendar;
@@ -215,60 +262,69 @@ export class CalendarComponent extends BaseComponent implements OnInit {
     console.log(clickInfo)
     this.eventIdSelected = clickInfo.event.id;
     this.isEdit = true;
-    this.userCalendarService.getUserCalendarById(clickInfo.event.id).subscribe({
-      next: async (res) => {
-        console.log(res)
-        let projectValue!: any;
-        let taskValue!: any;
-        const projectId = res.data?.projectId
-        const projectSelected = this.findProject(this.listProject, projectId);
-        projectValue = {...projectSelected}
 
-        if (projectId) {
-
-          try {
-            const data = {
-              projectId: projectId,
-            }
-            const resTask: any = await this.taskService.getTaskAccordingLevel(data).toPromise();
-            const listTask = resTask.data;
-            this.listTask = listTask.map((item: any) => {
-              return {
-                label: item.data.subject,
-                key: item.data.id,
-                children: this.setChildTask(item)
-              }
-            })
-          } catch (err: any) {
-            this.createErrorToast('Lỗi', err.message);
-          }
-
-          console.log("list task", this.listTask)
-          const taskSelected = this.findProject(this.listTask, res.data?.taskId);
-          taskValue = {...taskSelected}
-        }
-
-        this.form.patchValue({
-          title: res.data?.title,
-          description: res.data?.description,
-          start: new Date(res.data?.start) || null,
-          end: new Date(res.data?.end) || null,
-          allDay: res.data?.allDay,
-          projectId: projectValue,
-          taskId: taskValue,
-        })
-        this.visibleModalAddEvent = true;
+    const taskRes = await this.taskService.getTaskById(clickInfo.event.id).toPromise();
+    const task = taskRes.data;
+    this.dynamicDialogRef = this.dialogService.open(TaskCreateComponent, {
+      header: 'Chỉnh sửa công việc',
+      width: '60vw',
+      contentStyle: { overflow: 'auto', 'margin-bottom': '69px' },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      data: {
+        task: task
       }
-    })
-    // if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-    //   clickInfo.event.remove();
-    // }
+    });
+    // this.userCalendarService.getUserCalendarById(clickInfo.event.id).subscribe({
+    //   next: async (res) => {
+    //     console.log(res)
+    //     let projectValue!: any;
+    //     let taskValue!: any;
+    //     const projectId = res.data?.projectId
+    //     const projectSelected = this.findProject(this.listProject, projectId);
+    //     projectValue = {...projectSelected}
+    //
+    //     if (projectId) {
+    //
+    //       try {
+            // const data = {
+            //   projectId: projectId,
+            // }
+          //   const resTask: any = await this.taskService.getTaskAccordingLevel({}).toPromise();
+          //   const listTask = resTask.data;
+          //   this.listTask = listTask.map((item: any) => {
+          //     return {
+          //       label: item.data.subject,
+          //       key: item.data.id,
+          //       children: this.setChildTask(item)
+          //     }
+          //   })
+          // } catch (err: any) {
+          //   this.createErrorToast('Lỗi', err.message);
+          // }
+
+          // console.log("list task", this.listTask)
+          // const taskSelected = this.findProject(this.listTask, res.data?.taskId);
+          // taskValue = {...taskSelected}
+        // }
+    //
+    //     this.form.patchValue({
+    //       title: res.data?.title,
+    //       description: res.data?.description,
+    //       start: new Date(res.data?.start) || null,
+    //       end: new Date(res.data?.end) || null,
+    //       allDay: res.data?.allDay,
+    //       projectId: projectValue,
+    //       taskId: taskValue,
+    //     })
+    //     this.visibleModalAddEvent = true;
+    //   }
+    // })
   }
 
   handleEvents(events: EventApi[]) {
-    console.log(events)
-    this.currentEvents = events;
-    this.changeDetector.detectChanges(); // workaround for pressionChangedAfterItHasBeenCheckedError
   }
 
   handleChange(event: EventChangeArg) {
@@ -279,6 +335,7 @@ export class CalendarComponent extends BaseComponent implements OnInit {
       allDay: event.event.allDay
     }
     this.updateEvent(event.event.id, data);
+    console.log("is change")
   }
 
   onCloseAddModal() {
@@ -294,27 +351,12 @@ export class CalendarComponent extends BaseComponent implements OnInit {
       ...this.form.value,
       projectId: this.form.value.projectId?.key,
       taskId: this.form.value.taskId?.key,
+      allDay: this.checkAllDay(this.form.value.start, this.form.value.end)
     };
     if (this.isEdit) {
-      let allDay = data?.allDay;
-      if (data?.start.getHours()==0 && data?.end.getHours()==0) {
-        allDay = true;
-      }
-      const data2Edit = {
-        ...data,
-        allDay
-      }
-      this.updateEvent(this.eventIdSelected, data2Edit);
+      this.updateEvent(this.eventIdSelected, data);
     } else {
-      this.userCalendarService.addUserCalendar(data)
-        .subscribe({
-          next: (res) => {
-            this.createSuccessToast('Thành công', 'Thêm sự kiện thành công');
-            this.getUserCalendar();
-            this.form.reset()
-            this.visibleModalAddEvent = false;
-          }
-        })
+      this.createEvent(data);
     }
   }
 
@@ -323,10 +365,52 @@ export class CalendarComponent extends BaseComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.createSuccessToast('Thành công', 'Cập nhật sự kiện thành công');
-          this.getUserCalendar();
+          this.getUserCalendar(null);
           this.form.reset()
           this.visibleModalAddEvent = false;
         }
       })
+  }
+
+  createEvent(data: any) {
+    this.userCalendarService.addUserCalendar(data)
+      .subscribe({
+        next: (res) => {
+          this.createSuccessToast('Thành công', 'Thêm sự kiện thành công');
+          this.getUserCalendar(null);
+          this.form.reset();
+          this.visibleModalAddEvent = false;
+        }
+      })
+  }
+
+  onDropEvent(event: DropArg) {
+    console.log("ondrop", event)
+    let date = new Date(event.dateStr);
+    const data = {
+      title: this.taskSelected?.subject,
+      start: event.date,
+      end: event.allDay ? new Date(new Date(date.setDate(date.getDate() + 1)).setHours(0, 0, 0)) : new Date(event.date.setHours(event.date.getHours() + (this.taskSelected?.estimateTime || 1))),
+      allDay: event.allDay,
+      taskId: this.taskSelected?.id,
+      projectId: this.taskSelected?.projectId
+    }
+    console.log(event.dateStr)
+    console.log(new Date(date.setDate(date.getDate() + 1)));
+    this.createEvent(data);
+    this.getTaskInSidebar(null);
+    console.log("data", data)
+  }
+
+  checkAllDay = (start: Date, end: Date): boolean => {
+    if (this.isEdit) {
+      return (start.getHours()) == 0 && (end.getHours()) == 0 && start.getMinutes() == 0 && end.getMinutes() == 0;
+    }
+    console.log((start.getHours() - 7) == 0 && (end.getHours() - 7) == 0 && start.getMinutes() == 0 && end.getMinutes() == 0)
+    return (start.getHours() - 7) == 0 && (end.getHours() - 7) == 0 && start.getMinutes() == 0 && end.getMinutes() == 0;
+  };
+
+  onMouseDownTask(item: any) {
+    this.taskSelected = item;
   }
 }

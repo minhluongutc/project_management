@@ -319,6 +319,8 @@
 
   .p-overlaypanel {
     z-index: 99 !important;
+    overflow-y: scroll;
+    max-height: 60vh;
   }
 
   .fc-header-toolbar > div.fc-toolbar-chunk {
@@ -335,8 +337,31 @@
     transition: background-color 0.2s, color 0.2s, box-shadow 0.2s !important;
   }
 
+  .p-progressbar .p-progressbar-value {
+    background: #3db660;
+  }
+
+  .p-card-body,
+  .p-overlaypanel .p-overlaypanel-content {
+    padding: 6px;
+  }
+
+  .p-card .p-card-content {
+    padding: 0;
+  }
+
+  .p-overlay-badge .p-badge {
+    transform: translate(40%, -40%);
+  }
 }
 
 .text-color {
   color: $--ds-text-subtle;
+}
+.fc-scrollgrid-sync-table {
+  height: calc(100vh - 180.19px) !important;
+}
+
+.fc-view-harness {
+  height: calc(100vh - 180.19px) !important;
 }

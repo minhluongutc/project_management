@@ -161,4 +161,10 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
     List<TaskEntity> getTaskEntitiesByProjectIdAndEnabled(String projectId, Integer enabled);
 
     List<TaskEntity> getTaskEntitiesByProjectIdAndAssignUserIdAndEnabled(String projectId, String userId, Integer enabled);
+
+    @Query("select t from TaskEntity t " +
+            " where :projectId is null or :projectId = '' or t.projectId = :projectId " +
+            " and t.assignUserId = :userId" +
+            " and t.enabled = 1")
+    List<TaskEntity> getTaskEntitiesByProjectIdAndAssignUserId(String projectId, String userId);
 }
