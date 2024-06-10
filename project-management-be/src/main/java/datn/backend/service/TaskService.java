@@ -18,4 +18,8 @@ public interface TaskService {
 
     void downloadTemplate(Authentication authentication, String projectId, HttpServletResponse response);
     UploadMessageDTO importTasks(Authentication authentication, String projectId, MultipartFile file);
+
+    Object getUserCalendarTask(Authentication authentication, String projectId);
+
+    Object getTaskStatistics(Authentication authentication, String projectId, String userId);
 }

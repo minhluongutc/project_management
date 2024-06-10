@@ -1,52 +1,59 @@
-<div class='demo-app'>
-  <!--  <div class='demo-app-sidebar'>-->
-  <!--    <div class='demo-app-sidebar-section'>-->
-  <!--      <h2>Instructions</h2>-->
-  <!--      <ul>-->
-  <!--        <li>Select dates and you will be prompted to create a new event</li>-->
-  <!--        <li>Drag, drop, and resize events</li>-->
-  <!--        <li>Click an event to delete it</li>-->
-  <!--      </ul>-->
-  <!--    </div>-->
-  <!--    <div class='demo-app-sidebar-section'>-->
-  <!--      <label>-->
-  <!--        <input-->
-  <!--          type='checkbox'-->
-  <!--          [checked]='calendarVisible'-->
-  <!--          (change)='handleCalendarToggle()'-->
-  <!--        />-->
-  <!--        toggle whole calendar-->
-  <!--      </label>-->
-  <!--    </div>-->
-  <!--    <div class='demo-app-sidebar-section'>-->
-  <!--      <label>-->
-  <!--        <input-->
-  <!--          type='checkbox'-->
-  <!--          [checked]='calendarOptions().weekends'-->
-  <!--          (change)='handleWeekendsToggle()'-->
-  <!--        />-->
-  <!--        toggle weekends-->
-  <!--      </label>-->
-  <!--    </div>-->
-  <!--    <div class='demo-app-sidebar-section'>-->
-  <!--      <h2>All Events ({{currentEvents.length}})</h2>-->
-  <!--      <ul>-->
-  <!--        <li *ngFor='let event of currentEvents()'>-->
-  <!--          <b>{{event.startStr}}</b>-->
-  <!--          <i>{{event.title}}</i>-->
-  <!--        </li>-->
-  <!--      </ul>-->
-  <!--    </div>-->
-  <!--  </div>-->
-  <div class='demo-app-main'>
-    <full-calendar #calendar [options]='calendarOptions' [events]="listEvent">
-      <ng-template #eventContent let-arg>
-        <b>{{ arg.timeText }}</b>
-        <i>{{ arg.event.title }}</i>
-      </ng-template>
-    </full-calendar>
+<!--<div id='external-events' class='grid grid-cols-12 gap-4 p-4'>-->
+<!--  <div class="col-span-3">-->
+<!--    <div class="flex flex-col gap-2">-->
+<!--      <jira-label [jiraLabel]="'Dự án'"/>-->
+<!--      <p-treeSelect class="md:w-20rem w-full"-->
+<!--                    containerStyleClass="w-full"-->
+<!--                    placeholder="Chọn"-->
+<!--                    [options]="listProject"-->
+<!--                    (onNodeSelect)="onSelectFilterProject($event)"-->
+<!--                    (onNodeUnselect)="onUnselectFilterProject($event)"-->
+<!--      />-->
+<!--    </div>-->
+<!--    <p-table [value]="listData"-->
+<!--             [paginator]="true"-->
+<!--             [rows]="rows"-->
+<!--             [style]="{'border-right': '2px solid var(&#45;&#45;primary-400)'}">-->
+<!--      <ng-template pTemplate="header" let-columns>-->
+<!--        <tr class="text-sm">-->
+<!--          <th pSortableColumn="subject">Tiêu đề<p-sortIcon field="subject"></p-sortIcon></th>-->
+<!--          <th pSortableColumn="assignUserName">Người thực hiện<p-sortIcon field="assignUserName"></p-sortIcon></th>-->
+<!--        </tr>-->
+<!--      </ng-template>-->
+<!--      <ng-template pTemplate="body" let-item>-->
+<!--        <tr class="h-[48px] hover:bg-gray-300 cursor-pointer fc-event-custom" (mousedown)="onMouseDownTask(item)">-->
+<!--          <td class="text-sm">{{ item.subject }}<br/>{{item.taskCode}}</td>-->
+<!--          <td class="text-sm">{{ item.assignUserName || 'N/A' }}</td>-->
+<!--        </tr>-->
+<!--      </ng-template>-->
+<!--    </p-table>-->
+<!--  </div>-->
+<div class="m-4">
+  <div class="text-xl mt-2 mb-1 text-black font-semibold antialiased tracking-normal">
+    Tìm kiếm
+  </div>
+  <div class="grid grid-cols-4 gap-4">
+    <div class="flex flex-col gap-4">
+      <jira-label [jiraLabel]="'Dự án'"/>
+      <p-treeSelect class="md:w-20rem w-full"
+                    containerStyleClass="w-full"
+                    placeholder="Chọn"
+                    [options]="listProject"
+                    (onNodeSelect)="onSelectProject($event)"
+                    (onNodeUnselect)="onUnselectProject($event)"
+      />
+    </div>
   </div>
 </div>
+<div class="col-span-9">
+  <full-calendar #calendar [options]='calendarOptions' [events]="listEvent">
+    <ng-template #eventContent let-arg>
+      <b>{{ arg.timeText }}</b>
+      <i>{{ arg.event.title }}</i>
+    </ng-template>
+  </full-calendar>
+</div>
+<!--</div>-->
 @if (visibleModalAddEvent) {
   <p-dialog header="Thêm mới sự kiện"
             [(visible)]="visibleModalAddEvent"
@@ -69,8 +76,7 @@
       />
       <div class="flex flex-col gap-2">
         <jira-label [jiraLabel]="'Dự án'"/>
-        <p-treeSelect id="projectId"
-                      class="md:w-20rem w-full"
+        <p-treeSelect class="md:w-20rem w-full"
                       containerStyleClass="w-full"
                       formControlName="projectId"
                       placeholder="Chọn"
@@ -116,3 +122,42 @@
   </p-dialog>
 
 }
+<!--  <div class='demo-app-sidebar'>-->
+<!--    <div class='demo-app-sidebar-section'>-->
+<!--      <h2>Instructions</h2>-->
+<!--      <ul>-->
+<!--        <li>Select dates and you will be prompted to create a new event</li>-->
+<!--        <li>Drag, drop, and resize events</li>-->
+<!--        <li>Click an event to delete it</li>-->
+<!--      </ul>-->
+<!--    </div>-->
+<!--    <div class='demo-app-sidebar-section'>-->
+<!--      <label>-->
+<!--        <input-->
+<!--          type='checkbox'-->
+<!--          [checked]='calendarVisible'-->
+<!--          (change)='handleCalendarToggle()'-->
+<!--        />-->
+<!--        toggle whole calendar-->
+<!--      </label>-->
+<!--    </div>-->
+<!--    <div class='demo-app-sidebar-section'>-->
+<!--      <label>-->
+<!--        <input-->
+<!--          type='checkbox'-->
+<!--          [checked]='calendarOptions().weekends'-->
+<!--          (change)='handleWeekendsToggle()'-->
+<!--        />-->
+<!--        toggle weekends-->
+<!--      </label>-->
+<!--    </div>-->
+<!--    <div class='demo-app-sidebar-section'>-->
+<!--      <h2>All Events ({{currentEvents.length}})</h2>-->
+<!--      <ul>-->
+<!--        <li *ngFor='let event of currentEvents()'>-->
+<!--          <b>{{event.startStr}}</b>-->
+<!--          <i>{{event.title}}</i>-->
+<!--        </li>-->
+<!--      </ul>-->
+<!--    </div>-->
+<!--  </div>-->

@@ -20,6 +20,8 @@
       System.set(SystemJS.resolveSync('rxjs/operators'), System.newModule(m.operators));
       System.import('./src/app.component');
     });
+
+    var global = global || window;
   </script>
 
   <link rel="icon" type="image/x-icon" href="favicon.ico">

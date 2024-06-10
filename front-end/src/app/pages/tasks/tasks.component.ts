@@ -89,9 +89,9 @@ export class TasksComponent extends BaseComponent implements OnInit {
               private confirmationService: ConfirmationService) {
     super(injector);
     console.log("route: ", this.route.queryParamMap)
-    this.route.queryParamMap.subscribe((params: ParamMap) => {
-      this.getFilterByUrl(params);
-    })
+    // this.route.queryParamMap.subscribe((params: ParamMap) => {
+    //   this.getFilterByUrl(params);
+    // })
   }
 
   async ngOnInit() {
@@ -141,31 +141,31 @@ export class TasksComponent extends BaseComponent implements OnInit {
     }
   }
 
-  getFilterByUrl(params: any) {
-    let data = params.params;
-
-    // this.showAdvancedFilter = !(Object.keys(data).length === 0 && data.constructor === Object);
-
-    this.typeIdIsEqual = data?.typeIdIsEqual == "true" || true;
-    this.typeId = data?.typeId?.join(',') || null;
-    this.priorityIsEqual = data?.priorityIsEqual == "true" || true;
-    this.priority = data?.priority?.join(',') || null;
-    this.severityIsEqual = data?.severityIsEqual == "true" || true;
-    this.severity = data?.severity?.join(',') || null;
-    this.assignUserIdIsEqual = data?.assignUserIdIsEqual == "true" || true;
-    this.assignUserId = data?.assignUserId?.join(',') || null;
-    this.reviewUserIdIsEqual = data?.reviewUserIdIsEqual == "true" || true;
-    this.reviewUserId = data?.reviewUserId?.join(',') || null;
-    this.statusIssueIsEqual = data?.statusIssueIsEqual == "true" || true;
-    this.statusIssueId = data?.statusIssueId?.join(',') || null;
-    this.categoryIdIsEqual = data?.categoryIdIsEqual == "true" || true;
-    this.categoryId = data?.categoryId?.join(',') || null;
-    this.keyword = data?.keyword || null;
-    this.startDateOperator = 'lonBang';
-    this.startDate = data?.startDate == null ? null : new Date(data?.startDate);
-    this.endDateOperator = 'lonBang';
-    this.endDate = data?.endDate == null ? null : new Date(data?.endDate);
-  }
+  // getFilterByUrl(params: any) {
+  //   let data = params.params;
+  //
+  //   // this.showAdvancedFilter = !(Object.keys(data).length === 0 && data.constructor === Object);
+  //
+  //   this.typeIdIsEqual = data?.typeIdIsEqual == "true" || true;
+  //   this.typeId = data?.typeId?.join(',') || null;
+  //   this.priorityIsEqual = data?.priorityIsEqual == "true" || true;
+  //   this.priority = data?.priority?.join(',') || null;
+  //   this.severityIsEqual = data?.severityIsEqual == "true" || true;
+  //   this.severity = data?.severity?.join(',') || null;
+  //   this.assignUserIdIsEqual = data?.assignUserIdIsEqual == "true" || true;
+  //   this.assignUserId = data?.assignUserId?.join(',') || null;
+  //   this.reviewUserIdIsEqual = data?.reviewUserIdIsEqual == "true" || true;
+  //   this.reviewUserId = data?.reviewUserId?.join(',') || null;
+  //   this.statusIssueIsEqual = data?.statusIssueIsEqual == "true" || true;
+  //   this.statusIssueId = data?.statusIssueId?.join(',') || null;
+  //   this.categoryIdIsEqual = data?.categoryIdIsEqual == "true" || true;
+  //   this.categoryId = data?.categoryId?.join(',') || null;
+  //   this.keyword = data?.keyword || null;
+  //   this.startDateOperator = 'lonBang';
+  //   this.startDate = data?.startDate == null ? null : new Date(data?.startDate);
+  //   this.endDateOperator = 'lonBang';
+  //   this.endDate = data?.endDate == null ? null : new Date(data?.endDate);
+  // }
 
   getProjectSelected() {
     const project = this.findProject(this.listProject, this.projectId);
@@ -272,6 +272,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
 
 
   addQueryParams() {
+    // console.log(this.severity)
     // add query params
     this.router.navigate([], {
       queryParams: {

@@ -27,6 +27,8 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
   comments: any[] = [];
   updateHistory: any[] = [];
 
+  tags: string[] = [];
+
   dynamicDialogRef: DynamicDialogRef | undefined;
   constructor(injector: Injector,
               private taskService: TaskService,
@@ -63,6 +65,7 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
         projectId
       }
     }
+    console.log("data", data)
     this.taskService.getTasks(data).subscribe({
       next: (res: any) => {
         this.listData = res?.data || [];

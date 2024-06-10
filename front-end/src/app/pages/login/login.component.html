@@ -30,10 +30,10 @@
                 <label for="re-pass"><i class="pi pi-lock"></i></label>
                 <input [formControlName]="'confirmPassword'" type="password" name="re-pass" id="re-pass" placeholder="Nhập lại mật khẩu"/>
               </div>
-              <div class="form-group">
-                <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
-                <label for="agree-term" class="label-agree-term"><span><span></span></span>Tôi đồng ý tất cả các điều khoản trong  <a href="#" class="term-service">Điều khoản dịch vụ</a></label>
-              </div>
+<!--              <div class="form-group">-->
+<!--                <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />-->
+<!--                <label for="agree-term" class="label-agree-term"><span><span></span></span>Tôi đồng ý tất cả các điều khoản trong  <a href="#" class="term-service">Điều khoản dịch vụ</a></label>-->
+<!--              </div>-->
               <div class="form-group form-button">
                 <input (click)="onSubmitSignUp(signUpForm)" type="submit" name="signup" id="signup" class="form-submit" value="Đăng ký"/>
               </div>
@@ -66,10 +66,10 @@
                 <label for="your_pass"><i class="pi pi-lock"></i></label>
                 <input [formControlName]="'password'" [class.form-input__error]="password?.invalid && password?.touched" type="password" name="your_pass" id="your_pass" placeholder="Mật khẩu"/>
               </div>
-              <div class="form-group">
-                <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
-                <label for="remember-me" class="label-agree-term"><span><span></span></span>Nhớ mật khẩu</label>
-              </div>
+<!--              <div class="form-group">-->
+<!--                <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />-->
+<!--                <label for="remember-me" class="label-agree-term"><span><span></span></span>Nhớ mật khẩu</label>-->
+<!--              </div>-->
               <div class="form-group form-button">
                 <input (click)="onSubmitLogin(loginForm)" [disabled]="loginForm.invalid" type="submit" name="signin" id="signin" class="form-submit" value="Đăng nhập"/>
               </div>

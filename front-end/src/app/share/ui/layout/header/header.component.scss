@@ -40,3 +40,11 @@ button {
     border-color: var(--blue-600)!important;
   }
 }
+
+.content-tag {
+  width: 284px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}

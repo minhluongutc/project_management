@@ -17,7 +17,7 @@ public interface PostRepositoryJPA extends JpaRepository<PostEntity, String> {
             " from PostEntity p" +
             " join UserEntity u on p.createUserId = u.id" +
             " left join DocumentEntity d on d.objectId = u.id and d.type = 2 and d.enabled = 1" +
-            " where (:projectId is null  or (p.projectId = :projectId))" +
+            " where (:projectId is null or :projectId = ''  or (p.projectId = :projectId))" +
             " order by p.createTime asc")
     List<PostResponseDTO> findAllByProjectId(String projectId);
 }

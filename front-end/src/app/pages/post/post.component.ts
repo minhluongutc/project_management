@@ -40,8 +40,8 @@ export class PostComponent extends BaseComponent implements OnInit {
     });
   }
 
-  getPosts() {
-    this.postService.getPosts(null).subscribe({
+  getPosts(projectId: any = null) {
+    this.postService.getPosts(projectId).subscribe({
       next: res => {
         console.log("res:", res);
         this.listData = res.data;
@@ -84,10 +84,11 @@ export class PostComponent extends BaseComponent implements OnInit {
   }
 
   onSelectProject($event: TreeNodeSelectEvent) {
-
+    this.getPosts($event.node.key)
   }
 
   onUnselectProject($event: TreeNodeUnSelectEvent) {
+    this.getPosts();
   }
 
   showModalAddPost() {

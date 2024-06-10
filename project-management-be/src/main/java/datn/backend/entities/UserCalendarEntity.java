@@ -16,7 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "USER_CALENDAR")
+@Table(name = "USER_CALENDARS")
 public class UserCalendarEntity implements Serializable {
 
     @Id
@@ -41,7 +41,7 @@ public class UserCalendarEntity implements Serializable {
     @Column(name = "START")
     Date start;
 
-    @Column(name = "END")
+    @Column(name = "ENDS")
     Date end;
 
     @Column(name = "ALL_DAY")

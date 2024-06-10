@@ -90,6 +90,20 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
+    @GetMapping(value = "tasks/user-calendar", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getUserCalendarTask(Authentication authentication, String projectId) {
+        Object result = taskService.getUserCalendarTask(authentication, projectId);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
+    @GetMapping(value = "/tasks/statistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getTaskStatistics(Authentication authentication,
+                                                    String projectId,
+                                                    String userId) {
+        Object result = taskService.getTaskStatistics(authentication, projectId, userId);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
 //    @GetMapping(value = "/tasks/statistics/user/{userId}/task-completion-rate/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    public ResponseEntity<Object> getTaskCompletionRate(Authentication authentication,
 //                                                        @PathVariable String userId,

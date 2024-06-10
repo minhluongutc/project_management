@@ -302,8 +302,8 @@
           <h2 class="text-sm font-bold">{{ taskSelected.statusIssueName }}</h2>
           <div class="w-full relative">
             <p-progressBar [value]="taskSelected.progress" [showValue]="false"></p-progressBar>
-            <p class="absolute top-[50%] left-[50%]"
-               style="transform: translate(-50%, -50%)">{{ taskSelected.progress || 0 }}%</p>
+            <p class="absolute top-[50%] left-[50%] font-bold"
+               style="transform: translate(-50%, -50%);">{{ taskSelected.progress || 0 }}%</p>
           </div>
         </div>
         <p-accordion [multiple]="true" [activeIndex]="[0]">

@@ -31,6 +31,8 @@ import {FileUploadModule} from "primeng/fileupload";
 import { CalendarComponent } from './calendar/calendar.component';
 import {FullCalendarModule} from "@fullcalendar/angular";
 import {AutofocusDirective} from "../share/directives/auto-focus.directive";
+import {TableModule} from "primeng/table";
+import { TestWSComponent } from './test-ws/test-ws.component';
 
 
 @NgModule({
@@ -40,7 +42,8 @@ import {AutofocusDirective} from "../share/directives/auto-focus.directive";
     ProfileComponent,
     ViewAttachmentComponent,
     PostComponent,
-    CalendarComponent
+    CalendarComponent,
+    TestWSComponent
   ],
     imports: [
         CommonModule,
@@ -69,7 +72,8 @@ import {AutofocusDirective} from "../share/directives/auto-focus.directive";
         TreeSelectModule,
         FileUploadModule,
         FullCalendarModule,
-        AutofocusDirective
+        AutofocusDirective,
+        TableModule
     ],
   providers: [DecimalPipe]
 })

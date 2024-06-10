@@ -79,22 +79,21 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
       }
       meterList.push(meterGroup);
     }
-    console.log(rowData)
     return meterList;
   }
 
   generateColor(i: number): string {
     switch (i) {
       case 0:
-        return '#34d399';
+        return '#ff0000';
       case 1:
-        return '#fbbf24';
+        return '#26b928';
       case 2:
         return '#60a5fa';
       case 3:
         return '#c084fc';
       case 4:
-        return '#ff0000';
+        return '#34d399';
       case 5:
         return 'rgba(234,232,232,0.57)';
       case 6:
@@ -112,7 +111,7 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
       case 12:
         return '#5862d0';
       case 13:
-        return '#26b928';
+        return '#fbbf24';
       case 14:
         return '#43641f';
       case 15:

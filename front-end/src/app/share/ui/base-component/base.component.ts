@@ -183,7 +183,7 @@ export class BaseComponent implements OnDestroy {
       case 2:
         return '#2B1AB6';
       case 3:
-        return '#FDFD05';
+        return '#2f87f2';
       case 4:
         return '#FB9F00';
       case 5:
@@ -194,7 +194,7 @@ export class BaseComponent implements OnDestroy {
   }
 
   getImage(id: any): string {
-    if (!id) return '';
+    if (!id) return '/assets/images/image-default-user.jpg';
     return this.fileService.getFileUrl(id);
   }
 
