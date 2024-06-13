@@ -19,6 +19,8 @@ import {SidebarSecondaryComponent} from './sidebar-secondary/sidebar-secondary.c
 import {LayoutSecondaryComponent} from './layout-secondary/layout-secondary.component';
 import {CardModule} from "primeng/card";
 import {BadgeModule} from "primeng/badge";
+import {TabViewModule} from "primeng/tabview";
+import { NotificationCardComponent } from './notification-card/notification-card.component';
 
 @NgModule({
   declarations: [
@@ -27,26 +29,28 @@ import {BadgeModule} from "primeng/badge";
     LayoutComponent,
     JiraLabelComponent,
     SidebarSecondaryComponent,
-    LayoutSecondaryComponent
+    LayoutSecondaryComponent,
+    NotificationCardComponent
   ],
-  imports: [
-    SharedModule,
-    AvatarModule,
-    ButtonModule,
-    InputTextModule,
-    ToolbarModule,
-    SplitButtonModule,
-    ListboxModule,
-    FormsModule,
-    OverlayPanelModule,
-    NgIf,
-    DialogModule,
-    NgForOf,
-    NgTemplateOutlet,
-    CardModule,
-    BadgeModule,
-    DatePipe,
-  ],
+    imports: [
+        SharedModule,
+        AvatarModule,
+        ButtonModule,
+        InputTextModule,
+        ToolbarModule,
+        SplitButtonModule,
+        ListboxModule,
+        FormsModule,
+        OverlayPanelModule,
+        NgIf,
+        DialogModule,
+        NgForOf,
+        NgTemplateOutlet,
+        CardModule,
+        BadgeModule,
+        DatePipe,
+        TabViewModule,
+    ],
   providers: [DialogService],
     exports: [LayoutComponent, JiraLabelComponent, LayoutSecondaryComponent, SidebarSecondaryComponent]
 })

@@ -1,0 +1,15 @@
+<div class="flex flex-col gap-2">
+  <p-card styleClass="w-[350px] hover:bg-gray-100 cursor-pointer"
+          *ngFor="let notification of notifications; let i = index; trackBy: trackByFn"
+          [class.opacity-60]="notification.isRead" (click)="eventClick(notification)">
+    <div class="flex gap-1 h-[60px]">
+      <img [src]="getImage(notification.avatarId)" alt="Avatar"
+           class="w-[60px] h-[60px] rounded-full leading-[93px]">
+      <div class="flex flex-col">
+        <p class="text-sm content-tag"><strong>{{ notification.projectName }}</strong> / {{ notification.taskCode }}</p>
+        <p class="text-sm">{{ convertValueById(notification.actionType, 'name', NOTIFICATION_VALUE) }}</p>
+      </div>
+    </div>
+    <p class="text-xs">{{notification.username}}, {{ notification.createTime | date: 'dd/MM/yyyy, h:mm a' }}</p>
+  </p-card>
+</div>

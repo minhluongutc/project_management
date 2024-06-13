@@ -32,7 +32,7 @@
   <div class="text-xl mt-2 mb-1 text-black font-semibold antialiased tracking-normal">
     Tìm kiếm
   </div>
-  <div class="grid grid-cols-4 gap-4">
+  <div class="grid grid-cols-4 gap-4 mb-4">
     <div class="flex flex-col gap-4">
       <jira-label [jiraLabel]="'Dự án'"/>
       <p-treeSelect class="md:w-20rem w-full"
@@ -44,7 +44,6 @@
       />
     </div>
   </div>
-</div>
 <div class="col-span-9">
   <full-calendar #calendar [options]='calendarOptions' [events]="listEvent">
     <ng-template #eventContent let-arg>
@@ -52,6 +51,7 @@
       <i>{{ arg.event.title }}</i>
     </ng-template>
   </full-calendar>
+</div>
 </div>
 <!--</div>-->
 @if (visibleModalAddEvent) {

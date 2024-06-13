@@ -31,7 +31,7 @@ export class BaseComponent implements OnDestroy {
   rows = 10;
   totalRecords = 0;
   isSubmitted: boolean = false;
-  avatarDefault = '/assets/images/image-default-user.jpg';
+  avatarDefault: string = '/assets/images/image-default-user.jpg';
 
   protected fb: FormBuilder;
   protected router: Router;
@@ -193,9 +193,60 @@ export class BaseComponent implements OnDestroy {
     }
   }
 
+  generateColor(i: number): string {
+    switch (i) {
+      case 0://new
+        return '#68c3ab';
+      case 1://confirmed
+        return 'rgba(234,232,232,0.57)';
+      case 2://deploy waiting
+        return '#34d399';
+      case 3://resolve
+        return '#c084fc';
+      case 4://reopen
+        return '#60a5fa';
+      case 5://done
+        return '#26b928';
+      case 6://reject
+        return '#ff0000';
+      case 7:
+        return '#399bab';
+      case 8:
+        return '#43860c';
+      case 9:
+        return '#68b7ab';
+      case 10:
+        return '#6653ab';
+      case 11:
+        return '#17815c';
+      case 12:
+        return '#5862d0';
+      case 13:
+        return '#fbbf24';
+      case 14:
+        return '#43641f';
+      case 15:
+        return '#1e2cc4';
+      case 16:
+        return '#074232';
+      case 17:
+        return '#4122b2';
+      case 18:
+        return '#6aec8f';
+      case 19:
+        return '#0e3405';
+      case 20:
+        return '#b2eec5';
+      case 21:
+        return '#2a5730';
+      default:
+        return '#000000';
+    }
+  }
+
   getImage(id: any): string {
-    if (!id) return '/assets/images/image-default-user.jpg';
-    return this.fileService.getFileUrl(id);
+    if (!id) return this.avatarDefault;
+    return this.fileService.getFileUrl(id) || this.avatarDefault;
   }
 
   ngOnDestroy() {

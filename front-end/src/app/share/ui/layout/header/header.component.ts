@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import {Component, Injector, OnInit, TrackByFunction} from '@angular/core';
 import {AuthService} from "../../../auth/auth.service";
 import {User} from "../../../auth/user.model";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -10,6 +10,7 @@ import {NotificationService} from "../../../../service/notification.service";
 import {BaseComponent} from "../../base-component/base.component";
 import {TaskService} from "../../../../service/task.service";
 import {WebsocketService} from "../../../../service/websocket.service";
+import {NOTIFICATION_VALUE} from "../../../constants/data.constants";
 
 @Component({
   selector: 'app-header',
@@ -18,7 +19,7 @@ import {WebsocketService} from "../../../../service/websocket.service";
 })
 export class HeaderComponent extends BaseComponent implements OnInit {
   notifications: any[] = [];
-  notificationNotRead: string = "0";
+  notificationsNotRead: any[] = [];
   userSub: Subscription;
   isAuthenticated: boolean = false;
   userData: Partial<User> = {};
@@ -71,7 +72,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     this.notificationService.getNotifications(dto).subscribe({
       next: res => {
         this.notifications = res.data;
-        this.notificationNotRead = String(this.notifications.filter((item) => item.isRead == 0).length);
+        this.notificationsNotRead = this.notifications.filter((item) => item.isRead == 0);
       }
     })
   }
@@ -82,22 +83,26 @@ export class HeaderComponent extends BaseComponent implements OnInit {
 
   protected readonly String = String;
 
-  onReadNotify(id: any, taskCode: any) {
-    this.notificationService.readNotification(id).subscribe({
+  onReadNotify(data: any) {
+    this.notificationService.readNotification(data.id).subscribe({
       next: res => {
         this.getNotification();
       }
     })
-    this.router.navigate(['/tasks'], {queryParams: {taskCode: taskCode}});
+    this.router.navigate(['/tasks'], {queryParams: {taskCode: data.taskCode}});
   }
 
   listenNotification() {
     this.websocketService.getMessageSubject().subscribe((messages: any) => {
+      console.log("message: ", messages)
       if(messages.userId == this.user.id) {
-        this.createInfoToast("Thông báo", messages?.optionalContent)
+        this.createInfoToast("Thông báo", this.convertValueById(messages?.type, 'name', this.NOTIFICATION_VALUE))
         this.getNotification();
       }
       console.log(messages)
     })
   }
+
+  protected readonly NOTIFICATION_VALUE = NOTIFICATION_VALUE;
+  trackByFn: TrackByFunction<any> = (index, item) => item.id;
 }

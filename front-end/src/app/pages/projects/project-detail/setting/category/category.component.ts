@@ -110,6 +110,10 @@ export class CategoryComponent extends BaseComponent implements OnInit {
   deleteCategory(id: string) {
     this.categoryService.deleteCategory(id).subscribe({
       next: (res) => {
+        if (res.data == "CATEGORY_IN_USE") {
+          this.createWarningToast('Không thành công', 'Danh mục đang được sử dụng');
+          return;
+        }
         this.getCategories();
         this.createSuccessToast('Thành công','Xóa danh mục thành công');
       },

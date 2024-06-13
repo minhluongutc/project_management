@@ -97,4 +97,16 @@ public class Constants {
             this.value = value;
         }
     }
+
+    public enum NOTIFICATION_TYPE {
+        ADD_TASK(1, "Bạn được giao một công việc mới"),
+        EDIT_TASK(2, "Công việc bạn được giao thực hiện đã được chỉnh sửa");
+        public final int value;
+        public final String textValue;
+
+        NOTIFICATION_TYPE(int value, String textValue) {
+            this.value = value;
+            this.textValue = textValue;
+        }
+    }
 }

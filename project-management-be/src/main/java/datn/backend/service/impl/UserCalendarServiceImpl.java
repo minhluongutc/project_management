@@ -4,6 +4,7 @@ import datn.backend.dto.TaskDTO;
 import datn.backend.dto.UserCalendarRequestDTO;
 import datn.backend.dto.UserCalendarResponseDTO;
 import datn.backend.entities.UserCalendarEntity;
+import datn.backend.repositories.jpa.StatusIssueRepositoryJPA;
 import datn.backend.repositories.jpa.TaskRepositoryJPA;
 import datn.backend.repositories.jpa.UserCalendarRepositoryJPA;
 import datn.backend.service.TaskService;
@@ -27,6 +28,7 @@ import java.util.List;
 public class UserCalendarServiceImpl implements UserCalendarService {
     final TaskRepositoryJPA taskRepositoryJPA;
     final UserCalendarRepositoryJPA userCalendarRepositoryJPA;
+    final StatusIssueRepositoryJPA statusIssueRepositoryJPA;
 
     final TaskService taskService;
 
@@ -87,6 +89,7 @@ public class UserCalendarServiceImpl implements UserCalendarService {
                         calendarStartDate.get(Calendar.MINUTE) == 0 &&
                         calendarDueDate.get(Calendar.HOUR_OF_DAY) == 0 &&
                         calendarDueDate.get(Calendar.MINUTE) == 0);
+                userCalendar.setStatusCode(statusIssueRepositoryJPA.getCodeById(taskRepositoryJPA.findFirstById(task.getId()).getStatusIssueId()));
                 userCalendars.add(userCalendar);
             }
         }

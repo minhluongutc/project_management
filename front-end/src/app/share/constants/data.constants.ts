@@ -51,6 +51,11 @@ export const QUERY_OPERATOR_DATE: KeyValueModel[] = [
   {id: 'nhoBang', name: '<='},
 ]
 
+export const NOTIFICATION_VALUE: KeyValueModel[] = [
+  {id: 1, name: 'Bạn được thêm một công việc mới'},
+  {id: 2, name: 'Công việc bạn được giao thực hiện đã được chỉnh sửa'}
+]
+
 export class KeyValueModel {
   id!: any
   name!: any

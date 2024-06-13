@@ -115,6 +115,12 @@ export class StatusIssueComponent  extends BaseComponent implements OnInit {
   deleteStatusIssue(id: string) {
     this.statusIssueService.deleteStatusIssue(id).subscribe({
       next: (res) => {
+
+        if (res.data == "STATUS_ISSUE_IN_USE") {
+          this.createWarningToast('Không thành công', 'Trạng thái công việc đang được sử dụng')
+          return;
+        }
+
         this.getStatusIssue();
         this.createSuccessToast('Thành công','Xóa trạng thái công việc thành công');
       },

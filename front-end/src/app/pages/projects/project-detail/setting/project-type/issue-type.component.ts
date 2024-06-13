@@ -109,6 +109,10 @@ export class IssueTypeComponent extends BaseComponent implements OnInit {
   deleteCategory(id: string) {
     this.typeService.deleteType(id).subscribe({
       next: (res) => {
+        if (res.data == "TYPE_IN_USE") {
+          this.createErrorToast('Không thành công', 'Loại công việc đang được sử dụng');
+          return;
+        }
         this.getTypes();
         this.createSuccessToast('Thành công','Xóa loại công việc thành công');
       },

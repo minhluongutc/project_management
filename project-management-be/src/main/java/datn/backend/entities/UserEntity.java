@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "USERS")
+@Table(name="\"user\"")
 public class UserEntity implements Serializable {
 
     @Id

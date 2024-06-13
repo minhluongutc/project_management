@@ -130,6 +130,25 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
     });
   }
 
+  showAddChildTask() {
+    this.dynamicDialogRef = this.dialogService.open(TaskCreateComponent, {
+      header: 'Thêm mới công việc',
+      width: '60vw',
+      contentStyle: { overflow: 'auto', 'margin-bottom': '69px' },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      data: {
+        task: {
+          parentId: this.taskSelected.id,
+          projectId: this.taskSelected.projectId,
+          parentSubject: this.taskSelected.subject
+        }
+      }
+    });
+  }
+
   getTaskChildren(parentId: string) {
     this.taskService.getTaskChildren(parentId).subscribe({
       next: (res: any) => {

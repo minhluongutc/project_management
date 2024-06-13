@@ -6,7 +6,7 @@ import {ProjectService} from "../../../service/project.service";
 import {TreeNodeSelectEvent, TreeNodeUnSelectEvent} from "primeng/tree";
 import {TaskService} from "../../../service/task.service";
 import {Task} from "../../../models/task.model";
-import {PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
+import {NOTIFICATION_VALUE, PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
 import {TypeService} from "../../../service/type.service";
 import {ProjectUserService} from "../../../service/project-user.service";
 import {StatusIssueService} from "../../../service/status-issue.service";
@@ -18,6 +18,7 @@ import {ProjectStoreService} from "../../projects/project-store.service";
 import {saveAs} from "file-saver";
 import {WebsocketService} from "../../../service/websocket.service";
 import { v4 as uuidv4 } from 'uuid';
+import {NOTIFICATION_TYPE} from "../../../share/enum/enum";
 
 @Component({
   selector: 'app-task-create',
@@ -68,10 +69,34 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   async ngOnInit() {
-    try {
-      await this.getProjects();
+    await this.getProjects();
+    await this.fetchDataToEdit();
+  }
 
-      if (this.dynamicDialogConfig.data != undefined) {
+  buildForm() {
+    this.form = this.fb.group({
+      projectId: [null, Validators.required],
+      subject: [null, Validators.required],
+      description: [null],
+      time: [null],
+      parentId: [null],
+      typeId: [null, Validators.required],
+      estimateTime: [null],
+      priority: [null],
+      severity: [null],
+      assignUserId: [null],
+      reviewUserId: [null],
+      statusIssueId: [null],
+      categoryId: [null],
+      reporter: [this.user.username, Validators.required],
+      isPublic: [false],
+      continue: [false]
+    });
+  }
+
+  async fetchDataToEdit() {
+    try {
+      if (this.dynamicDialogConfig?.data?.task?.id != undefined) {
         this.projectIdSelected = this.dynamicDialogConfig.data.task.projectId;
         const res: any = await this.taskService.getTaskById(this.dynamicDialogConfig.data.task.id).toPromise();
         this.data2edit = res.data;
@@ -90,7 +115,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
           subject: this.data2edit.subject,
           description: this.data2edit.description,
           time: null,
-          parentId: parentTask,
+          parentId: this.data2edit?.parentId ? parentTask : null,
           typeId: this.data2edit.typeId,
           estimateTime: this.data2edit.estimateTime,
           priority: this.data2edit.priority,
@@ -111,9 +136,29 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
             time: null
           })
         }
+        console.log(this.data2edit)
         this.getAttachments2Edit(this.data2edit.id);
+        // on create child task (click button)
+      } else if (this.dynamicDialogConfig?.data?.task?.id == undefined && this.dynamicDialogConfig?.data?.task?.parentId != undefined) {
+        this.projectIdSelected = this.dynamicDialogConfig?.data?.task?.projectId;
+        const projectValue = {
+          label: this.dynamicDialogConfig?.data?.task?.projectName,
+          key: this.dynamicDialogConfig?.data?.task?.projectId,
+        }
+        const parentTask = {
+          label: this.dynamicDialogConfig?.data?.task?.parentSubject,
+          key: this.dynamicDialogConfig?.data?.task?.parentId,
+        }
+        console.log(parentTask)
+        this.getValuesOfProject();
+        this.form.patchValue({
+          projectId: projectValue,
+          parentId: parentTask,
+          reporter: this.user.id,
+          isPublic: false
+        })
       }
-
+      // fetch data project to create
       if (this.projectStoreService.id != '' && this.data2edit == undefined) {
         let projectValue!: any;
         const projectSelected = this.findProject(this.listProject, this.projectIdSelected);
@@ -146,27 +191,6 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     } else {
       this.setEnableFields(false);
     }
-  }
-
-  buildForm() {
-    this.form = this.fb.group({
-      projectId: [null, Validators.required],
-      subject: [null, Validators.required],
-      description: [null],
-      time: [null],
-      parentId: [null],
-      typeId: [null, Validators.required],
-      estimateTime: [null],
-      priority: [null],
-      severity: [null],
-      assignUserId: [null],
-      reviewUserId: [null],
-      statusIssueId: [null],
-      categoryId: [null],
-      reporter: [this.user.username, Validators.required],
-      isPublic: [false],
-      continue: [false]
-    });
   }
 
   getTypes(projectId: string | undefined) {
@@ -400,10 +424,12 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     )
     this.taskService.insertTask(formData).subscribe({
       next: (res: any) => {
+        // send notification
         const notificationData = {
           fromUserId: this.user.id,
           toUserId: this.form.value.assignUserId,
-          taskId: taskId
+          taskId: taskId,
+          actionType: NOTIFICATION_TYPE.ADD_TASK
         }
         this.createNotification(notificationData);
 
@@ -417,23 +443,10 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         });
         this.closeDialog();
 
-        // send notification
-
       }, error: (err: any) => {
         this.createErrorToast('Lỗi', err.message);
       }
     })
-  }
-
-  createNotification(data: any) {
-    const notificationData: any = {
-      fromUserId: data.fromUserId,
-      toUserId: data.toUserId,
-      taskId: data.taskId,
-      content: `Bạn được giao một công việc mới`,
-      actionType: 1
-    }
-    this.websocketService.onNotify("ABC", notificationData);
   }
 
   updateTask() {
@@ -457,6 +470,14 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
     }
     this.taskService.updateTask(this.data2edit.id, data).subscribe({
       next: (res: any) => {
+        const notificationData = {
+          fromUserId: this.user.id,
+          toUserId: this.form.value.assignUserId,
+          taskId: this.data2edit.id,
+          actionType: NOTIFICATION_TYPE.EDIT_TASK
+        }
+        this.createNotification(notificationData);
+
         this.createSuccessToast('Thành công', 'Chỉnh sửa công việc thành công');
         this.form.reset();
         this.fileList = [];
@@ -470,6 +491,16 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
         this.createErrorToast('Lỗi', err.message);
       }
     })
+  }
+
+  createNotification(data: any) {
+    const notificationData: any = {
+      fromUserId: data.fromUserId,
+      toUserId: data.toUserId,
+      taskId: data.taskId,
+      actionType: data.actionType
+    }
+    this.websocketService.onNotify("ABC", notificationData);
   }
 
   getAttachments2Edit(objectId: string) {

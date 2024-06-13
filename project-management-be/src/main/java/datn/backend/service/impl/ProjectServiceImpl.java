@@ -142,7 +142,7 @@ public class ProjectServiceImpl implements ProjectService {
                 projectUserService.addUserToProject(authentication, projectUser.getUserId(), projectEntity.getId(), projectUser.getProfessionalLevel(), projectUser.getPermission());
             }
         } else {
-            projectUserService.addUserToProject(authentication, AuditUtils.createUserId(authentication), projectEntity.getId(), Constants.PROFESSIONAL_LEVEL.INTERN.value, Constants.PERMISSION.MEMBER.value);
+            projectUserService.addUserToProject(authentication, AuditUtils.createUserId(authentication), projectEntity.getId(), Constants.PROFESSIONAL_LEVEL.INTERN.value, Constants.PERMISSION.ADMIN.value);
         }
         return "Create project success!";
     }

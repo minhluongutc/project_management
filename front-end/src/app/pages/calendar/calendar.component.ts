@@ -13,6 +13,7 @@ import {TreeNodeSelectEvent, TreeNodeUnSelectEvent} from "primeng/tree";
 import {TaskService} from "../../service/task.service";
 import {DynamicDialogRef} from "primeng/dynamicdialog";
 import {TaskCreateComponent} from "../tasks/task-create/task-create.component";
+import viLocale from '@fullcalendar/core/locales/vi';
 
 
 @Component({
@@ -49,7 +50,7 @@ export class CalendarComponent extends BaseComponent implements OnInit {
     super(injector);
     this.getUserCalendar(null);
     this.getProjects();
-    this.getTaskInSidebar(this.projectIdSelected);
+    // this.getTaskInSidebar(this.projectIdSelected);
   }
 
   async ngOnInit() {
@@ -91,6 +92,7 @@ export class CalendarComponent extends BaseComponent implements OnInit {
       selectMirror: true,
       dayMaxEvents: true,
       droppable: true,
+      locale: viLocale,
       drop: this.onDropEvent.bind(this),
       // select: this.handleDateSelect.bind(this),
       eventClick: this.handleEventClick.bind(this),
@@ -104,24 +106,24 @@ export class CalendarComponent extends BaseComponent implements OnInit {
     console.log(this.calendarOptions)
   }
 
-  getTaskInSidebar(projectId: any) {
-    this.taskService.getTasksNotSchedule(projectId).subscribe({
-      next: (res: any) => {
-        this.listData = res?.data || [];
-        this.totalRecords = this.listData.length || 0;
-      }, error: (err: any) => {
-        this.createErrorToast("Lỗi", err.message);
-      }
-    })
-  }
+  // getTaskInSidebar(projectId: any) {
+  //   this.taskService.getTasksNotSchedule(projectId).subscribe({
+  //     next: (res: any) => {
+  //       this.listData = res?.data || [];
+  //       this.totalRecords = this.listData.length || 0;
+  //     }, error: (err: any) => {
+  //       this.createErrorToast("Lỗi", err.message);
+  //     }
+  //   })
+  // }
 
-  onSelectFilterProject($event: TreeNodeSelectEvent) {
-    this.getTaskInSidebar($event.node.key)
-  }
-
-  onUnselectFilterProject($event: TreeNodeUnSelectEvent) {
-    this.getTaskInSidebar(null);
-  }
+  // onSelectFilterProject($event: TreeNodeSelectEvent) {
+  //   this.getTaskInSidebar($event.node.key)
+  // }
+  //
+  // onUnselectFilterProject($event: TreeNodeUnSelectEvent) {
+  //   this.getTaskInSidebar(null);
+  // }
 
   getUserCalendar(projectId: any) {
     this.userCalendarService.getUserCalendar({projectId})
@@ -129,6 +131,13 @@ export class CalendarComponent extends BaseComponent implements OnInit {
         next: (res) => {
           console.log(res);
           this.listEvent = res.data;
+          // add color to each event
+          this.listEvent = this.listEvent.map((item: any, index: number) => {
+            return {
+              ...item,
+              color: this.generateColor(item.statusCode-1)
+            }
+          })
         }
       })
   }
@@ -185,7 +194,8 @@ export class CalendarComponent extends BaseComponent implements OnInit {
   }
 
   onUnselectProject($event: TreeNodeUnSelectEvent) {
-    this.listTask = [];
+    this.getTasks('')
+    this.getUserCalendar(null);
   }
 
   async getTasks(projectId: string | undefined) {
@@ -398,7 +408,7 @@ export class CalendarComponent extends BaseComponent implements OnInit {
     console.log(event.dateStr)
     console.log(new Date(date.setDate(date.getDate() + 1)));
     this.createEvent(data);
-    this.getTaskInSidebar(null);
+    // this.getTaskInSidebar(null);
     console.log("data", data)
   }
 
