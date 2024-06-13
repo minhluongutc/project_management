@@ -1,17 +1,14 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {BaseComponent} from "../../share/ui/base-component/base.component";
 import {TreeNodeSelectEvent, TreeNodeUnSelectEvent} from "primeng/tree";
-import {ProjectStoreService} from "../projects/project-store.service";
 import {CategoryService} from '../../service/category.service';
 import {PRIORIES, QUERY_OPERATOR, QUERY_OPERATOR_DATE, SEVERITIES} from "../../share/constants/data.constants";
-import {ProjectUserService} from "../../service/project-user.service";
 import {TypeService} from "../../service/type.service";
 import {StatusIssueService} from "../../service/status-issue.service";
 import {ProjectService} from "../../service/project.service";
 import {FilterService} from "../../service/filter.service";
 import {Filter} from "../../models/filter.model";
 import {ConfirmationService} from "primeng/api";
-import {ParamMap} from "@angular/router";
 
 @Component({
   selector: 'app-tasks',
@@ -79,9 +76,7 @@ export class TasksComponent extends BaseComponent implements OnInit {
   endDate: any;
 
   constructor(injector: Injector,
-              protected projectStoreService: ProjectStoreService,
               private categoryService: CategoryService,
-              private projectUserService: ProjectUserService,
               private typeService: TypeService,
               private statusIssueService: StatusIssueService,
               private projectService: ProjectService,

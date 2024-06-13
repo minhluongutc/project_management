@@ -18,6 +18,7 @@ export class PostComponent extends BaseComponent implements OnInit {
   fileList: any[] = [];
   data2edit: any;
   visibleModalAddPost = false;
+  dialogTitle: string = '';
 
   constructor(injector: Injector,
               private projectService: ProjectService,
@@ -40,14 +41,16 @@ export class PostComponent extends BaseComponent implements OnInit {
     });
   }
 
-  getPosts(projectId: any = null) {
-    this.postService.getPosts(projectId).subscribe({
-      next: res => {
-        console.log("res:", res);
-        this.listData = res.data;
-      }
-    })
+  async getPosts(projectId: any = null) {
+  try {
+    const res: any = await this.postService.getPosts(projectId).toPromise();
+    console.log("res:", res);
+    this.listData = res.data;
+  } catch (err) {
+    // Handle error here
+    console.error(err);
   }
+}
 
   async getProjects() {
     try {
@@ -92,12 +95,69 @@ export class PostComponent extends BaseComponent implements OnInit {
   }
 
   showModalAddPost() {
+    this.dialogTitle = 'Thêm mới bài viết';
     this.visibleModalAddPost = true;
   }
 
   onCloseAddModal() {
+    this.dialogTitle = '';
     this.visibleModalAddPost = false;
   }
+
+  showModalEditPost(id: any, projectName: any) {
+    this.dialogTitle = 'Chỉnh sửa bài viết';
+    this.postService.getPost(id).subscribe({
+      next: res => {
+        this.data2edit = res.data;
+        const projectValue = {
+          label: projectName,
+          key: this.data2edit.projectId,
+        }
+        this.form.patchValue({
+          title: res.data.title,
+          content: res.data.content,
+          projectId: projectValue
+        });
+
+        console.log(this.listData.find((item: any) => item.id == this.data2edit.id))
+        if (this.listData.find((item: any) => item.id == this.data2edit.id).attachments.length > 0) {
+          this.getAttachments2Edit(this.data2edit.id);
+        } else {
+          this.fileList = [];
+        }
+        this.visibleModalAddPost = true;
+      }
+    })
+    this.visibleModalAddPost = true;
+  }
+
+  getAttachments2Edit(objectId: string) {
+    this.documentService.getAttachmentsByObjectId(objectId, 4).subscribe({
+      next: (res: any) => {
+        this.fileList = res.data;
+      }, error: (err: any) => {
+        this.createErrorToast('Lỗi', err.message);
+      }
+    })
+  }
+
+
+
+  // onEditPost() {
+  //   const data = {
+  //     title: this.form.value.title,
+  //     content: this.form.value.content,
+  //     projectId: this.form.value.projectId?.key,
+  //     id: this.data2edit.id
+  //   }
+  //   this.postService.editPost(data).subscribe({
+  //     next: res => {
+  //       this.buildForm();
+  //       this.visibleModalAddPost = false;
+  //       this.getPosts();
+  //     }
+  //   })
+  // }
 
   onAddPost() {
     console.log(this.form)

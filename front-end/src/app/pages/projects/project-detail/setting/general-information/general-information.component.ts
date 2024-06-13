@@ -15,8 +15,7 @@ export class GeneralInformationComponent extends BaseComponent implements OnInit
   projectId: any;
 
   constructor(injector: Injector,
-              private projectService: ProjectService,
-              private projectStoreService: ProjectStoreService
+              private projectService: ProjectService
   ) {
     super(injector);
     this.projectId = this.projectStoreService.id;

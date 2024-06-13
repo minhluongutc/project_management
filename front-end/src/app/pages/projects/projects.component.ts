@@ -18,7 +18,6 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
 
   constructor(injector: Injector,
               private projectService: ProjectService,
-              private projectStoreService: ProjectStoreService
   ) {
     super(injector);
   }

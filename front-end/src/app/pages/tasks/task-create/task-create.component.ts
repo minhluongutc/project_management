@@ -51,17 +51,15 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
               private projectService: ProjectService,
               private taskService: TaskService,
               private typeService: TypeService,
-              private projectUserService: ProjectUserService,
               private statusIssueService: StatusIssueService,
               private categoryService: CategoryService,
               private documentService: DocumentService,
               private dynamicDialogConfig: DynamicDialogConfig,
               private confirmationService: ConfirmationService,
-              private projectStoreService: ProjectStoreService,
               private websocketService: WebsocketService) {
     super(injector);
-    if (projectStoreService.id) {
-      this.projectIdSelected = projectStoreService.id;
+    if (this.projectStoreService.id) {
+      this.projectIdSelected = this.projectStoreService.id;
     }
     this.buildForm();
     this.severities = SEVERITIES;
@@ -86,7 +84,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
       severity: [null],
       assignUserId: [null],
       reviewUserId: [null],
-      statusIssueId: [null],
+      statusIssueId: [null, Validators.required],
       categoryId: [null],
       reporter: [this.user.username, Validators.required],
       isPublic: [false],

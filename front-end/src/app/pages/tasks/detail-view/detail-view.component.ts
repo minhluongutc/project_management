@@ -8,7 +8,6 @@ import {AccordionModule} from "primeng/accordion";
 import {PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
 import {DynamicDialogRef} from "primeng/dynamicdialog";
 import {TaskCreateComponent} from "../task-create/task-create.component";
-import {ProjectStoreService} from "../../projects/project-store.service";
 import {CommentService} from "../../../service/comment.service";
 import {UpdateHistoryTaskService} from "../../../service/update-history-task.service";
 
@@ -33,8 +32,7 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
   constructor(injector: Injector,
               private taskService: TaskService,
               private commentService: CommentService,
-              private updateHistoryService: UpdateHistoryTaskService,
-              private projectStoreService: ProjectStoreService
+              private updateHistoryService: UpdateHistoryTaskService
   ) {
     super(injector);
   }

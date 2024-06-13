@@ -55,7 +55,6 @@ export class UsersComponent extends BaseComponent implements OnInit {
   ]
 
   constructor(injector: Injector,
-              private projectUserService: ProjectUserService,
               private confirmationService: ConfirmationService,
               private userService: UserService,
   ) {

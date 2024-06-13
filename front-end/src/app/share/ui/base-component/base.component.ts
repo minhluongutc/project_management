@@ -2,8 +2,6 @@ import {ChangeDetectorRef, Component, Injector, OnDestroy,} from '@angular/core'
 import {ToastModule} from 'primeng/toast';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-// import { TranslateService } from '@ngx-translate/core';
-// import { VtsToastService } from '@ui-vts-kit/ng-vts/toast';
 import {Subscription} from 'rxjs';
 import {MessageService, TreeNode} from "primeng/api";
 import {AuthService} from "../../auth/auth.service";
@@ -11,8 +9,10 @@ import {User} from "../../auth/user.model";
 import {DialogService} from "primeng/dynamicdialog";
 import {DropdownChangeEvent} from "primeng/dropdown";
 import {FileService} from "../../services/file.service";
+import {ProjectStoreService} from "../../../pages/projects/project-store.service";
+import {PERMISSIONS_ENUM} from "../../enum/permission.enum";
+import {ProjectUserService} from "../../../service/project-user.service";
 
-// import { PvnTableConfig } from '../pvn-table/pvn-table.component';
 
 @Component({
   template: `
@@ -41,8 +41,9 @@ export class BaseComponent implements OnDestroy {
   protected toast: MessageService;
   protected authService: AuthService;
   protected fileService: FileService;
-  public dialogService: DialogService
-  // protected translate: TranslateService;
+  protected projectStoreService: ProjectStoreService;
+  protected projectUserService: ProjectUserService;
+  public dialogService: DialogService;
 
   subscriptions: Subscription[] = [];
 
@@ -56,9 +57,15 @@ export class BaseComponent implements OnDestroy {
     this.state = this.router.getCurrentNavigation()?.extras?.state;
     this.authService = this.injector.get(AuthService);
     this.fileService = this.injector.get(FileService);
+    this.projectStoreService = this.injector.get(ProjectStoreService);
+    this.projectUserService = this.injector.get(ProjectUserService);
     this.dialogService = this.injector.get(DialogService);
 
     this.user = this.authService.user.value
+    if(this.projectStoreService.id) {
+      this.setRoleInProject(this.projectStoreService.id, this.user.id);
+    }
+
   }
 
   findProject(list: any[], projectId: string): any {
@@ -174,6 +181,38 @@ export class BaseComponent implements OnDestroy {
 
   convertValueById(id: any, name: any, array: any[]) {
     return array.find((item: any) => item.id === id)?.[name] === undefined ? 'N/A' : array.find((item: any) => item.id === id)?.[name];
+  }
+
+  isRoleUser(): boolean {
+    return this.projectStoreService.role === PERMISSIONS_ENUM.USER;
+  }
+
+  isRoleLeader(): boolean {
+    return this.projectStoreService.role === PERMISSIONS_ENUM.LEADER;
+  }
+
+  isRoleProjectManager(): boolean {
+    return this.projectStoreService.role === PERMISSIONS_ENUM.PROJECT_MANAGER;
+  }
+
+  isRoleAdmin(): boolean {
+    return this.projectStoreService.role === PERMISSIONS_ENUM.ADMIN;
+  }
+
+  isRolePMOrAdmin(): boolean {
+    console.log(this.projectStoreService.id)
+    console.log(this.isRoleProjectManager(), this.isRoleAdmin());
+    return this.isRoleProjectManager() || this.isRoleAdmin();
+  }
+
+  async setRoleInProject(projectId: string, userId: string) {
+    try {
+      const res: any = await this.projectUserService.getRoleInProject(projectId, userId).toPromise();
+      this.projectStoreService.role = res.data;
+      console.log(this.projectStoreService.role);
+    } catch (err) {
+      this.createErrorToast("Lỗi", "Không tìm thấy dự án");
+    }
   }
 
   getColorTag(value: any) {

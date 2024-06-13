@@ -38,4 +38,16 @@ export class ProjectUserService extends BaseService {
     }
     return this.putRequest(`${this.SERVICE_URL}/${userId}`, data);
   }
+
+  getRoleInProject(projectId: string, userId: string) {
+    return this.getRequest(`${this.SERVICE_URL}/role`,
+      {
+        params: this.buildParams({
+          projectId,
+          userId
+        })
+      }
+    )
+      ;
+  }
 }
