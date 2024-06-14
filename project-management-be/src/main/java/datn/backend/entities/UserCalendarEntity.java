@@ -16,7 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "USER_CALENDARS")
+@Table(name="\"USER_CALENDAR\"")
 public class UserCalendarEntity implements Serializable {
 
     @Id

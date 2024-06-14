@@ -95,4 +95,16 @@ export class ListViewComponent extends BaseComponent implements OnInit {
   protected readonly PRIORIES = PRIORIES;
   protected readonly SEVERITIES = SEVERITIES;
 
+  onDeleteTask(id: any) {
+    this.taskService.deleteTask(id).subscribe(
+      {
+        next: (res: any) => {
+          this.createSuccessToast('Thành công', 'Xóa công việc thành công');
+          this.ngOnInit();
+        }, error: (err: any) => {
+          this.createErrorToast('Lỗi', err.message);
+        }
+      }
+    )
+  }
 }

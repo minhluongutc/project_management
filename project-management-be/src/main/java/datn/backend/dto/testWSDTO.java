@@ -1,4 +1,4 @@
-package datn.backend.controllers;
+package datn.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

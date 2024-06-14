@@ -24,4 +24,16 @@ export class PostService extends BaseService {
   createPost(data: any) {
     return this.postRequest(this.SERVICE_URL, data);
   }
+
+  updatePost(data: any) {
+    return this.putRequest(this.SERVICE_URL, data);
+  }
+
+  deletePost(id: string) {
+    return this.deleteRequest(this.SERVICE_URL, id);
+  }
+
+  getPost(id: any) {
+    return this.get(id);
+  }
 }

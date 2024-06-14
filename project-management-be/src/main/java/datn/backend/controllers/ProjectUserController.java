@@ -4,6 +4,7 @@ import datn.backend.dto.AddUsersToProjectDTO;
 import datn.backend.dto.ProjectUserDTO;
 import datn.backend.dto.UserDTO;
 import datn.backend.service.ProjectUserService;
+import datn.backend.service.jpa.ProjectUserServiceJPA;
 import datn.backend.utils.Constants;
 import datn.backend.utils.ResponseUtils;
 import lombok.AccessLevel;
@@ -21,10 +22,17 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProjectUserController {
     final ProjectUserService projectUserService;
+    final ProjectUserServiceJPA projectUserServiceJPA;
 
     @GetMapping(value = "/project-users", produces = MediaType.APPLICATION_JSON_VALUE)
     public Object getUserInProject(String projectId) {
         Object result = projectUserService.getUsers(projectId);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
+    @GetMapping(value = "/project-users/role", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Object getRoleByProjectAndUser(String projectId, String userId) {
+        Object result = projectUserServiceJPA.getRoleByProjectAndUser(projectId, userId);
         return ResponseUtils.getResponseEntity(result);
     }
 

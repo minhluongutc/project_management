@@ -2,6 +2,7 @@ import {Component, Injector, OnDestroy, OnInit} from '@angular/core';
 import {ProjectStoreService} from "../project-store.service";
 import {ProjectService} from "../../../service/project.service";
 import {BaseComponent} from "../../../share/ui/base-component/base.component";
+import {ProjectUserService} from "../../../service/project-user.service";
 
 @Component({
   selector: 'app-project-detail',
@@ -14,7 +15,7 @@ export class ProjectDetailComponent extends BaseComponent implements OnInit, OnD
   projectId: any = ''
   project: any = {};
 
-  menuSidebar = [
+  menuSidebar: any[] = [
     // {
     //   link_name: "Kanban Board",
     //   link: "./kanban-board",
@@ -39,48 +40,53 @@ export class ProjectDetailComponent extends BaseComponent implements OnInit, OnD
       icon: "pi pi-user",
       sub_menu: []
     },
-    {
-      link_name: "Thống kê",
-      link: "./statistics",
-      icon: "pi pi-chart-line",
-      sub_menu: []
-    },
-    {
-      link_name: "Cấu hình dự án",
-      link: null,
-      icon: "pi pi-cog",
-      sub_menu: [
-        {
-          link_name: "Thông tin chung",
-          link: "./general-information",
-        },
-        {
-          link_name: "Danh mục",
-          link: "./category",
-        },
-        {
-          link_name: "Loại công việc",
-          link: "./issue-type",
-        },
-        {
-          link_name: "Trạng thái công việc",
-          link: "./status-issue",
-        }
-      ]
-    }
+    // {
+    //   link_name: "Thống kê",
+    //   link: "./statistics",
+    //   icon: "pi pi-chart-line",
+    //   sub_menu: []
+    // },
   ]
 
   constructor(injector: Injector,
-              private projectService: ProjectService,
-              private projectStoreService: ProjectStoreService
+              private projectService: ProjectService
   ) {
     super(injector);
     this.projectId = this.route.snapshot.paramMap.get('id');
     this.getProject(this.projectId);
     this.projectStoreService.id = this.projectId;
+    // this.setRoleInProject(this.projectId, this.user.id);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.setRoleInProject(this.projectId, this.user.id);
+    console.log(this.projectStoreService.role)
+    if (this.isRolePMOrAdmin()) {
+      this.menuSidebar.push(
+        {
+          link_name: "Cấu hình dự án",
+          link: null,
+          icon: "pi pi-cog",
+          sub_menu: [
+            {
+              link_name: "Thông tin chung",
+              link: "./general-information",
+            },
+            {
+              link_name: "Danh mục",
+              link: "./category",
+            },
+            {
+              link_name: "Loại công việc",
+              link: "./issue-type",
+            },
+            {
+              link_name: "Trạng thái công việc",
+              link: "./status-issue",
+            }
+          ]
+        })
+    }
   }
 
   override ngOnDestroy() {

@@ -1,6 +1,5 @@
 package datn.backend.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +18,5 @@ public class UserCalendarResponseDTO {
     Date start;
     Date end;
     Boolean allDay;
+    Integer statusCode;
 }

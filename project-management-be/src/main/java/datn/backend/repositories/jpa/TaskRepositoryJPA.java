@@ -167,4 +167,10 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             " and t.assignUserId = :userId" +
             " and t.enabled = 1")
     List<TaskEntity> getTaskEntitiesByProjectIdAndAssignUserId(String projectId, String userId);
+
+    List<TaskEntity> getTaskEntitiesByCategoryIdAndEnabledAndIsPublic(String categoryId, Integer enabled, boolean isPublic);
+    List<TaskEntity> getTaskEntitiesByStatusIssueIdAndEnabledAndIsPublic(String statusIssueId, Integer enabled, boolean isPublic);
+    List<TaskEntity> getTaskEntitiesByTypeIdAndEnabledAndIsPublic(String typeId, Integer enabled, boolean isPublic);
+
+    TaskEntity findFirstById(String id);
 }

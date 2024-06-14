@@ -33,4 +33,24 @@ public class PostController {
         Object result = postService.insertPost(authentication, dto, files);
         return ResponseUtils.getResponseEntity(result);
     }
+
+    @PutMapping(value = "/posts/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Object> updatePost(Authentication authentication,
+                                             @PathVariable String id,
+                                             @RequestPart("dto") PostInsertDTO dto) {
+        Object result = postService.updatePost(authentication, id, dto);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
+    @DeleteMapping(value = "/posts/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> deletePost(Authentication authentication, @PathVariable String id) {
+        Object result = postService.deletePost(authentication, id);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
+    @GetMapping(value = "/posts/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getPost(Authentication authentication, @PathVariable String id) {
+        Object result = postService.getPost(authentication, id);
+        return ResponseUtils.getResponseEntity(result);
+    }
 }

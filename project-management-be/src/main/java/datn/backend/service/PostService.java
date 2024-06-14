@@ -8,7 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface PostService {
-    Object insertPost(Authentication authentication, PostInsertDTO dto, MultipartFile[] files);
 
     List<PostResponseDTO> getPosts(Authentication authentication, String projectId);
+    Object insertPost(Authentication authentication, PostInsertDTO dto, MultipartFile[] files);
+    Object updatePost(Authentication authentication, String id, PostInsertDTO dto);
+    Object deletePost(Authentication authentication, String id);
+    Object getPost(Authentication authentication, String id);
 }

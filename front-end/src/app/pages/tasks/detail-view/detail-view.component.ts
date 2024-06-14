@@ -8,7 +8,6 @@ import {AccordionModule} from "primeng/accordion";
 import {PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
 import {DynamicDialogRef} from "primeng/dynamicdialog";
 import {TaskCreateComponent} from "../task-create/task-create.component";
-import {ProjectStoreService} from "../../projects/project-store.service";
 import {CommentService} from "../../../service/comment.service";
 import {UpdateHistoryTaskService} from "../../../service/update-history-task.service";
 
@@ -33,8 +32,7 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
   constructor(injector: Injector,
               private taskService: TaskService,
               private commentService: CommentService,
-              private updateHistoryService: UpdateHistoryTaskService,
-              private projectStoreService: ProjectStoreService
+              private updateHistoryService: UpdateHistoryTaskService
   ) {
     super(injector);
   }
@@ -126,6 +124,25 @@ export class DetailViewComponent extends BaseComponent implements OnInit {
       },
       data: {
         task: this.taskSelected
+      }
+    });
+  }
+
+  showAddChildTask() {
+    this.dynamicDialogRef = this.dialogService.open(TaskCreateComponent, {
+      header: 'Thêm mới công việc',
+      width: '60vw',
+      contentStyle: { overflow: 'auto', 'margin-bottom': '69px' },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      data: {
+        task: {
+          parentId: this.taskSelected.id,
+          projectId: this.taskSelected.projectId,
+          parentSubject: this.taskSelected.subject
+        }
       }
     });
   }

@@ -9,8 +9,6 @@ import org.springframework.context.event.EventListener;
 
 @SpringBootApplication
 public class ProjectManagementApplication {
-	@Autowired
-	EmailSenderService senderService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProjectManagementApplication.class, args);

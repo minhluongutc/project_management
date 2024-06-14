@@ -26,8 +26,7 @@ export class DashboardComponent extends BaseComponent implements OnInit {
 
   constructor(injector: Injector,
               private projectService: ProjectService,
-              private taskService: TaskService,
-              private projectUserService: ProjectUserService) {
+              private taskService: TaskService) {
     super(injector);
   }
 

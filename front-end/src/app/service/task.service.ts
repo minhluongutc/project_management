@@ -68,4 +68,8 @@ export class TaskService extends BaseService {
   importTemplate(projectId: any, file: any) {
     return this.postRequest(`${this.SERVICE_URL}/${projectId}/import`, file);
   }
+
+  deleteTask(id: any) {
+    return this.delete(id);
+  }
 }

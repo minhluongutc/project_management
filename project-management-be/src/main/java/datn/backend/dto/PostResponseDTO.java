@@ -18,6 +18,7 @@ public class PostResponseDTO {
     String title;
     String content;
     String projectId;
+    String projectName;
     String createUserId;
     Date createTime;
     String updateUserId;
@@ -28,11 +29,12 @@ public class PostResponseDTO {
     String username;
     List<AttachmentDTO.AttachmentResponseDTO> attachments;
 
-    public PostResponseDTO(String id, String title, String content, String projectId, String createUserId, Date createTime, String updateUserId, Date updateTime, String avatarId, String firstName, String lastName, String username) {
+    public PostResponseDTO(String id, String title, String content, String projectId, String projectName, String createUserId, Date createTime, String updateUserId, Date updateTime, String avatarId, String firstName, String lastName, String username) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.projectId = projectId;
+        this.projectName = projectName;
         this.createUserId = createUserId;
         this.createTime = createTime;
         this.updateUserId = updateUserId;

@@ -149,6 +149,11 @@ export class ProfileComponent extends BaseComponent implements OnInit {
     this.editMode = false;
   }
 
+  getImageBackground(id: any): string {
+    if (!id) return '/assets/images/default-background.png';
+    return this.fileService.getFileUrl(id);
+  }
+
   protected readonly PERMISSION = PERMISSION;
   protected readonly PROFESSIONAL_LEVELS = PROFESSIONAL_LEVELS;
   protected readonly GENDER = GENDER;
