@@ -22,4 +22,6 @@ public interface TaskService {
     Object getUserCalendarTask(Authentication authentication, String projectId);
 
     Object getTaskStatistics(Authentication authentication, String projectId, String userId);
+
+    Object deleteTask(Authentication authentication, String id);
 }

@@ -490,6 +490,16 @@ public class TaskServiceImpl implements TaskService {
 //        );
     }
 
+    @Override
+    public Object deleteTask(Authentication authentication, String id) {
+        TaskEntity taskEntity = taskRepositoryJPA.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
+        taskEntity.setEnabled(Constants.STATUS.IN_ACTIVE.value);
+        taskEntity.setUpdateUserId(AuditUtils.updateUserId(authentication));
+        taskEntity.setUpdateTime(AuditUtils.updateTime());
+        taskRepositoryJPA.save(taskEntity);
+        return "successfully deleted";
+    }
+
     private float calculatePercent(int value, int total) {
         if (total == 0) {
             throw new IllegalArgumentException("Tổng không thể bằng 0");

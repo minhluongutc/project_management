@@ -6,18 +6,16 @@ import {ProjectService} from "../../../service/project.service";
 import {TreeNodeSelectEvent, TreeNodeUnSelectEvent} from "primeng/tree";
 import {TaskService} from "../../../service/task.service";
 import {Task} from "../../../models/task.model";
-import {NOTIFICATION_VALUE, PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
+import {PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
 import {TypeService} from "../../../service/type.service";
-import {ProjectUserService} from "../../../service/project-user.service";
 import {StatusIssueService} from "../../../service/status-issue.service";
 import {CategoryService} from "../../../service/category.service";
 import {DynamicDialogConfig} from "primeng/dynamicdialog";
 import {DocumentService} from "../../../service/document.service";
 import {ConfirmationService} from "primeng/api";
-import {ProjectStoreService} from "../../projects/project-store.service";
 import {saveAs} from "file-saver";
 import {WebsocketService} from "../../../service/websocket.service";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import {NOTIFICATION_TYPE} from "../../../share/enum/enum";
 
 @Component({
@@ -30,6 +28,8 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   listProject: any[] = [];
 
   listTask: any[] = [];
+
+  disableAll: boolean = false;
 
   issueTypes: any[] = [];
   categories: any[] = [];
@@ -67,6 +67,7 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.setEnableFieldsWithRole();
     await this.getProjects();
     await this.fetchDataToEdit();
   }
@@ -448,23 +449,46 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   updateTask() {
-    const data: Task = {
-      projectId: this.form.value.projectId?.key,
-      subject: this.form.value.subject,
-      description: this.form.value.description,
-      startDate: this.form.value.time === null ? null : this.form.value.time[0],
-      dueDate: this.form.value.time === null ? null : this.form.value.time[1],
-      parentId: this.form.value.parentId?.key,
-      typeId: this.form.value.typeId,
-      estimateTime: this.form.value.estimateTime,
-      priority: this.form.value.priority,
-      severity: this.form.value.severity,
-      assignUserId: this.form.value.assignUserId,
-      reviewUserId: this.form.value.reviewUserId,
-      statusIssueId: this.form.value.statusIssueId,
-      categoryId: this.form.value.categoryId,
-      reporter: this.user.id,//Not use this field
-      isPublic: this.form.value.isPublic
+    console.log(this.form.value);
+    let data: Task;
+    if (this.form.value.projectId == undefined) {
+      data = {
+        assignUserId: this.data2edit?.assignUserId,
+        categoryId: this.data2edit?.categoryId,
+        description: this.data2edit?.description,
+        dueDate: this.data2edit?.dueDate,
+        estimateTime: this.data2edit?.estimateTime,
+        isPublic: this.data2edit?.isPublic,
+        parentId: this.data2edit?.parentId,
+        priority: this.data2edit?.priority,
+        projectId: this.data2edit?.projectId,
+        reporter: this.data2edit?.reporter,
+        reviewUserId: this.data2edit?.reviewUserId,
+        severity: this.data2edit?.severity,
+        startDate: this.data2edit?.startDate,
+        statusIssueId: this.form.value.statusIssueId,
+        subject: this.data2edit?.subject,
+        typeId: this.data2edit?.typeId
+      }
+    } else {
+      data = {
+        projectId: this.form.value.projectId?.key,
+        subject: this.form.value.subject,
+        description: this.form.value.description,
+        startDate: this.form.value.time === null ? null : this.form.value.time[0],
+        dueDate: this.form.value.time === null ? null : this.form.value.time[1],
+        parentId: this.form.value.parentId?.key,
+        typeId: this.form.value.typeId,
+        estimateTime: this.form.value.estimateTime,
+        priority: this.form.value.priority,
+        severity: this.form.value.severity,
+        assignUserId: this.form.value.assignUserId,
+        reviewUserId: this.form.value.reviewUserId,
+        statusIssueId: this.form.value.statusIssueId,
+        categoryId: this.form.value.categoryId,
+        reporter: this.user.id,//Not use this field
+        isPublic: this.form.value.isPublic
+    }
     }
     this.taskService.updateTask(this.data2edit.id, data).subscribe({
       next: (res: any) => {
@@ -532,21 +556,44 @@ export class TaskCreateComponent extends BaseComponent implements OnInit {
   }
 
   setEnableFields(enable: boolean) {
-    if (enable) {
-      this.form.get('typeId')?.enable();
-      this.form.get('assignUserId')?.enable();
-      this.form.get('reviewUserId')?.enable();
-      this.form.get('statusIssueId')?.enable();
-      this.form.get('categoryId')?.enable();
-      this.form.get('parentId')?.enable();
-    } else {
+    if (!this.disableAll) {
+      if (enable) {
+        this.form.get('typeId')?.enable();
+        this.form.get('assignUserId')?.enable();
+        this.form.get('reviewUserId')?.enable();
+        this.form.get('statusIssueId')?.enable();
+        this.form.get('categoryId')?.enable();
+        this.form.get('parentId')?.enable();
+      } else {
+        this.form.get('typeId')?.disable();
+        this.form.get('assignUserId')?.disable();
+        this.form.get('reviewUserId')?.disable();
+        this.form.get('statusIssueId')?.disable();
+        this.form.get('categoryId')?.disable();
+        this.form.get('parentId')?.disable();
+      }
+    }
+  }
+
+  setEnableFieldsWithRole() {
+    console.log(this.isRoleUser())
+    if (this.isRoleUser()) {
+      this.disableAll = true;
+      this.form.get('projectId')?.disable();
       this.form.get('typeId')?.disable();
+      this.form.get('subject')?.disable();
+      this.form.get('description')?.disable();
+      this.form.get('time')?.disable();
+      this.form.get('estimateTime')?.disable();
+      this.form.get('priority')?.disable();
+      this.form.get('severity')?.disable();
       this.form.get('assignUserId')?.disable();
       this.form.get('reviewUserId')?.disable();
-      this.form.get('statusIssueId')?.disable();
       this.form.get('categoryId')?.disable();
       this.form.get('parentId')?.disable();
+      this.form.get('reporter')?.disable();
     }
+    console.log(this.form)
   }
 
   showDialogImportFile() {

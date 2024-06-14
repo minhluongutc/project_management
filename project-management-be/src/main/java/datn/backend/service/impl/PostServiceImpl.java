@@ -51,6 +51,35 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Object updatePost(Authentication authentication, String id, PostInsertDTO dto) {
+        PostEntity postEntity = postRepositoryJPA.findById(id).orElse(null);
+        if (postEntity != null) {
+            modelMapper.map(dto, postEntity);
+            postEntity.setId(id);
+            postEntity.setUpdateUserId(AuditUtils.getUserId(authentication));
+            postEntity.setUpdateTime(AuditUtils.createTime());
+            postRepositoryJPA.save(postEntity);
+            return "Update post success";
+        }
+        return null;
+    }
+
+    @Override
+    public Object deletePost(Authentication authentication, String id) {
+        PostEntity postEntity = postRepositoryJPA.findById(id).orElse(null);
+        if (postEntity != null) {
+            postEntity.setEnabled(Constants.STATUS.IN_ACTIVE.value);
+            return "Delete post success";
+        }
+        return null;
+    }
+
+    @Override
+    public Object getPost(Authentication authentication, String id) {
+        return postRepositoryJPA.findById(id).orElse(null);
+    }
+
+    @Override
     public List<PostResponseDTO> getPosts(Authentication authentication, String projectId) {
         List<PostResponseDTO> postResponseDTOS = postRepositoryJPA.findAllByProjectId(projectId);
         for (PostResponseDTO postResponseDTO : postResponseDTOS) {

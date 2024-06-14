@@ -19,26 +19,26 @@
                            [jiraErrors]="getError('description')"
                            [jiraShowError]="showError('description')"></jira-input-text>
         </div>
-        <div class="flex flex-col gap-2">
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-2">
-              <jira-input-text jiraLabelText="Thời gian cảnh báo"
-                               formControlName="warningTime"
-                               [jiraIsInputNumber]="true"
-                               [jiraErrors]="getError('warningTime')"
-                               [jiraShowError]="showError('warningTime')"
-                               [jiraSuffix]="' ngày'"/>
-            </div>
-            <div class="flex flex-col gap-2">
-              <jira-input-text jiraLabelText="Thời gian nguy hiểm"
-                               formControlName="dangerTime"
-                               [jiraIsInputNumber]="true"
-                               [jiraErrors]="getError('dangerTime')"
-                               [jiraShowError]="showError('dangerTime')"
-                               [jiraSuffix]="' ngày'"/>
-            </div>
-          </div>
-        </div>
+<!--        <div class="flex flex-col gap-2">-->
+<!--          <div class="grid grid-cols-2 gap-4">-->
+<!--            <div class="flex flex-col gap-2">-->
+<!--              <jira-input-text jiraLabelText="Thời gian cảnh báo"-->
+<!--                               formControlName="warningTime"-->
+<!--                               [jiraIsInputNumber]="true"-->
+<!--                               [jiraErrors]="getError('warningTime')"-->
+<!--                               [jiraShowError]="showError('warningTime')"-->
+<!--                               [jiraSuffix]="' ngày'"/>-->
+<!--            </div>-->
+<!--            <div class="flex flex-col gap-2">-->
+<!--              <jira-input-text jiraLabelText="Thời gian nguy hiểm"-->
+<!--                               formControlName="dangerTime"-->
+<!--                               [jiraIsInputNumber]="true"-->
+<!--                               [jiraErrors]="getError('dangerTime')"-->
+<!--                               [jiraShowError]="showError('dangerTime')"-->
+<!--                               [jiraSuffix]="' ngày'"/>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
         <div class="flex flex-col gap-2 pt-4">
           <p-button label="Cập nhật" (click)="handleSave(form)" [disabled]="form.invalid"></p-button>
         </div>

@@ -104,6 +104,12 @@ public class TaskController {
         return ResponseUtils.getResponseEntity(result);
     }
 
+    @DeleteMapping(value = "/tasks/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> deleteTask(Authentication authentication, @PathVariable String id) {
+        Object result = taskService.deleteTask(authentication, id);
+        return ResponseUtils.getResponseEntity(result);
+    }
+
 //    @GetMapping(value = "/tasks/statistics/user/{userId}/task-completion-rate/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    public ResponseEntity<Object> getTaskCompletionRate(Authentication authentication,
 //                                                        @PathVariable String userId,

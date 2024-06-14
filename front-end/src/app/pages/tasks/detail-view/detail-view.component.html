@@ -184,12 +184,6 @@
                               -> {{ (history?.newDueDate | date: 'dd/MM/yyyy') || 'null' }}
                               <br/>
                             }
-                            @if ((history?.newDueDate || history?.oldDueDate) && (history?.newDueDate != history?.oldDueDate)) {
-                              <strong class="text-md">Thời gian kết thúc: </strong>
-                              {{ (history?.oldDueDate | date: 'dd/MM/yyyy') || 'null' }}
-                              -> {{ (history?.newDueDate | date: 'dd/MM/yyyy') || 'null' }}
-                              <br/>
-                            }
                             @if ((history?.newAssignUser || history?.oldAssignUser) && (history?.newAssignUser != history?.oldAssignUser)) {
                               <strong class="text-md">Người thực hiện: </strong>
                               {{ history?.oldAssignUser || 'null' }} -> {{ history?.newAssignUser || 'null' }}
@@ -343,9 +337,8 @@
                 @if (taskSelected.dueDate != 'N/A') {
                   <div class="flex gap-2">
                     <p class="text-base"
-                       [class.text-yellow-400]="compareDateTask(taskSelected.dueDate, taskSelected.warningTime, taskSelected.dangerTime)=='warning'"
-                       [class.text-red-600]="compareDateTask(taskSelected.dueDate, taskSelected.warningTime, taskSelected.dangerTime)=='danger'"
-                       [class.text-green-500]="compareDateTask(taskSelected.dueDate, taskSelected.warningTime, taskSelected.dangerTime)=='normal'"
+                       [class.text-red-600]="compareCurrentTime(taskSelected.dueDate)"
+                       [class.text-green-500]="!compareCurrentTime(taskSelected.dueDate)"
                     >
                       {{ taskSelected.dueDate | date: 'dd/MM/yyyy' }}
                     </p>
