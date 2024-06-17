@@ -13,8 +13,8 @@ public interface CategoryRepositoryJPA extends JpaRepository<CategoryEntity, Str
     @Query("FROM CategoryEntity c" +
             " WHERE c.projectId = :projectId" +
             " and (:keySearch is null or (" +
-            "       lower(c.name) like lower(concat('%', :keySearch, '%')) " +
-            "   or  lower(c.description) like lower(concat('%', :keySearch, '%')))" +
+            "       lower(c.name) like lower(CAST(:keySearch as String)) " +
+            "   or  lower(c.description) like lower(CAST(:keySearch as String)))" +
             "     )" +
             " and c.enabled = 1" +
             " order by c.createTime desc")

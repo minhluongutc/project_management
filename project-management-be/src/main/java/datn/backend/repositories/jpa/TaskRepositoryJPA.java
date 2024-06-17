@@ -19,8 +19,8 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             " from TaskEntity t" +
             " where t.projectId = :#{#dto.projectId}" +
             " and t.enabled = 1" +
-            " and (:#{#dto.subject} is null or upper(t.subject) like upper(concat('%', trim(:#{#dto.subject}) ,'%')))" +
-            " and (:#{#dto.description} is null or upper(t.description) like upper(concat('%', trim(:#{#dto.description}) ,'%')))" +
+            " and (:#{#dto.subject} is null or upper(t.subject) like upper(CAST(trim(:#{#dto.subject}) as String)))" +
+            " and (:#{#dto.description} is null or upper(t.description) like upper(CAST(trim(:#{#dto.description}) as String)))" +
             " and (:#{#dto.isPublic} is null or t.isPublic = :#{#dto.isPublic})" +
             " and (:#{#dto.typeId} is null or t.typeId = :#{#dto.typeId})" +
             " and (:#{#dto.statusIssueId} is null or t.statusIssueId = :#{#dto.statusIssueId})" +
@@ -140,7 +140,7 @@ public interface TaskRepositoryJPA extends JpaRepository<TaskEntity, String> {
             "       or (:#{#dto.endDateOperator} = 'nho' and t.dueDate < :#{#dto.endDate})" +
             "       or (:#{#dto.endDateOperator} = 'nhoBang' and t.dueDate <= :#{#dto.endDate})" +
             "   )" +
-            " and (:#{#dto.keyword} is null or :#{#dto.keyword} = '' or (lower(t.subject) like lower(concat('%', trim(:#{#dto.keyword}) ,'%'))))" +
+            " and (:#{#dto.keyword} is null or :#{#dto.keyword} = '' or (lower(t.subject) like lower(CAST(trim(:#{#dto.keyword}) as String))))" +
             " and (t.enabled = 1)" +
             " order by t.createTime desc")
     List<TaskDTO.TaskResponseDTO> getTasks(@Param("dto") TaskDTO.TaskQueryDTO dto);
