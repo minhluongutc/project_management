@@ -53,8 +53,19 @@
           } @else if (col.field == "updateTime") {
             {{ rowData[col.field] | date: 'dd/MM/yyyy' }}
           } @else if (i == cols.length - 1) {
-            <p-button icon="pi pi-pencil" [rounded]="true" severity="secondary" [style]="{ 'margin-right': '.5em' }"/>
-            <p-button icon="pi pi-trash" [rounded]="true" severity="secondary"/>
+            <button pButton
+                    pRipple
+                    type="button"
+                    icon="pi pi-pencil"
+                    class="p-button-rounded p-button-text"
+                    (click)="onEdit(rowData)">
+            </button>
+            <button pButton
+                    pRipple
+                    type="button"
+                    icon="pi pi-trash"
+                    class="p-button-rounded p-button-text p-button-danger" (click)="confirmDelete(rowData, $event)">
+            </button>
           } @else {
             {{ rowData[col.field] }}
           }

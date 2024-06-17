@@ -11,12 +11,12 @@ import java.util.List;
 public interface TypeRepositoryJPA extends JpaRepository<TypeEntity, String> {
 
     @Query("FROM TypeEntity t" +
-            " WHERE t.projectId = :projectId" +
-            " and (:keySearch is null or (" +
-            "       lower(t.name) like lower(concat('%', :keySearch, '%')) " +
-            "   or  lower(t.description) like lower(concat('%', :keySearch, '%')))" +
-            "     )" +
-            " and t.enabled = 1" +
-            " order by t.createTime desc")
-    List<TypeEntity> getTypes(String projectId, String keySearch);
+        " WHERE t.projectId = :projectId" +
+        " and (:keySearch is null or (" +
+        "       lower(t.name) like lower(CAST(:keySearch AS String)) " +
+        "   or  lower(t.description) like lower(CAST(:keySearch AS String)))" +
+        "     )" +
+        " and t.enabled = 1" +
+        " order by t.createTime desc")
+List<TypeEntity> getTypes(String projectId, String keySearch);
 }

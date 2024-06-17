@@ -14,8 +14,8 @@ public interface StatusIssueRepositoryJPA extends JpaRepository<StatusIssueEntit
     @Query("from StatusIssueEntity s" +
             " where s.projectId = :projectId" +
             " and (:keySearch is null or (" +
-            "       lower(s.name) like lower(concat('%', :keySearch, '%')) " +
-            "   or  lower(s.description) like lower(concat('%', :keySearch, '%')))" +
+            "       lower(s.name) like lower(CAST(:keySearch AS String)) " +
+            "   or  lower(s.description) like lower(CAST('%' AS String) || CAST(:keySearch AS String) || CAST('%' AS String)))" +
             "     )" +
             " and s.enabled = 1" +
             " order by s.code asc")

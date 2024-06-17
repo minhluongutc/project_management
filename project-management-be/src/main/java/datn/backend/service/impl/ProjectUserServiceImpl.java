@@ -41,7 +41,7 @@ public class ProjectUserServiceImpl implements ProjectUserService {
         for (ProjectUserEntity projectUserEntity : projectUserEntities) {
             UserEntity userEntity = userRepositoryJPA.findByIdAndEnabled(projectUserEntity.getUserId(), Constants.STATUS.ACTIVE.value).orElseThrow(() -> new RuntimeException("User not found"));
             UserDTO.UserResponseDTO userResponseDTO = new UserDTO.UserResponseDTO();
-            userResponseDTO.setId(projectUserEntity.getId());
+            userResponseDTO.setId(userEntity.getId());
             userResponseDTO.setUsername(userEntity.getUsername());
             userResponseDTO.setEmail(userEntity.getEmail());
             userResponseDTO.setFirstName(userEntity.getFirstName());

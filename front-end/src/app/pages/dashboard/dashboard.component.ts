@@ -33,7 +33,7 @@ export class DashboardComponent extends BaseComponent implements OnInit {
   async ngOnInit() {
     this.cols = [
       {field: 'name', header: 'Tên dự án'},
-      {field: 'description', header: 'Mô tả'},
+      // {field: 'description', header: 'Mô tả'},
     ];
     await this.getProjects();
     await this.getProjectsDropdown();

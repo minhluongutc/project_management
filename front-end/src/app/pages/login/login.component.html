@@ -9,33 +9,59 @@
               <div class="form-group">
                 <label for="firstName"><i class="pi pi-user"></i></label>
                 <input [formControlName]="'firstName'" type="text" name="firstName" id="firstName" placeholder="Họ của bạn"/>
+                @if (showErrorCustom(signUpForm, 'firstName') && firstName?.errors?.['required']) {
+                  <span class="text-sm text-red-500">Họ không được để trống</span>
+                }
               </div>
               <div class="form-group">
                 <label for="lastName"><i class="pi pi-user"></i></label>
                 <input [formControlName]="'lastName'" type="text" name="lastName" id="lastName" placeholder="Tên của bạn"/>
+                @if (showErrorCustom(signUpForm, 'lastName') && lastName?.errors?.['required']) {
+                  <span class="text-sm text-red-500">Tên không được để trống</span>
+                }
               </div>
               <div class="form-group">
                 <label for="username"><i class="pi pi-user"></i></label>
                 <input [formControlName]="'username'" type="text" name="username" id="username" placeholder="Tên tài khoản"/>
+                @if (showErrorCustom(signUpForm, 'username') && username?.errors?.['required']) {
+                  <span class="text-sm text-red-500">Tên tài khoản không được để trống</span>
+                }
               </div>
               <div class="form-group">
                 <label for="email"><i class="pi pi-envelope"></i></label>
                 <input [formControlName]="'email'" type="email" name="email" id="email" placeholder="Địa chỉ Email"/>
+                @if (showErrorCustom(signUpForm, 'email') && email?.errors?.['required']) {
+                  <span class="text-sm text-red-500">Email không được để trống</span>
+                } @else if (showErrorCustom(signUpForm, 'email') && email?.errors?.['email']) {
+                  <span class="text-sm text-red-500">Email không đúng định dạng</span>
+                }
               </div>
               <div class="form-group">
                 <label for="pass"><i class="pi pi-lock"></i></label>
                 <input [formControlName]="'password'" type="password" name="pass" id="pass" placeholder="Mật khẩu"/>
+                @if (showErrorCustom(signUpForm, 'password') && signUpForm.controls['password']?.errors?.['required']) {
+                  <span class="text-sm text-red-500">Mật khẩu không được để trống</span>
+                } @else if (showErrorCustom(signUpForm, 'password') && signUpForm.controls['password']?.errors?.['minlength']) {
+                  <span class="text-sm text-red-500">Mật khẩu không được dưới 6 ký tự</span>
+                }
               </div>
               <div class="form-group">
                 <label for="re-pass"><i class="pi pi-lock"></i></label>
                 <input [formControlName]="'confirmPassword'" type="password" name="re-pass" id="re-pass" placeholder="Nhập lại mật khẩu"/>
+                @if (showErrorCustom(signUpForm, 'confirmPassword') && confirmPassword?.errors?.['notMatch']) {
+                  <span class="text-sm text-red-500">Mật khẩu không khớp</span>
+                }
               </div>
 <!--              <div class="form-group">-->
 <!--                <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />-->
 <!--                <label for="agree-term" class="label-agree-term"><span><span></span></span>Tôi đồng ý tất cả các điều khoản trong  <a href="#" class="term-service">Điều khoản dịch vụ</a></label>-->
 <!--              </div>-->
               <div class="form-group form-button">
-                <input (click)="onSubmitSignUp(signUpForm)" type="submit" name="signup" id="signup" class="form-submit" value="Đăng ký"/>
+                @if (signUpForm.invalid) {
+                  <input type="submit" name="signup" id="signup" class="disabled form-submit" value="Đăng ký" style="width: 100%"/>
+                } @else {
+                  <input (click)="onSubmitSignUp(signUpForm)" type="submit" name="signup" id="signup" class="bg-blue-500 text-white hover:bg-blue-600" value="Đăng ký"/>
+                }
               </div>
             </form>
           </div>

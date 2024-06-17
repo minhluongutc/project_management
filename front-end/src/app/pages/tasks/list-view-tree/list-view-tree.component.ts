@@ -5,6 +5,9 @@ import {Column} from "../../../models/column.model";
 import {last} from "rxjs";
 import {PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
 import {ParamMap} from "@angular/router";
+import {TaskCreateComponent} from "../task-create/task-create.component";
+import {DynamicDialogRef} from "primeng/dynamicdialog";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-list-view-tree',
@@ -13,9 +16,11 @@ import {ParamMap} from "@angular/router";
 })
 export class ListViewTreeComponent extends BaseComponent implements OnInit {
   cols!: Column[];
+  dynamicDialogRef: DynamicDialogRef | undefined;
 
   constructor(injector: Injector,
-              private taskService: TaskService
+              private taskService: TaskService,
+              private confirmationService: ConfirmationService,
   ) {
     super(injector);
   }
@@ -106,4 +111,54 @@ export class ListViewTreeComponent extends BaseComponent implements OnInit {
 
   protected readonly PRIORIES = PRIORIES;
   protected readonly SEVERITIES = SEVERITIES;
+
+  confirmDelete(rowData: any, event: MouseEvent) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'bạn có muốn xóa công việc này?',
+      header: 'Xác nhận xóa',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: "p-button-danger p-button-text",
+      rejectButtonStyleClass: "p-button-text p-button-text",
+      acceptIcon: "none",
+      rejectIcon: "none",
+
+      accept: () => {
+        this.onDeleteTask(rowData.id)
+      },
+      reject: () => {
+        console.log("is reject")
+      }
+    });
+  }
+
+  onDeleteTask(id: any) {
+    this.taskService.deleteTask(id).subscribe(
+      {
+        next: (res: any) => {
+          this.createSuccessToast('Thành công', 'Xóa công việc thành công');
+          this.ngOnInit();
+        }, error: (err: any) => {
+          this.createErrorToast('Lỗi', err.message);
+        }
+      }
+    )
+  }
+
+  async onEdit(rowData: any) {
+    const taskRes = await this.taskService.getTaskById(rowData.id).toPromise();
+    const task = taskRes.data;
+    this.dynamicDialogRef = this.dialogService.open(TaskCreateComponent, {
+      header: 'Chỉnh sửa công việc',
+      width: '60vw',
+      contentStyle: { overflow: 'auto', 'margin-bottom': '69px' },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      data: {
+        task: task
+      }
+    });
+  }
 }
