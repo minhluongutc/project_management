@@ -5,20 +5,26 @@ import {ParamMap} from "@angular/router";
 import {Column} from "../../../models/column.model";
 import {PRIORIES, SEVERITIES} from "../../../share/constants/data.constants";
 import FileSaver from 'file-saver';
+import {ConfirmationService} from "primeng/api";
+import {DynamicDialogRef} from "primeng/dynamicdialog";
+import {TaskCreateComponent} from "../task-create/task-create.component";
 
 @Component({
   selector: 'app-list-view',
   templateUrl: './list-view.component.html',
-  styleUrl: './list-view.component.scss'
+  styleUrl: './list-view.component.scss',
+  providers: [ConfirmationService]
 })
 export class ListViewComponent extends BaseComponent implements OnInit {
 
   cols!: Column[];
 
   exportColumns!: any[];
+  dynamicDialogRef: DynamicDialogRef | undefined;
 
   constructor(injector: Injector,
               private taskService: TaskService,
+              private confirmationService: ConfirmationService,
   ) {
     super(injector);
   }
@@ -106,5 +112,43 @@ export class ListViewComponent extends BaseComponent implements OnInit {
         }
       }
     )
+  }
+
+  confirmDelete(item: any, event: Event) {
+    console.log(event)
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'bạn có muốn xóa công việc này?',
+      header: 'Xác nhận xóa',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: "p-button-danger p-button-text",
+      rejectButtonStyleClass: "p-button-text p-button-text",
+      acceptIcon: "none",
+      rejectIcon: "none",
+
+      accept: () => {
+        this.onDeleteTask(item.id)
+      },
+      reject: () => {
+        console.log("is reject")
+      }
+    });
+  }
+
+  async onEdit(item: any) {
+    const taskRes = await this.taskService.getTaskById(item.id).toPromise();
+    const task = taskRes.data;
+    this.dynamicDialogRef = this.dialogService.open(TaskCreateComponent, {
+      header: 'Chỉnh sửa công việc',
+      width: '60vw',
+      contentStyle: { overflow: 'auto', 'margin-bottom': '69px' },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      data: {
+        task: task
+      }
+    });
   }
 }

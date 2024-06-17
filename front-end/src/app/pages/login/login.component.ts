@@ -1,17 +1,19 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, Injector, OnInit} from "@angular/core";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../share/auth/auth.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {Observable} from "rxjs";
 import {AuthResponseData} from "../../share/auth/AuthResponseData.model";
+import {BaseComponent} from "../../share/ui/base-component/base.component";
+import {PasswordValidator} from "../../share/validators/re-password.validator";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent extends BaseComponent implements OnInit {
 
   loginForm: FormGroup = new FormGroup<any>({});
   signUpForm: FormGroup = new FormGroup<any>({});
@@ -20,10 +22,10 @@ export class LoginComponent implements OnInit {
   mode: 'login' | 'register' = 'login';
 
   constructor(
-    private authService: AuthService,
-    private router: Router,
+    injector: Injector,
     private messageService: MessageService
   ) {
+    super(injector)
   }
 
   ngOnInit(): void {
@@ -37,7 +39,7 @@ export class LoginComponent implements OnInit {
       {
         'username': new FormControl('', [Validators.required]),
         'password': new FormControl('', [Validators.required, Validators.minLength(6)]),
-        'confirmPassword': new FormControl('', [Validators.required, Validators.minLength(6)]),
+        'confirmPassword': new FormControl('', [Validators.required, Validators.minLength(6), PasswordValidator('password')]),
         'firstName': new FormControl('', [Validators.required]),
         'lastName': new FormControl('', [Validators.required]),
         'email': new FormControl('', [Validators.required, Validators.email]),
@@ -51,6 +53,22 @@ export class LoginComponent implements OnInit {
 
   get password() {
     return this.loginForm.get('password');
+  }
+
+  get email() {
+    return this.signUpForm.controls['email'];
+  }
+
+  get confirmPassword() {
+    return this.signUpForm.controls['confirmPassword'];
+  }
+
+  get lastName() {
+    return this.signUpForm.controls['lastName'];
+  }
+
+  get firstName() {
+    return this.signUpForm.controls['firstName'];
   }
 
   onSubmitLogin(form: FormGroup) {
@@ -82,14 +100,14 @@ export class LoginComponent implements OnInit {
           this.mode = 'login';
           this.messageService.add({severity: 'success', summary: 'Thành công', detail: 'Đăng ký tài khoản thành công'});
         }, error: err => {
-          this.showError(err.error.message);
+          if (err.status == 401) {
+            this.createErrorToast('Error', 'biểu mẫu không hợp lệ')
+          } else {
+            this.createErrorToast('Error', err.error.message);
+          }
         }
       }
     )
-  }
-
-  showError(message: string) {
-    this.messageService.add({severity: 'error', summary: 'Thất bại', detail: message});
   }
 
   changeMode(mode: 'login' | 'register') {

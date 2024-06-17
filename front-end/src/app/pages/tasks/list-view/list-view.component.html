@@ -85,13 +85,14 @@
                     pRipple
                     type="button"
                     icon="pi pi-pencil"
-                    class="p-button-rounded p-button-text">
+                    class="p-button-rounded p-button-text"
+                    (click)="onEdit(item)">
             </button>
             <button pButton
                     pRipple
                     type="button"
                     icon="pi pi-trash"
-                    class="p-button-rounded p-button-text p-button-danger" (click)="onDeleteTask(item.id)">
+                    class="p-button-rounded p-button-text p-button-danger" (click)="confirmDelete(item, $event)">
             </button>
           </div>
         </td>
@@ -99,3 +100,5 @@
     </ng-template>
   </p-table>
 </div>
+
+<p-confirmDialog></p-confirmDialog>
